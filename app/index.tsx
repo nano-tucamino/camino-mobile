@@ -1,89 +1,38 @@
 // 📄 app/index.tsx
-import { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  Animated,
   StatusBar,
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import Map from "lucide-react-native/dist/esm/icons/map";
-import House from "lucide-react-native/dist/esm/icons/house";
-import MessageCircle from "lucide-react-native/dist/esm/icons/message-circle";
-import Globe from "lucide-react-native/dist/esm/icons/globe";
-import "../lib/i18n";
 
 const { width, height } = Dimensions.get("window");
-
-const SLIDES = [
-  {
-    ciudad: "Santiago de Compostela",
-    image:
-      "https://res.cloudinary.com/dazuwnm1k/image/upload/v1774432766/catedrales-santiago_yntkre.webp",
-  },
-  {
-    ciudad: "León",
-    image:
-      "https://res.cloudinary.com/dazuwnm1k/image/upload/v1774432766/catedrales-leon_lajs32.webp",
-  },
-  {
-    ciudad: "Astorga",
-    image:
-      "https://res.cloudinary.com/dazuwnm1k/image/upload/v1774711873/astorrrrga_yd1ttq.webp",
-  },
-];
-
-const FEATURES = [
-  { key: "mapa", Icon: Map },
-  { key: "albergues", Icon: House },
-  { key: "chat", Icon: MessageCircle },
-  { key: "comunidad", Icon: Globe },
-] as const;
 
 export default function Landing() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [actual, setActual] = useState(0);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      Animated.sequence([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ]).start();
-      setTimeout(() => setActual((a) => (a + 1) % SLIDES.length), 600);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      <Animated.Image
-        source={{ uri: SLIDES[actual].image }}
-        style={[styles.bgImage, { opacity: fadeAnim }]}
+      <Image
+        source={{
+          uri: "https://res.cloudinary.com/dazuwnm1k/image/upload/v1774432766/catedrales-santiago_yntkre.webp",
+        }}
+        style={styles.bgImage}
         resizeMode="cover"
       />
 
       <View style={styles.overlay} />
 
       <View style={styles.content}>
-        {/* Header */}
+        {/* Logo arriba */}
         <View style={styles.header}>
           <Image
             source={require("../assets/logo-blanco.png")}
@@ -93,51 +42,26 @@ export default function Landing() {
           <Text style={styles.logoText}>Tu Camino</Text>
         </View>
 
-        {/* Título */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.titulo}>{t("landing.titulo")}</Text>
-          <Text style={styles.tituloCamino}>{t("landing.camino")}</Text>
-          <Animated.Text style={[styles.ciudad, { opacity: fadeAnim }]}>
-            {SLIDES[actual].ciudad}
-          </Animated.Text>
-        </View>
-
-        {/* Features */}
-        <View style={styles.features}>
-          {FEATURES.map(({ key, Icon }) => (
-            <View key={key} style={styles.featureRow}>
-              <Icon size={18} color="#D4AF72" strokeWidth={1.5} />
-              <Text style={styles.featureText}>
-                {t(`landing.features.${key}`)}
+        {/* Título + CTA juntos abajo */}
+        <View style={styles.bottom}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.siente}>{t("landing.siente_el")}</Text>
+            <Text style={styles.camino}>{t("landing.camino")}</Text>
+          </View>
+          <View style={styles.ctaContainer}>
+            <Text style={styles.subtitulo}>{t("landing.subtitulo")}</Text>
+            <TouchableOpacity
+              style={styles.btnDescubre}
+              onPress={() => router.push("/(public)/dashboard")}
+            >
+              <Text style={styles.btnDescubreText}>
+                {t("landing.descubre")}
               </Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Dots */}
-        <View style={styles.dots}>
-          {SLIDES.map((_, i) => (
-            <View
-              key={i}
-              style={[styles.dot, i === actual && styles.dotActive]}
-            />
-          ))}
-        </View>
-
-        {/* CTAs */}
-        <View style={styles.ctas}>
-          <TouchableOpacity
-            style={styles.btnPrimary}
-            onPress={() => router.push("/auth/login")}
-          >
-            <Text style={styles.btnPrimaryText}>{t("auth.login")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.btnSecondary}
-            onPress={() => router.push("/auth/registro")}
-          >
-            <Text style={styles.btnSecondaryText}>{t("auth.registro")}</Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/auth/login")}>
+              <Text style={styles.linkLogin}>{t("auth.con_cuenta")}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -155,13 +79,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     width,
     height,
-    backgroundColor: "rgba(0,0,0,0.52)",
+    backgroundColor: "rgba(0,0,0,0.45)",
   },
   content: {
     flex: 1,
     paddingHorizontal: 28,
     paddingTop: 60,
-    paddingBottom: 48,
+    paddingBottom: 52,
     justifyContent: "space-between",
   },
   header: {
@@ -179,78 +103,52 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: -0.5,
   },
-  titleContainer: { gap: 4 },
-  titulo: {
-    color: "rgba(255,255,255,0.85)",
-    fontSize: 48,
-    fontWeight: "700",
-    lineHeight: 52,
-    letterSpacing: -1,
+  bottom: {
+    gap: 20,
   },
-  tituloCamino: {
+  titleContainer: {
+    alignItems: "flex-start",
+  },
+  siente: {
+    color: "rgba(255,255,255,0.85)",
+    fontSize: 44,
+    fontWeight: "700",
+    lineHeight: 48,
+    letterSpacing: -1.5,
+  },
+  camino: {
     color: "#D4AF72",
-    fontSize: 56,
+    fontSize: 54,
     fontWeight: "700",
     fontStyle: "italic",
-    lineHeight: 60,
-    letterSpacing: -1,
+    lineHeight: 58,
+    letterSpacing: -2,
   },
-  ciudad: {
-    color: "#D4AF72",
-    fontSize: 11,
-    fontWeight: "600",
-    letterSpacing: 3,
-    textTransform: "uppercase",
-    marginTop: 12,
+  ctaContainer: {
+    gap: 16,
   },
-  features: { gap: 14 },
-  featureRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  featureText: {
-    color: "rgba(255,255,255,0.75)",
+  subtitulo: {
+    color: "rgba(255,255,255,0.55)",
     fontSize: 14,
     lineHeight: 20,
-    flex: 1,
+    letterSpacing: 0.2,
   },
-  dots: {
-    flexDirection: "row",
-    gap: 6,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "rgba(255,255,255,0.3)",
-  },
-  dotActive: {
-    width: 24,
-    backgroundColor: "#D4AF72",
-  },
-  ctas: { gap: 12 },
-  btnPrimary: {
+  btnDescubre: {
     backgroundColor: "#D4AF72",
     borderRadius: 999,
-    paddingVertical: 16,
+    paddingVertical: 14,
     alignItems: "center",
   },
-  btnPrimaryText: {
+  btnDescubreText: {
     color: "#1a1814",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
+    letterSpacing: 0.3,
   },
-  btnSecondary: {
-    borderRadius: 999,
-    paddingVertical: 16,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
-  },
-  btnSecondaryText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "500",
+  linkLogin: {
+    color: "rgba(255,255,255,0.45)",
+    fontSize: 13,
+    textAlign: "center",
+    letterSpacing: 0.2,
   },
 });

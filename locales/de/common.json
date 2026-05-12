@@ -3,9 +3,11 @@
     "titulo": "Erlebe den",
     "camino": "Camino",
     "subtitulo": "Dein Pilgerwanderungs-Begleiter",
+    "siente_el": "Spüre den",
+    "descubre": "Entdecke den Camino",
     "features": {
       "mapa": "Interaktive Karte mit allen Etappen und Varianten",
-      "albergues": "Herbergen mit Echtzeit-Auslastung",
+      "albergues": "Herbergen mit Echtzeitauslastung",
       "chat": "Mehrsprachiger Chat mit Pilgern und Herbergswirten",
       "comunidad": "Gemeinschaft von Pilgern aus der ganzen Welt"
     },

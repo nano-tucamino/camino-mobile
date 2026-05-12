@@ -3,9 +3,11 @@
     "titulo": "Vivez le",
     "camino": "Chemin",
     "subtitulo": "Votre compagnon de pèlerinage",
+    "siente_el": "Ressentez le",
+    "descubre": "Découvrez le Chemin",
     "features": {
       "mapa": "Carte interactive avec toutes les étapes et variantes",
-      "albergues": "Gîtes avec occupation en temps réel",
+      "albergues": "Auberges avec occupation en temps réel",
       "chat": "Chat multilingue avec pèlerins et hospitaliers",
       "comunidad": "Communauté de pèlerins du monde entier"
     },
@@ -23,9 +25,9 @@
   },
   "nav": {
     "etapas": "Étapes",
-    "albergues": "Gîtes",
+    "albergues": "Auberges",
     "mapa": "Carte",
     "perfil": "Profil",
-    "salir": "Déconnexion"
+    "salir": "Se déconnecter"
   }
 }

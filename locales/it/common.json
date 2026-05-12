@@ -3,13 +3,15 @@
     "titulo": "Vivi il",
     "camino": "Cammino",
     "subtitulo": "Il tuo compagno di pellegrinaggio",
+    "siente_el": "Senti il",
+    "descubre": "Scopri il Cammino",
     "features": {
-      "mapa": "Mappa interattiva con tutti gli itinerari e le varianti",
+      "mapa": "Mappa interattiva con tutte le tappe e varianti",
       "albergues": "Ostelli con occupazione in tempo reale",
       "chat": "Chat multilingue con pellegrini e ospitalieri",
       "comunidad": "Comunità di pellegrini da tutto il mondo"
     },
-    "cta_login": "Inizia",
+    "cta_login": "Iniziare",
     "cta_registro": "Crea account"
   },
   "auth": {
@@ -22,7 +24,7 @@
     "con_cuenta": "Hai già un account?"
   },
   "nav": {
-    "etapas": "Itinerari",
+    "etapas": "Tappe",
     "albergues": "Ostelli",
     "mapa": "Mappa",
     "perfil": "Profilo",

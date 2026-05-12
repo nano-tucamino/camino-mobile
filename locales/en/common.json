@@ -3,29 +3,31 @@
     "titulo": "Experience the",
     "camino": "Camino",
     "subtitulo": "Your pilgrimage companion",
+    "siente_el": "Feel the",
+    "descubre": "Discover the Camino",
     "features": {
       "mapa": "Interactive map with all stages and variants",
-      "albergues": "Shelters with real-time occupancy",
-      "chat": "Multilingual chat with pilgrims and hospitalers",
+      "albergues": "Hostels with real-time occupancy",
+      "chat": "Multilingual chat with pilgrims and hospitaleros",
       "comunidad": "Community of pilgrims from around the world"
     },
-    "cta_login": "Get Started",
-    "cta_registro": "Create Account"
+    "cta_login": "Get started",
+    "cta_registro": "Create account"
   },
   "auth": {
     "email": "Email",
     "password": "Password",
-    "login": "Sign In",
-    "registro": "Sign Up",
+    "login": "Log in",
+    "registro": "Sign up",
     "google": "Continue with Google",
     "sin_cuenta": "Don't have an account?",
     "con_cuenta": "Already have an account?"
   },
   "nav": {
     "etapas": "Stages",
-    "albergues": "Shelters",
+    "albergues": "Hostels",
     "mapa": "Map",
     "perfil": "Profile",
-    "salir": "Sign Out"
+    "salir": "Log out"
   }
 }

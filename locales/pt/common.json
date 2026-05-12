@@ -3,11 +3,13 @@
     "titulo": "Viva o",
     "camino": "Caminho",
     "subtitulo": "Seu companheiro de peregrinação",
+    "siente_el": "Sinta o",
+    "descubre": "Descubra o Caminho",
     "features": {
       "mapa": "Mapa interativo com todas as etapas e variantes",
       "albergues": "Albergues com ocupação em tempo real",
-      "chat": "Chat multilíngue com peregrinos e hospitaleiros",
-      "comunidade": "Comunidade de peregrinos de todo o mundo"
+      "chat": "Chat multiidioma com peregrinos e hospitaleiros",
+      "comunidad": "Comunidade de peregrinos de todo o mundo"
     },
     "cta_login": "Começar",
     "cta_registro": "Criar conta"
