@@ -1,0 +1,31 @@
+{
+  "landing": {
+    "titulo": "体験する",
+    "camino": "カミーノ",
+    "subtitulo": "あなた巡礼の相棒",
+    "features": {
+      "mapa": "すべてのステージとバリアントを含むインタラクティブマップ",
+      "albergues": "リアルタイム占有情報付きアルベルゲ",
+      "chat": "巡礼者とホスピタレロとの多言語チャット",
+      "comunidad": "世界中の巡礼者コミュニティ"
+    },
+    "cta_login": "開始",
+    "cta_registro": "アカウント作成"
+  },
+  "auth": {
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "login": "ログイン",
+    "registro": "登録",
+    "google": "Googleで続行",
+    "sin_cuenta": "アカウントをお持ちですか？",
+    "con_cuenta": "すでにアカウントをお持ちですか？"
+  },
+  "nav": {
+    "etapas": "ステージ",
+    "albergues": "アルベルゲ",
+    "mapa": "マップ",
+    "perfil": "プロフィール",
+    "salir": "ログアウト"
+  }
+}

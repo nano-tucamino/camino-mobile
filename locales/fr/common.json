@@ -1,0 +1,31 @@
+{
+  "landing": {
+    "titulo": "Vivez le",
+    "camino": "Chemin",
+    "subtitulo": "Votre compagnon de pèlerinage",
+    "features": {
+      "mapa": "Carte interactive avec toutes les étapes et variantes",
+      "albergues": "Gîtes avec occupation en temps réel",
+      "chat": "Chat multilingue avec pèlerins et hospitaliers",
+      "comunidad": "Communauté de pèlerins du monde entier"
+    },
+    "cta_login": "Commencer",
+    "cta_registro": "Créer un compte"
+  },
+  "auth": {
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "login": "Se connecter",
+    "registro": "S'inscrire",
+    "google": "Continuer avec Google",
+    "sin_cuenta": "Vous n'avez pas de compte ?",
+    "con_cuenta": "Vous avez déjà un compte ?"
+  },
+  "nav": {
+    "etapas": "Étapes",
+    "albergues": "Gîtes",
+    "mapa": "Carte",
+    "perfil": "Profil",
+    "salir": "Déconnexion"
+  }
+}

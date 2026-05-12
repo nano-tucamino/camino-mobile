@@ -1,0 +1,31 @@
+{
+  "landing": {
+    "titulo": "체험하세요",
+    "camino": "까미노",
+    "subtitulo": "당신의 순례 동반자",
+    "features": {
+      "mapa": "모든 구간과 변형이 포함된 대화형 지도",
+      "albergues": "실시간 점유율이 있는 숙박소",
+      "chat": "순례자 및 숙박 담당자와의 다국어 채팅",
+      "comunidad": "전 세계 순례자 커뮤니티"
+    },
+    "cta_login": "시작하기",
+    "cta_registro": "계정 만들기"
+  },
+  "auth": {
+    "email": "이메일",
+    "password": "비밀번호",
+    "login": "로그인",
+    "registro": "회원가입",
+    "google": "Google로 계속",
+    "sin_cuenta": "계정이 없으신가요?",
+    "con_cuenta": "이미 계정이 있으신가요?"
+  },
+  "nav": {
+    "etapas": "구간",
+    "albergues": "숙박소",
+    "mapa": "지도",
+    "perfil": "프로필",
+    "salir": "로그아웃"
+  }
+}

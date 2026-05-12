@@ -1,0 +1,31 @@
+{
+  "landing": {
+    "titulo": "Erlebe den",
+    "camino": "Camino",
+    "subtitulo": "Dein Pilgerwanderungs-Begleiter",
+    "features": {
+      "mapa": "Interaktive Karte mit allen Etappen und Varianten",
+      "albergues": "Herbergen mit Echtzeit-Auslastung",
+      "chat": "Mehrsprachiger Chat mit Pilgern und Herbergswirten",
+      "comunidad": "Gemeinschaft von Pilgern aus der ganzen Welt"
+    },
+    "cta_login": "Beginnen",
+    "cta_registro": "Konto erstellen"
+  },
+  "auth": {
+    "email": "E-Mail",
+    "password": "Passwort",
+    "login": "Anmelden",
+    "registro": "Registrieren",
+    "google": "Mit Google fortfahren",
+    "sin_cuenta": "Hast du kein Konto?",
+    "con_cuenta": "Hast du bereits ein Konto?"
+  },
+  "nav": {
+    "etapas": "Etappen",
+    "albergues": "Herbergen",
+    "mapa": "Karte",
+    "perfil": "Profil",
+    "salir": "Abmelden"
+  }
+}

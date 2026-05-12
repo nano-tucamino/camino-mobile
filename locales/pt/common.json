@@ -1,0 +1,31 @@
+{
+  "landing": {
+    "titulo": "Viva o",
+    "camino": "Caminho",
+    "subtitulo": "Seu companheiro de peregrinação",
+    "features": {
+      "mapa": "Mapa interativo com todas as etapas e variantes",
+      "albergues": "Albergues com ocupação em tempo real",
+      "chat": "Chat multilíngue com peregrinos e hospitaleiros",
+      "comunidade": "Comunidade de peregrinos de todo o mundo"
+    },
+    "cta_login": "Começar",
+    "cta_registro": "Criar conta"
+  },
+  "auth": {
+    "email": "Correio eletrônico",
+    "password": "Senha",
+    "login": "Entrar",
+    "registro": "Registrar-se",
+    "google": "Continuar com Google",
+    "sin_cuenta": "Não tem conta?",
+    "con_cuenta": "Já tem conta?"
+  },
+  "nav": {
+    "etapas": "Etapas",
+    "albergues": "Albergues",
+    "mapa": "Mapa",
+    "perfil": "Perfil",
+    "salir": "Sair"
+  }
+}
