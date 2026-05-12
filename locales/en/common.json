@@ -11,14 +11,14 @@
       "chat": "Multilingual chat with pilgrims and hospitaleros",
       "comunidad": "Community of pilgrims from around the world"
     },
-    "cta_login": "Get started",
-    "cta_registro": "Create account"
+    "cta_login": "Get Started",
+    "cta_registro": "Create Account"
   },
   "auth": {
     "email": "Email",
     "password": "Password",
-    "login": "Log in",
-    "registro": "Sign up",
+    "login": "Sign In",
+    "registro": "Sign Up",
     "google": "Continue with Google",
     "sin_cuenta": "Don't have an account?",
     "con_cuenta": "Already have an account?"
@@ -28,6 +28,7 @@
     "albergues": "Hostels",
     "mapa": "Map",
     "perfil": "Profile",
-    "salir": "Log out"
+    "salir": "Logout",
+    "mensajes": "Messages"
   }
 }

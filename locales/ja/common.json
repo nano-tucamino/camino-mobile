@@ -1,17 +1,17 @@
 {
   "landing": {
-    "titulo": "体験する",
+    "titulo": "体験しよう",
     "camino": "カミーノ",
-    "subtitulo": "あなたの巡礼の仲間",
-    "siente_el": "感じる",
+    "subtitulo": "あなたの巡礼の相棒",
+    "siente_el": "感じよう",
     "descubre": "カミーノを発見する",
     "features": {
-      "mapa": "すべてのステージとバリエーションを備えたインタラクティブマップ",
-      "albergues": "リアルタイム稼働状況のアルベルゲ",
+      "mapa": "すべてのステージとバリエーションを含むインタラクティブマップ",
+      "albergues": "リアルタイム収容状況のある宿泊施設",
       "chat": "巡礼者とホスピタレロとの多言語チャット",
-      "comunidad": "世界中の巡礼者コミュニティ"
+      "comunidad": "世界中の巡礼者のコミュニティ"
     },
-    "cta_login": "開始",
+    "cta_login": "始める",
     "cta_registro": "アカウント作成"
   },
   "auth": {
@@ -19,15 +19,16 @@
     "password": "パスワード",
     "login": "ログイン",
     "registro": "登録",
-    "google": "Googleで続行",
-    "sin_cuenta": "アカウントを持っていませんか？",
+    "google": "Googleで続ける",
+    "sin_cuenta": "アカウントをお持ちですか？",
     "con_cuenta": "既にアカウントをお持ちですか？"
   },
   "nav": {
     "etapas": "ステージ",
-    "albergues": "アルベルゲ",
+    "albergues": "宿泊施設",
     "mapa": "マップ",
     "perfil": "プロフィール",
-    "salir": "ログアウト"
+    "salir": "ログアウト",
+    "mensajes": "メッセージ"
   }
 }

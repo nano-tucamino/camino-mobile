@@ -1,18 +1,18 @@
 {
   "landing": {
     "titulo": "경험하세요",
-    "camino": "까미노",
+    "camino": "산티아고 길",
     "subtitulo": "당신의 순례 동반자",
     "siente_el": "느껴보세요",
-    "descubre": "까미노를 발견하세요",
+    "descubre": "산티아고 길을 발견하세요",
     "features": {
       "mapa": "모든 구간과 변형이 포함된 대화형 지도",
-      "albergues": "실시간 점유율이 있는 숙소",
-      "chat": "순례자와 숙소 운영자를 위한 다국어 채팅",
+      "albergues": "실시간 수용 현황이 있는 순례자 숙소",
+      "chat": "순례자와 숙소 관리자와의 다국어 채팅",
       "comunidad": "전 세계 순례자 커뮤니티"
     },
     "cta_login": "시작하기",
-    "cta_registro": "계정 생성"
+    "cta_registro": "계정 만들기"
   },
   "auth": {
     "email": "이메일",
@@ -28,6 +28,7 @@
     "albergues": "숙소",
     "mapa": "지도",
     "perfil": "프로필",
-    "salir": "로그아웃"
+    "salir": "로그아웃",
+    "mensajes": "메시지"
   }
 }

@@ -2,14 +2,14 @@
   "landing": {
     "titulo": "Erlebe den",
     "camino": "Camino",
-    "subtitulo": "Dein Pilgerwanderungs-Begleiter",
+    "subtitulo": "Dein Pilgerwanderbegleiter",
     "siente_el": "Spüre den",
     "descubre": "Entdecke den Camino",
     "features": {
       "mapa": "Interaktive Karte mit allen Etappen und Varianten",
-      "albergues": "Herbergen mit Echtzeitauslastung",
+      "albergues": "Herbergen mit Echtzeit-Auslastung",
       "chat": "Mehrsprachiger Chat mit Pilgern und Herbergswirten",
-      "comunidad": "Gemeinschaft von Pilgern aus der ganzen Welt"
+      "comunidad": "Pilgergemeinschaft aus aller Welt"
     },
     "cta_login": "Beginnen",
     "cta_registro": "Konto erstellen"
@@ -28,6 +28,7 @@
     "albergues": "Herbergen",
     "mapa": "Karte",
     "perfil": "Profil",
-    "salir": "Abmelden"
+    "salir": "Abmelden",
+    "mensajes": "Nachrichten"
   }
 }

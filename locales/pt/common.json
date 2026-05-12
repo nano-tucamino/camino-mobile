@@ -8,14 +8,14 @@
     "features": {
       "mapa": "Mapa interativo com todas as etapas e variantes",
       "albergues": "Albergues com ocupação em tempo real",
-      "chat": "Chat multiidioma com peregrinos e hospitaleiros",
+      "chat": "Chat multilíngue com peregrinos e hospitaleiros",
       "comunidad": "Comunidade de peregrinos de todo o mundo"
     },
     "cta_login": "Começar",
     "cta_registro": "Criar conta"
   },
   "auth": {
-    "email": "Correio eletrônico",
+    "email": "E-mail",
     "password": "Senha",
     "login": "Entrar",
     "registro": "Registrar-se",
@@ -28,6 +28,7 @@
     "albergues": "Albergues",
     "mapa": "Mapa",
     "perfil": "Perfil",
-    "salir": "Sair"
+    "salir": "Sair",
+    "mensajes": "Mensagens"
   }
 }
