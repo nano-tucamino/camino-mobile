@@ -853,7 +853,7 @@ function PerfilElevacionRN({
   useEffect(() => {
     const anim = Animated.timing(animVal, {
       toValue: 1,
-      duration: 2400,
+      duration: 15000,
       delay: 300,
       useNativeDriver: false,
     });

@@ -1134,6 +1134,7 @@ export type Database = {
           perfil_id: string | null;
           plan: string;
           plan_hasta: string | null;
+          servicios: string[] | null;
           slug: string;
           telefono: string | null;
           updated_at: string;
@@ -1165,6 +1166,7 @@ export type Database = {
           perfil_id?: string | null;
           plan?: string;
           plan_hasta?: string | null;
+          servicios?: string[] | null;
           slug: string;
           telefono?: string | null;
           updated_at?: string;
@@ -1196,6 +1198,7 @@ export type Database = {
           perfil_id?: string | null;
           plan?: string;
           plan_hasta?: string | null;
+          servicios?: string[] | null;
           slug?: string;
           telefono?: string | null;
           updated_at?: string;
