@@ -128,6 +128,8 @@ export default function EtapaScreen() {
   const [activeTab, setActiveTab] = useState<TabId>("mapa");
   const { onScroll: notifyScroll } = useNavigation();
 
+  const [mensajesVistos, setMensajesVistos] = useState(0);
+
   const scrollRef = useRef<ScrollView>(null);
   const sectionY = useRef<Record<TabId, number>>({
     mapa: 0,
@@ -376,6 +378,51 @@ export default function EtapaScreen() {
             </ColapsableSection>
           )}
 
+          {/* ── ALBERGUES ── */}
+          <View
+            onLayout={(e) => {
+              sectionY.current.albergues = e.nativeEvent.layout.y;
+            }}
+          >
+            <ColapsableSection
+              color={color}
+              title="Albergues"
+              extra={`${localidades.length} pob · ${(albergues as Albergue[]).length}`}
+            >
+              <AlberguesPorLocalidad
+                albergues={albergues as Albergue[]}
+                localidades={localidades}
+                color={color}
+                lang={lang}
+              />
+            </ColapsableSection>
+          </View>
+
+          {/* ── CANAL ── */}
+          <View
+            onLayout={(e) => {
+              sectionY.current.canal = e.nativeEvent.layout.y;
+            }}
+          >
+            <ColapsableSection
+              color={color}
+              title="Canal de la etapa"
+              onOpen={() => setMensajesVistos(mensajes.length)}
+              extra={
+                mensajes.length - mensajesVistos > 0
+                  ? `${mensajes.length - mensajesVistos} mensajes`
+                  : undefined
+              }
+            >
+              <CanalEtapa
+                mensajes={mensajes as Mensaje[]}
+                color={color}
+                lang={lang}
+              />
+            </ColapsableSection>
+          </View>
+
+          {/* CONSEJOS  */}
           {(consejos as Consejo[]).length > 0 && (
             <ColapsableSection
               color={color}
@@ -414,7 +461,7 @@ export default function EtapaScreen() {
               ))}
             </ColapsableSection>
           )}
-
+          {/* --- COMENTARIOS --- */}
           <ColapsableSection
             color={color}
             title="Experiencias"
@@ -474,48 +521,12 @@ export default function EtapaScreen() {
           </ColapsableSection>
         </View>
 
-        {/* ── ALBERGUES ── */}
-        <View
-          onLayout={(e) => {
-            sectionY.current.albergues = e.nativeEvent.layout.y;
-          }}
-        >
-          <ColapsableSection
-            color={color}
-            title="Albergues"
-            extra={`${localidades.length} pob · ${(albergues as Albergue[]).length}`}
-          >
-            <AlberguesPorLocalidad
-              albergues={albergues as Albergue[]}
-              localidades={localidades}
-              color={color}
-              lang={lang}
-            />
-          </ColapsableSection>
-        </View>
-
-        {/* ── CANAL ── */}
-        <View
-          onLayout={(e) => {
-            sectionY.current.canal = e.nativeEvent.layout.y;
-          }}
-        >
-          <ColapsableSection
-            color={color}
-            title="Canal de la etapa"
-            extra={
-              (mensajes as Mensaje[]).length > 0
-                ? `${(mensajes as Mensaje[]).length} mensajes`
-                : undefined
-            }
-          >
-            <CanalEtapa
-              mensajes={mensajes as Mensaje[]}
-              color={color}
-              lang={lang}
-            />
-          </ColapsableSection>
-        </View>
+        <EtapaCheckButton
+          etapaId={etapa.id}
+          initialCompletada={false}
+          color={color}
+          lang={lang}
+        />
 
         <NavEtapas
           anterior={navegacion.anterior}
@@ -531,6 +542,8 @@ export default function EtapaScreen() {
         mensajes={mensajes}
         color={color}
         lang={lang}
+        visto={mensajes.length - mensajesVistos === 0}
+        onOpen={() => setMensajesVistos(mensajes.length)}
       />
     </View>
   );
@@ -752,6 +765,7 @@ function ColapsableSection({
   defaultOpen = false,
   children,
   preview,
+  onOpen,
 }: {
   color: string;
   title: string;
@@ -759,11 +773,13 @@ function ColapsableSection({
   defaultOpen?: boolean;
   children: React.ReactNode;
   preview?: React.ReactNode;
+  onOpen?: () => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const rot = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
 
   const toggle = () => {
+    if (!open && onOpen) onOpen();
     Animated.timing(rot, {
       toValue: open ? 0 : 1,
       duration: 200,

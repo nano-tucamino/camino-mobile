@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { apiPost, apiDelete } from "@/lib/api";
+import { router } from "expo-router";
 
 interface Props {
   etapaId: string;
@@ -135,7 +136,18 @@ export default function EtapaCheckButton({
 
   // userId null hasta auth
   const userId: string | null = null;
-  if (!userId) return null;
+  if (!userId)
+    return (
+      <View style={s.wrapper}>
+        <TouchableOpacity
+          style={[s.marcarBtn, { backgroundColor: "#8B7355" }]}
+          onPress={() => router.push("/(auth)/login" as any)}
+        >
+          <Text style={s.marcarIcon}>○</Text>
+          <Text style={s.marcarText}>{t(lang, "marcar")}</Text>
+        </TouchableOpacity>
+      </View>
+    );
 
   async function handleMarcar() {
     if (completada) {

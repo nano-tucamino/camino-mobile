@@ -22,6 +22,8 @@ interface Props {
   etapaNombre: string;
   mensajes: Mensaje[];
   color: string;
+  visto?: boolean;
+  onOpen?: () => void;
   lang: string;
   onNuevoMensaje?: (texto: string) => Promise<void>;
 }
@@ -128,6 +130,8 @@ export default function CanalWidget({
   color,
   lang,
   onNuevoMensaje,
+  visto = false,
+  onOpen,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [texto, setTexto] = useState("");
@@ -140,6 +144,7 @@ export default function CanalWidget({
 
   const openDrawer = () => {
     setOpen(true);
+    if (onOpen) onOpen();
     Animated.spring(slideAnim, {
       toValue: 0,
       useNativeDriver: true,
@@ -184,7 +189,7 @@ export default function CanalWidget({
         activeOpacity={0.85}
       >
         <Text style={s.fabIcon}>💬</Text>
-        {mensajes.length > 0 && (
+        {!visto && mensajes.length > 0 && (
           <View style={s.fabBadge}>
             <Text style={s.fabBadgeText}>
               {mensajes.length > 99 ? "99+" : mensajes.length}
@@ -311,7 +316,7 @@ const s = StyleSheet.create({
   // FAB
   fab: {
     position: "absolute",
-    bottom: 100,
+    bottom: 120,
     right: 20,
     width: 52,
     height: 52,

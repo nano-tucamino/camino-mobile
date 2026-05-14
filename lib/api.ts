@@ -35,3 +35,12 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
+
+export async function apiDelete(path: string): Promise<void> {
+  const headers = await getHeaders();
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "DELETE",
+    headers,
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+}
