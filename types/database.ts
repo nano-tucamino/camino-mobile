@@ -1,10 +1,16 @@
-﻿export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+﻿export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: '14.4';
+    PostgrestVersion: "14.4";
   };
   graphql_public: {
     Tables: {
@@ -59,7 +65,7 @@ export type Database = {
           nombre_it: string | null;
           nombre_ko: string | null;
           nombre_pt: string | null;
-          ocupacion: Database['public']['Enums']['ocupacion_albergue'];
+          ocupacion: Database["public"]["Enums"]["ocupacion_albergue"];
           perfil_id: string | null;
           plan: string;
           plan_hasta: string | null;
@@ -71,7 +77,7 @@ export type Database = {
           slug: string | null;
           telefono: string | null;
           tiene_booking: boolean | null;
-          tipo: Database['public']['Enums']['tipo_albergue'];
+          tipo: Database["public"]["Enums"]["tipo_albergue"];
           ubicacion: string | null;
           ubicacion_de: string | null;
           ubicacion_en: string | null;
@@ -110,7 +116,7 @@ export type Database = {
           nombre_it?: string | null;
           nombre_ko?: string | null;
           nombre_pt?: string | null;
-          ocupacion?: Database['public']['Enums']['ocupacion_albergue'];
+          ocupacion?: Database["public"]["Enums"]["ocupacion_albergue"];
           perfil_id?: string | null;
           plan?: string;
           plan_hasta?: string | null;
@@ -122,7 +128,7 @@ export type Database = {
           slug?: string | null;
           telefono?: string | null;
           tiene_booking?: boolean | null;
-          tipo: Database['public']['Enums']['tipo_albergue'];
+          tipo: Database["public"]["Enums"]["tipo_albergue"];
           ubicacion?: string | null;
           ubicacion_de?: string | null;
           ubicacion_en?: string | null;
@@ -161,7 +167,7 @@ export type Database = {
           nombre_it?: string | null;
           nombre_ko?: string | null;
           nombre_pt?: string | null;
-          ocupacion?: Database['public']['Enums']['ocupacion_albergue'];
+          ocupacion?: Database["public"]["Enums"]["ocupacion_albergue"];
           perfil_id?: string | null;
           plan?: string;
           plan_hasta?: string | null;
@@ -173,7 +179,7 @@ export type Database = {
           slug?: string | null;
           telefono?: string | null;
           tiene_booking?: boolean | null;
-          tipo?: Database['public']['Enums']['tipo_albergue'];
+          tipo?: Database["public"]["Enums"]["tipo_albergue"];
           ubicacion?: string | null;
           ubicacion_de?: string | null;
           ubicacion_en?: string | null;
@@ -189,11 +195,11 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'albergues_etapa_id_fkey';
-            columns: ['etapa_id'];
+            foreignKeyName: "albergues_etapa_id_fkey";
+            columns: ["etapa_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -224,40 +230,40 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'albergues_alojamiento_albergue_id_fkey';
-            columns: ['albergue_id'];
+            foreignKeyName: "albergues_alojamiento_albergue_id_fkey";
+            columns: ["albergue_id"];
             isOneToOne: false;
-            referencedRelation: 'albergues';
-            referencedColumns: ['id'];
+            referencedRelation: "albergues";
+            referencedColumns: ["id"];
           },
         ];
       };
       albergues_ocupacion: {
         Row: {
           albergue_id: string;
-          estado: Database['public']['Enums']['ocupacion_albergue'];
+          estado: Database["public"]["Enums"]["ocupacion_albergue"];
           id: string;
           updated_at: string | null;
         };
         Insert: {
           albergue_id: string;
-          estado?: Database['public']['Enums']['ocupacion_albergue'];
+          estado?: Database["public"]["Enums"]["ocupacion_albergue"];
           id?: string;
           updated_at?: string | null;
         };
         Update: {
           albergue_id?: string;
-          estado?: Database['public']['Enums']['ocupacion_albergue'];
+          estado?: Database["public"]["Enums"]["ocupacion_albergue"];
           id?: string;
           updated_at?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: 'albergues_ocupacion_albergue_id_fkey';
-            columns: ['albergue_id'];
+            foreignKeyName: "albergues_ocupacion_albergue_id_fkey";
+            columns: ["albergue_id"];
             isOneToOne: false;
-            referencedRelation: 'albergues';
-            referencedColumns: ['id'];
+            referencedRelation: "albergues";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -285,11 +291,11 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'albergues_precios_albergue_id_fkey';
-            columns: ['albergue_id'];
+            foreignKeyName: "albergues_precios_albergue_id_fkey";
+            columns: ["albergue_id"];
             isOneToOne: false;
-            referencedRelation: 'albergues';
-            referencedColumns: ['id'];
+            referencedRelation: "albergues";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -350,11 +356,11 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'albergues_servicios_albergue_id_fkey';
-            columns: ['albergue_id'];
+            foreignKeyName: "albergues_servicios_albergue_id_fkey";
+            columns: ["albergue_id"];
             isOneToOne: false;
-            referencedRelation: 'albergues';
-            referencedColumns: ['id'];
+            referencedRelation: "albergues";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -436,25 +442,25 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'comentarios_autor_id_fkey';
-            columns: ['autor_id'];
+            foreignKeyName: "comentarios_autor_id_fkey";
+            columns: ["autor_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'comentarios_parent_id_fkey';
-            columns: ['parent_id'];
+            foreignKeyName: "comentarios_parent_id_fkey";
+            columns: ["parent_id"];
             isOneToOne: false;
-            referencedRelation: 'comentarios';
-            referencedColumns: ['id'];
+            referencedRelation: "comentarios";
+            referencedColumns: ["id"];
           },
         ];
       };
       conexiones_peregrinos: {
         Row: {
           created_at: string;
-          estado: Database['public']['Enums']['estado_conexion'];
+          estado: Database["public"]["Enums"]["estado_conexion"];
           etapa_id: string | null;
           id: string;
           perfil_a_id: string;
@@ -463,7 +469,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
-          estado?: Database['public']['Enums']['estado_conexion'];
+          estado?: Database["public"]["Enums"]["estado_conexion"];
           etapa_id?: string | null;
           id?: string;
           perfil_a_id: string;
@@ -472,7 +478,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
-          estado?: Database['public']['Enums']['estado_conexion'];
+          estado?: Database["public"]["Enums"]["estado_conexion"];
           etapa_id?: string | null;
           id?: string;
           perfil_a_id?: string;
@@ -481,25 +487,25 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'conexiones_peregrinos_etapa_id_fkey';
-            columns: ['etapa_id'];
+            foreignKeyName: "conexiones_peregrinos_etapa_id_fkey";
+            columns: ["etapa_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'conexiones_peregrinos_perfil_a_id_fkey';
-            columns: ['perfil_a_id'];
+            foreignKeyName: "conexiones_peregrinos_perfil_a_id_fkey";
+            columns: ["perfil_a_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'conexiones_peregrinos_perfil_b_id_fkey';
-            columns: ['perfil_b_id'];
+            foreignKeyName: "conexiones_peregrinos_perfil_b_id_fkey";
+            columns: ["perfil_b_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -527,18 +533,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'conversacion_participantes_conversacion_id_fkey';
-            columns: ['conversacion_id'];
+            foreignKeyName: "conversacion_participantes_conversacion_id_fkey";
+            columns: ["conversacion_id"];
             isOneToOne: false;
-            referencedRelation: 'conversaciones';
-            referencedColumns: ['id'];
+            referencedRelation: "conversaciones";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'conversacion_participantes_perfil_id_fkey';
-            columns: ['perfil_id'];
+            foreignKeyName: "conversacion_participantes_perfil_id_fkey";
+            columns: ["perfil_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -549,7 +555,7 @@ export type Database = {
           etapa_id: string | null;
           id: string;
           nombre: string | null;
-          tipo: Database['public']['Enums']['tipo_conversacion'];
+          tipo: Database["public"]["Enums"]["tipo_conversacion"];
         };
         Insert: {
           albergue_id?: string | null;
@@ -557,7 +563,7 @@ export type Database = {
           etapa_id?: string | null;
           id?: string;
           nombre?: string | null;
-          tipo: Database['public']['Enums']['tipo_conversacion'];
+          tipo: Database["public"]["Enums"]["tipo_conversacion"];
         };
         Update: {
           albergue_id?: string | null;
@@ -565,22 +571,22 @@ export type Database = {
           etapa_id?: string | null;
           id?: string;
           nombre?: string | null;
-          tipo?: Database['public']['Enums']['tipo_conversacion'];
+          tipo?: Database["public"]["Enums"]["tipo_conversacion"];
         };
         Relationships: [
           {
-            foreignKeyName: 'conversaciones_albergue_id_fkey';
-            columns: ['albergue_id'];
+            foreignKeyName: "conversaciones_albergue_id_fkey";
+            columns: ["albergue_id"];
             isOneToOne: false;
-            referencedRelation: 'albergues';
-            referencedColumns: ['id'];
+            referencedRelation: "albergues";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'conversaciones_etapa_id_fkey';
-            columns: ['etapa_id'];
+            foreignKeyName: "conversaciones_etapa_id_fkey";
+            columns: ["etapa_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -680,11 +686,11 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'datos_interes_autor_id_fkey';
-            columns: ['autor_id'];
+            foreignKeyName: "datos_interes_autor_id_fkey";
+            columns: ["autor_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -730,18 +736,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'etapa_fotos_etapa_id_fkey';
-            columns: ['etapa_id'];
+            foreignKeyName: "etapa_fotos_etapa_id_fkey";
+            columns: ["etapa_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'etapa_fotos_subido_por_fkey';
-            columns: ['subido_por'];
+            foreignKeyName: "etapa_fotos_subido_por_fkey";
+            columns: ["subido_por"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -907,11 +913,11 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'etapas_etapa_padre_id_fkey';
-            columns: ['etapa_padre_id'];
+            foreignKeyName: "etapas_etapa_padre_id_fkey";
+            columns: ["etapa_padre_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -957,18 +963,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'etapas_completadas_etapa_id_fkey';
-            columns: ['etapa_id'];
+            foreignKeyName: "etapas_completadas_etapa_id_fkey";
+            columns: ["etapa_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'etapas_completadas_perfil_id_fkey';
-            columns: ['perfil_id'];
+            foreignKeyName: "etapas_completadas_perfil_id_fkey";
+            columns: ["perfil_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1035,11 +1041,11 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'etapas_recorrido_etapa_id_fkey';
-            columns: ['etapa_id'];
+            foreignKeyName: "etapas_recorrido_etapa_id_fkey";
+            columns: ["etapa_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1082,25 +1088,302 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'mensajes_autor_id_fkey';
-            columns: ['autor_id'];
+            foreignKeyName: "mensajes_autor_id_fkey";
+            columns: ["autor_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'mensajes_conversacion_id_fkey';
-            columns: ['conversacion_id'];
+            foreignKeyName: "mensajes_conversacion_id_fkey";
+            columns: ["conversacion_id"];
             isOneToOne: false;
-            referencedRelation: 'conversaciones';
-            referencedColumns: ['id'];
+            referencedRelation: "conversaciones";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'mensajes_reply_to_id_fkey';
-            columns: ['reply_to_id'];
+            foreignKeyName: "mensajes_reply_to_id_fkey";
+            columns: ["reply_to_id"];
             isOneToOne: false;
-            referencedRelation: 'mensajes';
-            referencedColumns: ['id'];
+            referencedRelation: "mensajes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      negocios_camino: {
+        Row: {
+          activo: boolean;
+          categoria: string;
+          coords: unknown;
+          created_at: string;
+          descripcion: string | null;
+          descripcion_de: string | null;
+          descripcion_en: string | null;
+          descripcion_fr: string | null;
+          descripcion_it: string | null;
+          descripcion_ko: string | null;
+          descripcion_pt: string | null;
+          direccion: string | null;
+          email: string | null;
+          foto_public_id: string | null;
+          foto_url: string | null;
+          id: string;
+          lat: number | null;
+          lng: number | null;
+          nombre: string;
+          perfil_id: string | null;
+          plan: string;
+          plan_hasta: string | null;
+          slug: string;
+          telefono: string | null;
+          updated_at: string;
+          verificado: boolean;
+          verificado_at: string | null;
+          web: string | null;
+          whatsapp: string | null;
+        };
+        Insert: {
+          activo?: boolean;
+          categoria: string;
+          coords?: unknown;
+          created_at?: string;
+          descripcion?: string | null;
+          descripcion_de?: string | null;
+          descripcion_en?: string | null;
+          descripcion_fr?: string | null;
+          descripcion_it?: string | null;
+          descripcion_ko?: string | null;
+          descripcion_pt?: string | null;
+          direccion?: string | null;
+          email?: string | null;
+          foto_public_id?: string | null;
+          foto_url?: string | null;
+          id?: string;
+          lat?: number | null;
+          lng?: number | null;
+          nombre: string;
+          perfil_id?: string | null;
+          plan?: string;
+          plan_hasta?: string | null;
+          slug: string;
+          telefono?: string | null;
+          updated_at?: string;
+          verificado?: boolean;
+          verificado_at?: string | null;
+          web?: string | null;
+          whatsapp?: string | null;
+        };
+        Update: {
+          activo?: boolean;
+          categoria?: string;
+          coords?: unknown;
+          created_at?: string;
+          descripcion?: string | null;
+          descripcion_de?: string | null;
+          descripcion_en?: string | null;
+          descripcion_fr?: string | null;
+          descripcion_it?: string | null;
+          descripcion_ko?: string | null;
+          descripcion_pt?: string | null;
+          direccion?: string | null;
+          email?: string | null;
+          foto_public_id?: string | null;
+          foto_url?: string | null;
+          id?: string;
+          lat?: number | null;
+          lng?: number | null;
+          nombre?: string;
+          perfil_id?: string | null;
+          plan?: string;
+          plan_hasta?: string | null;
+          slug?: string;
+          telefono?: string | null;
+          updated_at?: string;
+          verificado?: boolean;
+          verificado_at?: string | null;
+          web?: string | null;
+          whatsapp?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "negocios_camino_perfil_id_fkey";
+            columns: ["perfil_id"];
+            isOneToOne: false;
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      negocios_etapas: {
+        Row: {
+          etapa_id: string;
+          km_referencia: number | null;
+          negocio_id: string;
+        };
+        Insert: {
+          etapa_id: string;
+          km_referencia?: number | null;
+          negocio_id: string;
+        };
+        Update: {
+          etapa_id?: string;
+          km_referencia?: number | null;
+          negocio_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "negocios_etapas_etapa_id_fkey";
+            columns: ["etapa_id"];
+            isOneToOne: false;
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "negocios_etapas_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_camino";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "negocios_etapas_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_en_etapa";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      negocios_fotos: {
+        Row: {
+          alt: string | null;
+          created_at: string | null;
+          es_hero: boolean | null;
+          id: string;
+          negocio_id: string;
+          orden: number | null;
+          public_id: string | null;
+          subido_por: string | null;
+          url: string;
+        };
+        Insert: {
+          alt?: string | null;
+          created_at?: string | null;
+          es_hero?: boolean | null;
+          id?: string;
+          negocio_id: string;
+          orden?: number | null;
+          public_id?: string | null;
+          subido_por?: string | null;
+          url: string;
+        };
+        Update: {
+          alt?: string | null;
+          created_at?: string | null;
+          es_hero?: boolean | null;
+          id?: string;
+          negocio_id?: string;
+          orden?: number | null;
+          public_id?: string | null;
+          subido_por?: string | null;
+          url?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "negocios_fotos_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_camino";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "negocios_fotos_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_en_etapa";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "negocios_fotos_subido_por_fkey";
+            columns: ["subido_por"];
+            isOneToOne: false;
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      negocios_horarios: {
+        Row: {
+          apertura: string | null;
+          cerrado: boolean;
+          cierre: string | null;
+          created_at: string | null;
+          dia_semana: number | null;
+          id: string;
+          negocio_id: string;
+          nota: string | null;
+          nota_de: string | null;
+          nota_en: string | null;
+          nota_fr: string | null;
+          nota_it: string | null;
+          nota_ko: string | null;
+          nota_pt: string | null;
+          temporada_fin: string | null;
+          temporada_inicio: string | null;
+          turno: number;
+        };
+        Insert: {
+          apertura?: string | null;
+          cerrado?: boolean;
+          cierre?: string | null;
+          created_at?: string | null;
+          dia_semana?: number | null;
+          id?: string;
+          negocio_id: string;
+          nota?: string | null;
+          nota_de?: string | null;
+          nota_en?: string | null;
+          nota_fr?: string | null;
+          nota_it?: string | null;
+          nota_ko?: string | null;
+          nota_pt?: string | null;
+          temporada_fin?: string | null;
+          temporada_inicio?: string | null;
+          turno?: number;
+        };
+        Update: {
+          apertura?: string | null;
+          cerrado?: boolean;
+          cierre?: string | null;
+          created_at?: string | null;
+          dia_semana?: number | null;
+          id?: string;
+          negocio_id?: string;
+          nota?: string | null;
+          nota_de?: string | null;
+          nota_en?: string | null;
+          nota_fr?: string | null;
+          nota_it?: string | null;
+          nota_ko?: string | null;
+          nota_pt?: string | null;
+          temporada_fin?: string | null;
+          temporada_inicio?: string | null;
+          turno?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "negocios_horarios_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_camino";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "negocios_horarios_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_en_etapa";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1125,7 +1408,7 @@ export type Database = {
           numero_caminos: number | null;
           pais_residencia: string | null;
           permite_dm: boolean;
-          rol: Database['public']['Enums']['rol_usuario'];
+          rol: Database["public"]["Enums"]["rol_usuario"];
           updated_at: string;
         };
         Insert: {
@@ -1148,7 +1431,7 @@ export type Database = {
           numero_caminos?: number | null;
           pais_residencia?: string | null;
           permite_dm?: boolean;
-          rol?: Database['public']['Enums']['rol_usuario'];
+          rol?: Database["public"]["Enums"]["rol_usuario"];
           updated_at?: string;
         };
         Update: {
@@ -1171,16 +1454,16 @@ export type Database = {
           numero_caminos?: number | null;
           pais_residencia?: string | null;
           permite_dm?: boolean;
-          rol?: Database['public']['Enums']['rol_usuario'];
+          rol?: Database["public"]["Enums"]["rol_usuario"];
           updated_at?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'perfiles_albergue_id_fkey';
-            columns: ['albergue_id'];
+            foreignKeyName: "perfiles_albergue_id_fkey";
+            columns: ["albergue_id"];
             isOneToOne: false;
-            referencedRelation: 'albergues';
-            referencedColumns: ['id'];
+            referencedRelation: "albergues";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1214,18 +1497,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'poi_fotos_autor_id_fkey';
-            columns: ['autor_id'];
+            foreignKeyName: "poi_fotos_autor_id_fkey";
+            columns: ["autor_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'poi_fotos_dato_interes_id_fkey';
-            columns: ['dato_interes_id'];
+            foreignKeyName: "poi_fotos_dato_interes_id_fkey";
+            columns: ["dato_interes_id"];
             isOneToOne: false;
-            referencedRelation: 'datos_interes';
-            referencedColumns: ['id'];
+            referencedRelation: "datos_interes";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1253,7 +1536,7 @@ export type Database = {
           nombre_ko: string | null;
           nombre_pt: string | null;
           osm_id: string | null;
-          tipo: Database['public']['Enums']['tipo_punto_interes'];
+          tipo: Database["public"]["Enums"]["tipo_punto_interes"];
           updated_at: string | null;
         };
         Insert: {
@@ -1279,7 +1562,7 @@ export type Database = {
           nombre_ko?: string | null;
           nombre_pt?: string | null;
           osm_id?: string | null;
-          tipo: Database['public']['Enums']['tipo_punto_interes'];
+          tipo: Database["public"]["Enums"]["tipo_punto_interes"];
           updated_at?: string | null;
         };
         Update: {
@@ -1305,16 +1588,16 @@ export type Database = {
           nombre_ko?: string | null;
           nombre_pt?: string | null;
           osm_id?: string | null;
-          tipo?: Database['public']['Enums']['tipo_punto_interes'];
+          tipo?: Database["public"]["Enums"]["tipo_punto_interes"];
           updated_at?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: 'puntos_interes_etapa_id_fkey';
-            columns: ['etapa_id'];
+            foreignKeyName: "puntos_interes_etapa_id_fkey";
+            columns: ["etapa_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1375,18 +1658,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'retos_completados_perfil_id_fkey';
-            columns: ['perfil_id'];
+            foreignKeyName: "retos_completados_perfil_id_fkey";
+            columns: ["perfil_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'retos_completados_reto_id_fkey';
-            columns: ['reto_id'];
+            foreignKeyName: "retos_completados_reto_id_fkey";
+            columns: ["reto_id"];
             isOneToOne: false;
-            referencedRelation: 'retos_geocaching';
-            referencedColumns: ['id'];
+            referencedRelation: "retos_geocaching";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1432,18 +1715,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'retos_geocaching_creador_id_fkey';
-            columns: ['creador_id'];
+            foreignKeyName: "retos_geocaching_creador_id_fkey";
+            columns: ["creador_id"];
             isOneToOne: false;
-            referencedRelation: 'perfiles';
-            referencedColumns: ['id'];
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: 'retos_geocaching_etapa_id_fkey';
-            columns: ['etapa_id'];
+            foreignKeyName: "retos_geocaching_etapa_id_fkey";
+            columns: ["etapa_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1482,6 +1765,41 @@ export type Database = {
       };
     };
     Views: {
+      negocios_en_etapa: {
+        Row: {
+          activo: boolean | null;
+          categoria: string | null;
+          descripcion: string | null;
+          descripcion_de: string | null;
+          descripcion_en: string | null;
+          descripcion_fr: string | null;
+          descripcion_it: string | null;
+          descripcion_ko: string | null;
+          descripcion_pt: string | null;
+          etapa_id: string | null;
+          foto_url: string | null;
+          id: string | null;
+          km_referencia: number | null;
+          lat: number | null;
+          lng: number | null;
+          nombre: string | null;
+          plan: string | null;
+          slug: string | null;
+          telefono: string | null;
+          verificado: boolean | null;
+          web: string | null;
+          whatsapp: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "negocios_etapas_etapa_id_fkey";
+            columns: ["etapa_id"];
+            isOneToOne: false;
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       puntos_interes_geo: {
         Row: {
           descripcion: string | null;
@@ -1491,7 +1809,7 @@ export type Database = {
           lat: number | null;
           lng: number | null;
           nombre: string | null;
-          tipo: Database['public']['Enums']['tipo_punto_interes'] | null;
+          tipo: Database["public"]["Enums"]["tipo_punto_interes"] | null;
         };
         Insert: {
           descripcion?: string | null;
@@ -1501,7 +1819,7 @@ export type Database = {
           lat?: never;
           lng?: never;
           nombre?: string | null;
-          tipo?: Database['public']['Enums']['tipo_punto_interes'] | null;
+          tipo?: Database["public"]["Enums"]["tipo_punto_interes"] | null;
         };
         Update: {
           descripcion?: string | null;
@@ -1511,15 +1829,15 @@ export type Database = {
           lat?: never;
           lng?: never;
           nombre?: string | null;
-          tipo?: Database['public']['Enums']['tipo_punto_interes'] | null;
+          tipo?: Database["public"]["Enums"]["tipo_punto_interes"] | null;
         };
         Relationships: [
           {
-            foreignKeyName: 'puntos_interes_etapa_id_fkey';
-            columns: ['etapa_id'];
+            foreignKeyName: "puntos_interes_etapa_id_fkey";
+            columns: ["etapa_id"];
             isOneToOne: false;
-            referencedRelation: 'etapas';
-            referencedColumns: ['id'];
+            referencedRelation: "etapas";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1541,32 +1859,32 @@ export type Database = {
         Args: { p_reto_id: string; p_user_pos: unknown };
         Returns: boolean;
       };
-      unaccent: { Args: { '': string }; Returns: string };
+      unaccent: { Args: { "": string }; Returns: string };
     };
     Enums: {
-      estado_conexion: 'pendiente' | 'aceptada' | 'rechazada';
-      ocupacion_albergue: 'libre' | 'casi_lleno' | 'completo';
-      rol_usuario: 'peregrino' | 'albergue' | 'admin';
-      tipo_albergue: 'municipal' | 'privado' | 'parroquial' | 'asociacion';
-      tipo_conversacion: 'directo' | 'canal_etapa' | 'albergue';
+      estado_conexion: "pendiente" | "aceptada" | "rechazada";
+      ocupacion_albergue: "libre" | "casi_lleno" | "completo";
+      rol_usuario: "peregrino" | "albergue" | "admin" | "negocio";
+      tipo_albergue: "municipal" | "privado" | "parroquial" | "asociacion";
+      tipo_conversacion: "directo" | "canal_etapa" | "albergue" | "negocio";
       tipo_punto_interes:
-        | 'fuente'
-        | 'iglesia'
-        | 'monumento'
-        | 'restaurante'
-        | 'supermercado'
-        | 'farmacia'
-        | 'medico'
-        | 'mirador'
-        | 'refugio'
-        | 'otro'
-        | 'ermita'
-        | 'cruceiro'
-        | 'puente'
-        | 'yacimiento'
-        | 'area_descanso'
-        | 'albergue_rural'
-        | 'capilla';
+        | "fuente"
+        | "iglesia"
+        | "monumento"
+        | "restaurante"
+        | "supermercado"
+        | "farmacia"
+        | "medico"
+        | "mirador"
+        | "refugio"
+        | "otro"
+        | "ermita"
+        | "cruceiro"
+        | "puente"
+        | "yacimiento"
+        | "area_descanso"
+        | "albergue_rural"
+        | "capilla";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1574,31 +1892,36 @@ export type Database = {
   };
 };
 
-type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>;
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>];
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  "public"
+>];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R;
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
-    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R;
       }
       ? R
@@ -1607,23 +1930,23 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I;
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I;
       }
       ? I
@@ -1632,23 +1955,23 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U;
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U;
       }
       ? U
@@ -1657,36 +1980,36 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema['Enums']
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
-    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never;
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema['CompositeTypes']
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never;
 
 export const Constants = {
@@ -1695,29 +2018,29 @@ export const Constants = {
   },
   public: {
     Enums: {
-      estado_conexion: ['pendiente', 'aceptada', 'rechazada'],
-      ocupacion_albergue: ['libre', 'casi_lleno', 'completo'],
-      rol_usuario: ['peregrino', 'albergue', 'admin'],
-      tipo_albergue: ['municipal', 'privado', 'parroquial', 'asociacion'],
-      tipo_conversacion: ['directo', 'canal_etapa', 'albergue'],
+      estado_conexion: ["pendiente", "aceptada", "rechazada"],
+      ocupacion_albergue: ["libre", "casi_lleno", "completo"],
+      rol_usuario: ["peregrino", "albergue", "admin", "negocio"],
+      tipo_albergue: ["municipal", "privado", "parroquial", "asociacion"],
+      tipo_conversacion: ["directo", "canal_etapa", "albergue", "negocio"],
       tipo_punto_interes: [
-        'fuente',
-        'iglesia',
-        'monumento',
-        'restaurante',
-        'supermercado',
-        'farmacia',
-        'medico',
-        'mirador',
-        'refugio',
-        'otro',
-        'ermita',
-        'cruceiro',
-        'puente',
-        'yacimiento',
-        'area_descanso',
-        'albergue_rural',
-        'capilla',
+        "fuente",
+        "iglesia",
+        "monumento",
+        "restaurante",
+        "supermercado",
+        "farmacia",
+        "medico",
+        "mirador",
+        "refugio",
+        "otro",
+        "ermita",
+        "cruceiro",
+        "puente",
+        "yacimiento",
+        "area_descanso",
+        "albergue_rural",
+        "capilla",
       ],
     },
   },

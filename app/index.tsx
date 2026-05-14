@@ -48,11 +48,12 @@ export default function Landing() {
             <Text style={styles.siente}>{t("landing.siente_el")}</Text>
             <Text style={styles.camino}>{t("landing.camino")}</Text>
           </View>
+
           <View style={styles.ctaContainer}>
             <Text style={styles.subtitulo}>{t("landing.subtitulo")}</Text>
             <TouchableOpacity
               style={styles.btnDescubre}
-              onPress={() => router.push("/mapa" as any)}
+              onPress={() => router.replace("/(public)" as any)}
             >
               <Text style={styles.btnDescubreText}>
                 {t("landing.descubre")}

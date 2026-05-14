@@ -1,14 +1,16 @@
-// 📄 app/(public)/_layout.tsx
 import { View, StyleSheet } from "react-native";
 import { Slot } from "expo-router";
 import BottomNav from "../../components/BottomNav";
+import { NavigationProvider } from "../../contexts/NavigationContext";
 
 export default function PublicLayout() {
   return (
-    <View style={styles.container}>
-      <Slot />
-      <BottomNav />
-    </View>
+    <NavigationProvider>
+      <View style={styles.container}>
+        <Slot />
+        <BottomNav />
+      </View>
+    </NavigationProvider>
   );
 }
 

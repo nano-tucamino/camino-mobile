@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "../hooks/useAuth";
+import { NavigationProvider } from "@/contexts/NavigationContext";
 
 export default function RootLayout() {
   const { session, loading } = useAuth();
@@ -25,8 +26,10 @@ export default function RootLayout() {
 
   return (
     <>
-      <Stack screenOptions={{ headerShown: false }} />
-      <StatusBar style="auto" />
+      <NavigationProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+        <StatusBar style="auto" />
+      </NavigationProvider>
     </>
   );
 }

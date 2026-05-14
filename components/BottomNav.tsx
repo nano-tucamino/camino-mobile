@@ -1,8 +1,15 @@
 // 📄 components/BottomNav.tsx
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+} from "react-native";
 import { useRouter, useSegments } from "expo-router";
 import { useTranslation } from "react-i18next";
 import Svg, { Path } from "react-native-svg";
+import { useNavigation } from "@/contexts/NavigationContext";
 
 const GOLD = "#D4AF72";
 const SOFT = "#999";
@@ -132,8 +139,10 @@ export default function BottomNav() {
   const { t } = useTranslation();
   const router = useRouter();
   const segments = useSegments();
+  const { navAnim, showNav } = useNavigation();
 
   const currentTab = (segments as string[])[1] ?? "index";
+
   const tabs = [
     { key: "index", label: t("nav.mapa"), Icon: IconMapa, route: "/(public)/" },
     {
@@ -162,9 +171,19 @@ export default function BottomNav() {
     },
   ];
 
+  const translateY = navAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [120, 0],
+  });
+
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.pill}>
+    <Animated.View
+      style={[
+        styles.wrapper,
+        { opacity: navAnim, transform: [{ translateY }] },
+      ]}
+    >
+      <TouchableOpacity activeOpacity={1} onPress={showNav} style={styles.pill}>
         {tabs.map(({ key, label, Icon, route }) => {
           const active =
             currentTab === key ||
@@ -185,8 +204,8 @@ export default function BottomNav() {
             </TouchableOpacity>
           );
         })}
-      </View>
-    </View>
+      </TouchableOpacity>
+    </Animated.View>
   );
 }
 
@@ -222,18 +241,9 @@ const styles = StyleSheet.create({
     minWidth: 56,
     position: "relative",
   },
-  tabActive: {
-    backgroundColor: "rgba(212,175,114,0.12)",
-  },
-  label: {
-    fontSize: 10,
-    fontWeight: "500",
-    color: SOFT,
-  },
-  labelActive: {
-    fontWeight: "600",
-    color: GOLD,
-  },
+  tabActive: { backgroundColor: "rgba(212,175,114,0.12)" },
+  label: { fontSize: 10, fontWeight: "500", color: SOFT },
+  labelActive: { fontWeight: "600", color: GOLD },
   dot: {
     position: "absolute",
     bottom: 4,
