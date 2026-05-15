@@ -57,6 +57,32 @@ type Negocio = {
   descripcion_ja?: string | null;
 };
 
+type Albergue = {
+  id: string;
+  slug: string | null;
+  nombre: string;
+  localidad: string | null;
+  tipo: string | null;
+  ocupacion: string | null;
+  precio_cama: string | null;
+  precio_habitacion: string | null;
+  precio_desde: number | null;
+  foto_url: string | null;
+  fotos_urls?: string[] | null;
+  plan: string | null;
+  telefono: string | null;
+  web: string | null;
+  descripcion: string | null;
+  descripcion_en?: string | null;
+  descripcion_de?: string | null;
+  descripcion_fr?: string | null;
+  descripcion_it?: string | null;
+  descripcion_pt?: string | null;
+  descripcion_ko?: string | null;
+  ubicacion?: string | null;
+  ubicacion_en?: string | null;
+};
+
 // ── Constantes ─────────────────────────────────────────────────────────────
 
 const TIPO_EMOJI: Record<string, string> = {
@@ -101,6 +127,12 @@ const CATEGORIA_LABEL: Record<string, string> = {
   otros: "Otros",
 };
 
+const OCUP_COLOR: Record<string, string> = {
+  libre: "#16a34a",
+  casi_lleno: "#ca8a04",
+  completo: "#dc2626",
+};
+
 const TIPOS_PATRIMONIO = new Set([
   "iglesia",
   "capilla",
@@ -114,6 +146,125 @@ const TIPOS_PATRIMONIO = new Set([
 ]);
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
+
+// ── AlbergueChip ───────────────────────────────────────────────────────────
+
+function AlbergueChip({
+  albergue,
+  lang,
+  color,
+}: {
+  albergue: Albergue;
+  lang: string;
+  color: string;
+}) {
+  const foto = albergue.foto_url ?? albergue.fotos_urls?.[0] ?? null;
+  const [abierto, setAbierto] = useState(false);
+  const router = useRouter();
+
+  const descKey = `descripcion_${lang}` as keyof Albergue;
+  const descripcion =
+    (albergue[descKey] as string) || albergue.descripcion || "";
+  const dotColor = OCUP_COLOR[albergue.ocupacion ?? "libre"] ?? "#16a34a";
+  const precio =
+    albergue.precio_cama ??
+    (albergue.precio_desde ? `${albergue.precio_desde}€` : null);
+
+  return (
+    <View style={styles.negocioWrapper}>
+      <TouchableOpacity
+        onPress={() => setAbierto((v) => !v)}
+        activeOpacity={0.7}
+        style={[
+          styles.negocioChip,
+          styles.negocioChipDestacado,
+          { borderColor: color },
+        ]}
+      >
+        {/* Miniatura */}
+        <View style={styles.negocioMiniatura}>
+          {foto ? (
+            <Image source={{ uri: foto }} style={styles.negocioMiniaturaImg} />
+          ) : (
+            <Text style={styles.negocioMiniaturaEmoji}>🏠</Text>
+          )}
+        </View>
+
+        {/* Info */}
+        <View style={styles.negocioChipInfo}>
+          <Text style={styles.negocioChipNombre} numberOfLines={1}>
+            {albergue.nombre}
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 4,
+              marginTop: 1,
+            }}
+          >
+            <View style={[styles.ocupDot, { backgroundColor: dotColor }]} />
+            {precio && <Text style={styles.negocioChipCat}>{precio}</Text>}
+          </View>
+        </View>
+
+        {/* Derecha */}
+        <View style={styles.negocioChipRight}>
+          <View style={[styles.badgeDestacado, { backgroundColor: color }]}>
+            <Text style={styles.badgeDestacadoText}>Plus</Text>
+          </View>
+          <Text style={[styles.chevron, abierto && styles.chevronOpen]}>›</Text>
+        </View>
+      </TouchableOpacity>
+
+      {abierto && (
+        <View style={[styles.negocioCard, { borderColor: color }]}>
+          {foto && (
+            <View style={styles.negocioFotoContainer}>
+              <Image source={{ uri: foto }} style={styles.negocioFoto} />
+              <View
+                style={[styles.negocioFotoBadge, { backgroundColor: color }]}
+              >
+                <Text style={styles.negocioFotoBadgeText}>Albergue Plus</Text>
+              </View>
+            </View>
+          )}
+          <View style={styles.negocioCardBody}>
+            <Text style={styles.negocioCardNombre}>{albergue.nombre}</Text>
+            {precio && (
+              <Text style={[styles.negocioCardCat, { color }]}>
+                {precio} por cama
+              </Text>
+            )}
+            {!!descripcion && (
+              <Text style={styles.negocioCardDesc} numberOfLines={4}>
+                {descripcion}
+              </Text>
+            )}
+            <View style={styles.negocioCardActions}>
+              {!!albergue.telefono && (
+                <TouchableOpacity
+                  onPress={() => Linking.openURL(`tel:${albergue.telefono}`)}
+                  style={styles.btnLlamar}
+                >
+                  <Text style={styles.btnLlamarText}>📞 Llamar</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                onPress={() =>
+                  router.push(`/(public)/albergues/${albergue.slug}` as any)
+                }
+                style={[styles.btnFicha, { backgroundColor: color }]}
+              >
+                <Text style={styles.btnFichaText}>Ver ficha →</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+}
 
 // ── NegocioChip ────────────────────────────────────────────────────────────
 
@@ -295,6 +446,7 @@ interface Props {
   waypoints: Waypoint[];
   pois: POI[];
   negocios: Negocio[];
+  albergues: Albergue[];
   color: string;
   lang: string;
   scrollY: Animated.Value;
@@ -304,6 +456,7 @@ export default function RecorridoTimeline({
   waypoints,
   pois,
   negocios,
+  albergues,
   color,
   lang,
   scrollY,
@@ -311,30 +464,33 @@ export default function RecorridoTimeline({
   const containerRef = useRef<View>(null);
   const containerYRef = useRef(0);
   const containerHeightRef = useRef(1);
-  const progressAnim = useRef(new Animated.Value(0)).current;
   const [progress, setProgress] = useState(0);
-
-  const measureContainer = () => {
-    containerRef.current?.measure((_x, _y, _w, _h, _px, py) => {
-      if (py != null) containerYRef.current = py;
-    });
-  };
-
-  const onLayout = (e: LayoutChangeEvent) => {
-    containerHeightRef.current = e.nativeEvent.layout.height || 1;
-    measureContainer();
-  };
-
+  const scrollYValueRef = useRef(0);
   useEffect(() => {
     const listener = scrollY.addListener(({ value }) => {
       const screenMid = SCREEN_HEIGHT * 0.5;
+
       const containerTop = containerYRef.current - value;
       const raw = (screenMid - containerTop) / containerHeightRef.current;
-      const clamped = Math.min(1, Math.max(0, raw));
-      setProgress(clamped);
+      setProgress(Math.min(1, Math.max(0, raw)));
+      scrollYValueRef.current = value;
     });
     return () => scrollY.removeListener(listener);
   }, [scrollY]);
+  // Albergues destacados (plus o premium)
+  const alberguesDestacados = albergues.filter(
+    (a) => a.plan === "plus" || a.plan === "premium",
+  );
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    containerHeightRef.current = e.nativeEvent.layout.height || 1;
+    containerRef.current?.measure((_x, _y, _w, _h, _px, py) => {
+      if (py != null) {
+        // py es relativo a ventana, sumamos el scroll actual para obtener posición absoluta
+        containerYRef.current = py + scrollYValueRef.current;
+      }
+    });
+  };
 
   function poisEnTramo(kmDesde: number, kmHasta: number) {
     return pois.filter(
@@ -347,6 +503,13 @@ export default function RecorridoTimeline({
       const km = n.km_referencia ?? 0;
       return km >= kmDesde && km < kmHasta;
     });
+  }
+
+  // Albergues destacados por localidad del waypoint
+  function alberguesEnWaypoint(localidad: string) {
+    return alberguesDestacados.filter(
+      (a) => a.localidad?.toLowerCase() === localidad.toLowerCase(),
+    );
   }
 
   function getDesc(wp: Waypoint): string {
@@ -384,10 +547,7 @@ export default function RecorridoTimeline({
 
   return (
     <View ref={containerRef} onLayout={onLayout} style={styles.container}>
-      {/* Línea base gris */}
       <View style={[styles.lineaBase, { borderColor: "#E8E0D0" }]} />
-
-      {/* Línea progreso coloreada */}
       <View style={styles.lineaProgressWrap}>
         <View
           style={[
@@ -409,6 +569,7 @@ export default function RecorridoTimeline({
         const kmSiguiente = siguiente?.km_acumulado ?? kmActual + 999;
         const poisTramo = poisEnTramo(kmActual, kmSiguiente);
         const negociosTramo = negociosEnTramo(kmActual, kmSiguiente);
+        const alberguesWp = alberguesEnWaypoint(wp.localidad);
 
         const porTipo = poisTramo.reduce<Record<string, POI[]>>((acc, p) => {
           if (!acc[p.tipo]) acc[p.tipo] = [];
@@ -490,6 +651,20 @@ export default function RecorridoTimeline({
 
               {!!desc && <Text style={styles.desc}>{desc}</Text>}
 
+              {/* Albergues destacados en este waypoint */}
+              {alberguesWp.length > 0 && (
+                <View style={{ marginBottom: 8 }}>
+                  {alberguesWp.map((a) => (
+                    <AlbergueChip
+                      key={a.id}
+                      albergue={a}
+                      lang={lang}
+                      color={color}
+                    />
+                  ))}
+                </View>
+              )}
+
               {tiposOrdenados.length > 0 && (
                 <View style={{ marginBottom: 8 }}>
                   {tiposOrdenados.map((tipo) => (
@@ -553,7 +728,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
     borderStyle: "dashed",
   },
-
   waypointRow: { flexDirection: "row", gap: 16, position: "relative" },
   dot: {
     width: 22,
@@ -568,7 +742,6 @@ const styles = StyleSheet.create({
   dotInner: { width: 8, height: 8, borderRadius: 4 },
   waypointContent: { flex: 1, paddingTop: 2 },
   waypointContentPadding: { paddingBottom: 20 },
-
   waypointHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -589,6 +762,7 @@ const styles = StyleSheet.create({
   },
   difText: { fontSize: 11, fontWeight: "700" },
   desc: { fontSize: 13, color: "#8B7355", lineHeight: 19, marginBottom: 8 },
+  ocupDot: { width: 7, height: 7, borderRadius: 4 },
 
   poiChip: {
     flexDirection: "row",
@@ -630,7 +804,7 @@ const styles = StyleSheet.create({
     maxWidth: 300,
   },
   negocioChipDestacado: {
-    shadowColor: "#C8622A",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
@@ -713,7 +887,6 @@ const styles = StyleSheet.create({
   btnLlamarText: { fontSize: 12, color: "#2C1F0E" },
   btnFicha: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20 },
   btnFichaText: { fontSize: 12, fontWeight: "600", color: "white" },
-
   chevron: { fontSize: 18, color: "#B4A890", marginLeft: 2 },
   chevronOpen: { transform: [{ rotate: "90deg" }] },
 });

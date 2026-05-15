@@ -31,6 +31,7 @@ import RecorridoTimeline from "@/components/etapa/RecorridoTimeline";
 import EtapaCheckButton from "@/components/etapa/EtapaCheckButton";
 import CanalWidget from "@/components/etapa/CanalWidget";
 import { useNavigation } from "@/contexts/NavigationContext";
+import { Linking } from "react-native";
 
 const { width: SW } = Dimensions.get("window");
 
@@ -45,7 +46,7 @@ interface EtapaFoto {
   alt: string | null;
 }
 interface NavEtapa {
-  slug: string;
+  slug: string | null;
   numero: number;
   inicio_nombre: string;
   fin_nombre: string;
@@ -374,6 +375,7 @@ export default function EtapaScreen() {
                 color={color}
                 lang={lang}
                 scrollY={scrollY}
+                albergues={albergues as Albergue[]}
               />
             </ColapsableSection>
           )}
@@ -1361,13 +1363,153 @@ const tl = StyleSheet.create({
 // ═════════════════════════════════════════════════════════════════════════════
 // ALBERGUES POR LOCALIDAD
 // ═════════════════════════════════════════════════════════════════════════════
+const OCUP_COLOR_ETQ: Record<string, string> = {
+  libre: "#16a34a",
+  casi_lleno: "#ca8a04",
+  completo: "#dc2626",
+};
+
+// Card expandible para albergues plus/premium
+function AlbergueCardDestacada({
+  albergue,
+  color,
+  lang,
+}: {
+  albergue: any;
+  color: string;
+  lang: string;
+}) {
+  const [abierto, setAbierto] = useState(false);
+  const foto = albergue.foto_url ?? albergue.fotos_urls?.[0] ?? null;
+  const descKey = `descripcion_${lang}`;
+  const descripcion = albergue[descKey] || albergue.descripcion || "";
+  const precio =
+    albergue.precio_cama ??
+    (albergue.precio_desde ? `${albergue.precio_desde}€` : null);
+  const dotColor = OCUP_COLOR_ETQ[albergue.ocupacion ?? "libre"];
+
+  return (
+    <View style={abl.cardWrapper}>
+      <TouchableOpacity
+        onPress={() => setAbierto((v) => !v)}
+        activeOpacity={0.7}
+        style={[abl.cardChip, { borderColor: color }]}
+      >
+        {/* Miniatura */}
+        <View style={abl.miniatura}>
+          {foto ? (
+            <Image source={{ uri: foto }} style={abl.miniaturaImg} />
+          ) : (
+            <Text style={abl.miniaturaEmoji}>🏠</Text>
+          )}
+        </View>
+
+        {/* Info */}
+        <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 6 }}>
+          <Text style={abl.cardChipNombre} numberOfLines={1}>
+            {albergue.nombre}
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 5,
+              marginTop: 2,
+            }}
+          >
+            <View style={[abl.ocupDot, { backgroundColor: dotColor }]} />
+            {precio && <Text style={abl.cardChipPrecio}>{precio}</Text>}
+          </View>
+        </View>
+
+        {/* Badge + chevron */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            paddingRight: 8,
+          }}
+        >
+          <View style={[abl.badgePlus, { backgroundColor: color }]}>
+            <Text style={abl.badgePlusText}>Plus</Text>
+          </View>
+          <Text
+            style={[
+              ab.chev,
+              abierto && ({ transform: [{ rotate: "90deg" }] } as any),
+            ]}
+          >
+            ›
+          </Text>
+        </View>
+      </TouchableOpacity>
+
+      {abierto && (
+        <View style={[abl.cardExpanded, { borderColor: color }]}>
+          {foto && (
+            <View style={{ position: "relative", height: 140 }}>
+              <Image
+                source={{ uri: foto }}
+                style={abl.cardFoto}
+                resizeMode="cover"
+              />
+              <View style={[abl.fotoBadge, { backgroundColor: color }]}>
+                <Text style={abl.fotoBadgeText}>Albergue Plus</Text>
+              </View>
+            </View>
+          )}
+          <View style={{ padding: 12 }}>
+            <Text style={abl.cardNombre}>{albergue.nombre}</Text>
+            {precio && (
+              <Text style={[abl.cardPrecioLabel, { color }]}>
+                {precio} por cama
+              </Text>
+            )}
+            {!!descripcion && (
+              <Text style={abl.cardDesc} numberOfLines={5}>
+                {descripcion}
+              </Text>
+            )}
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 8,
+                marginTop: 12,
+                flexWrap: "wrap",
+              }}
+            >
+              {!!albergue.telefono && (
+                <TouchableOpacity
+                  onPress={() => Linking.openURL(`tel:${albergue.telefono}`)}
+                  style={abl.btnLlamar}
+                >
+                  <Text style={abl.btnLlamarText}>📞 Llamar</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                onPress={() =>
+                  router.push(`/(public)/albergues/${albergue.slug}` as any)
+                }
+                style={[abl.btnFicha, { backgroundColor: color }]}
+              >
+                <Text style={abl.btnFichaText}>Ver ficha completa →</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+}
+
 function AlberguesPorLocalidad({
   albergues,
   localidades,
   color,
   lang,
 }: {
-  albergues: Albergue[];
+  albergues: any[];
   localidades: string[];
   color: string;
   lang: string;
@@ -1384,7 +1526,14 @@ function AlberguesPorLocalidad({
     <View style={{ gap: 10 }}>
       {localidades.map((localidad) => {
         const lista = albergues.filter((a) => a.localidad === localidad);
+        const destacados = lista.filter(
+          (a) => a.plan === "plus" || a.plan === "premium",
+        );
+        const resto = lista.filter(
+          (a) => a.plan !== "plus" && a.plan !== "premium",
+        );
         const abierta = abiertas.has(localidad);
+
         return (
           <View key={localidad} style={ab.group}>
             <TouchableOpacity
@@ -1406,60 +1555,160 @@ function AlberguesPorLocalidad({
                 ›
               </Text>
             </TouchableOpacity>
-            {abierta &&
-              lista.map((a, i) => {
-                const tipoColor =
-                  TIPO_ALB_COLOR[a.tipo ?? "privado"] ?? "#C8622A";
-                const dotColor = OCUP_COLOR[a.ocupacion ?? "libre"];
-                return (
-                  <TouchableOpacity
-                    key={a.id}
-                    style={[
-                      ab.row,
-                      i < lista.length - 1 && {
-                        borderBottomWidth: 1,
-                        borderBottomColor: "#F0EBE0",
-                      },
-                    ]}
-                    activeOpacity={0.7}
-                    onPress={() =>
-                      a.slug &&
-                      router.push(`/(public)/albergues/${a.slug}` as any)
-                    }
+
+            {abierta && (
+              <View>
+                {/* Albergues destacados — cards expandibles */}
+                {destacados.length > 0 && (
+                  <View
+                    style={{
+                      padding: 10,
+                      gap: 8,
+                      borderBottomWidth: resto.length > 0 ? 1 : 0,
+                      borderBottomColor: "#F0EBE0",
+                    }}
                   >
-                    <View style={[ab.dot, { backgroundColor: dotColor }]} />
-                    <View style={{ flex: 1, minWidth: 0 }}>
-                      <Text style={ab.nombre} numberOfLines={1}>
-                        {a.nombre}
-                      </Text>
-                      {a.ubicacion ? (
-                        <Text style={ab.ubic} numberOfLines={1}>
-                          {getL(a, "ubicacion", lang)}
+                    {destacados.map((a) => (
+                      <AlbergueCardDestacada
+                        key={a.id}
+                        albergue={a}
+                        color={color}
+                        lang={lang}
+                      />
+                    ))}
+                  </View>
+                )}
+
+                {/* Albergues normales — lista compacta */}
+                {resto.map((a, i) => {
+                  const tipoColor =
+                    TIPO_ALB_COLOR[a.tipo ?? "privado"] ?? "#C8622A";
+                  const dotColor = OCUP_COLOR[a.ocupacion ?? "libre"];
+                  return (
+                    <TouchableOpacity
+                      key={a.id}
+                      style={[
+                        ab.row,
+                        i < resto.length - 1 && {
+                          borderBottomWidth: 1,
+                          borderBottomColor: "#F0EBE0",
+                        },
+                      ]}
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        a.slug &&
+                        router.push(`/(public)/albergues/${a.slug}` as any)
+                      }
+                    >
+                      <View style={[ab.dot, { backgroundColor: dotColor }]} />
+                      <View style={{ flex: 1, minWidth: 0 }}>
+                        <Text style={ab.nombre} numberOfLines={1}>
+                          {a.nombre}
                         </Text>
-                      ) : null}
-                    </View>
-                    <View style={{ alignItems: "flex-end" }}>
-                      {a.precio_cama && (
-                        <Text style={[ab.precio, { color: tipoColor }]}>
-                          {a.precio_cama}
-                        </Text>
-                      )}
-                      {a.precio_habitacion && (
-                        <Text style={ab.precioHab}>
-                          hab. {a.precio_habitacion}
-                        </Text>
-                      )}
-                    </View>
-                    <Text style={ab.arrow}>›</Text>
-                  </TouchableOpacity>
-                );
-              })}
+                        {a.ubicacion ? (
+                          <Text style={ab.ubic} numberOfLines={1}>
+                            {getL(a, "ubicacion", lang)}
+                          </Text>
+                        ) : null}
+                      </View>
+                      <View style={{ alignItems: "flex-end" }}>
+                        {a.precio_cama && (
+                          <Text style={[ab.precio, { color: tipoColor }]}>
+                            {a.precio_cama}
+                          </Text>
+                        )}
+                        {a.precio_habitacion && (
+                          <Text style={ab.precioHab}>
+                            hab. {a.precio_habitacion}
+                          </Text>
+                        )}
+                      </View>
+                      <Text style={ab.arrow}>›</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
           </View>
         );
       })}
     </View>
   );
 }
+
+// ─── Estilos nuevos para AlbergueCardDestacada ────────────────────────────
+const abl = StyleSheet.create({
+  cardWrapper: { marginBottom: 4 },
+  cardChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  miniatura: {
+    width: 52,
+    height: 52,
+    backgroundColor: "#F5F0E8",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  miniaturaImg: { width: 52, height: 52 },
+  miniaturaEmoji: { fontSize: 22 },
+  cardChipNombre: { fontSize: 13, fontWeight: "700", color: "#2C1F0E" },
+  cardChipPrecio: { fontSize: 12, color: "#8B7355", fontWeight: "600" },
+  ocupDot: { width: 7, height: 7, borderRadius: 4 },
+  badgePlus: { paddingHorizontal: 7, paddingVertical: 2, borderRadius: 999 },
+  badgePlusText: { fontSize: 9, fontWeight: "700", color: "white" },
+  cardExpanded: {
+    marginTop: 4,
+    backgroundColor: "white",
+    borderRadius: 12,
+    borderWidth: 1.5,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  cardFoto: { width: "100%", height: 140 },
+  fotoBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 20,
+  },
+  fotoBadgeText: { fontSize: 10, fontWeight: "700", color: "white" },
+  cardNombre: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#2C1F0E",
+    marginBottom: 2,
+  },
+  cardPrecioLabel: { fontSize: 13, fontWeight: "600", marginBottom: 8 },
+  cardDesc: { fontSize: 13, color: "#5C4A32", lineHeight: 19 },
+  btnLlamar: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    backgroundColor: "#F5F0E8",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#E8DDD0",
+  },
+  btnLlamarText: { fontSize: 12, color: "#2C1F0E" },
+  btnFicha: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20 },
+  btnFichaText: { fontSize: 12, fontWeight: "600", color: "white" },
+});
 
 const ab = StyleSheet.create({
   group: {
