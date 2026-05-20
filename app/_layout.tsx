@@ -13,23 +13,20 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loading) return;
+    const inAuthGroup = segments[0] === "(auth)";
+    const segs = segments as string[];
+    const inProtectedRoute =
+      inAuthGroup && segs[1] !== "login" && segs[1] !== "confirmar";
 
-    const inAuthGroup =
-      segments[0] === "(peregrine)" || segments[0] === "(hospitalero)";
-
-    if (!session && inAuthGroup) {
-      router.replace("/");
-    } else if (session && !inAuthGroup) {
-      router.replace("/(peregrine)/dashboard");
+    if (!session && inProtectedRoute) {
+      router.replace("/(auth)/login");
     }
-  }, [session, loading]);
+  }, [session, loading, segments]);
 
   return (
-    <>
-      <NavigationProvider>
-        <Stack screenOptions={{ headerShown: false }} />
-        <StatusBar style="auto" />
-      </NavigationProvider>
-    </>
+    <NavigationProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+      <StatusBar style="auto" />
+    </NavigationProvider>
   );
 }

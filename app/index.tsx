@@ -59,7 +59,7 @@ export default function Landing() {
                 {t("landing.descubre")}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push("/auth/login")}>
+            <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
               <Text style={styles.linkLogin}>{t("auth.con_cuenta")}</Text>
             </TouchableOpacity>
           </View>

@@ -119,6 +119,7 @@
     "registro": "Registro",
     "iniciar_sesion": "Iniciar sesión",
     "cerrar_sesion": "Cerrar sesión",
+    "con_cuenta": "¿Ya tienes cuenta? Inicia sesión",
     "email": "Email",
     "contrasena": "Contraseña",
     "saltar": "Saltar",
@@ -242,6 +243,13 @@
       "nota": "Sin tarjeta de crédito · Siempre gratis para peregrinos"
     }
   },
+  "landing": {
+    "siente_el": "Siente el",
+    "camino": "Camino.",
+    "subtitulo": "Planifica, explora y vive el Camino de Santiago",
+    "descubre": "Descubrir el Camino"
+  },
+
   "etapa": {
     "mapa": "Mapa de la etapa",
     "perfil": "Perfil de la etapa",

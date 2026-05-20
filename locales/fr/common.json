@@ -18,9 +18,9 @@
   },
   "hero": {
     "titulo": "Ton Chemin, dans ta langue",
-    "subtitulo": "Planifie, explore et vive le Chemin de Saint-Jacques",
+    "subtitulo": "Planifie, explore et vis le Chemin de Santiago",
     "cta": "Explorer le Chemin",
-    "vive_el": "Vive le",
+    "vive_el": "Vis le",
     "camino": "Chemin.",
     "explorar_etapas": "Explorer les étapes",
     "ver_albergues": "Voir les gîtes",
@@ -43,14 +43,14 @@
     "titulo": "Les 34 étapes",
     "subtitulo": "Chemin Français · 825 km",
     "completado": "Chemin terminé !",
-    "casi": "Presque !",
-    "ultima_etapa": "Dernière étape !",
+    "casi": "presque !",
+    "ultima_etapa": "dernière étape !",
     "variante": "variante",
     "km": "km",
     "desnivel": "dénivelé",
     "dificultad": {
       "baja": "Facile",
-      "media": "Modéré",
+      "media": "Modérée",
       "alta": "Difficile",
       "muy_alta": "Très difficile"
     }
@@ -58,21 +58,21 @@
   "albergues": {
     "titulo": "Gîtes",
     "subtitulo": "Chemin Français · 34 étapes",
-    "buscarPlaceholder": "Rechercher par nom ou localité…",
+    "buscarPlaceholder": "Chercher par nom ou localité…",
     "todasEtapas": "Toutes les étapes",
     "resultados": "gîtes",
     "desde": "À partir de",
     "plazas": "places",
     "cargando": "Chargement des gîtes…",
     "sinResultados": "Aucun résultat",
-    "sinResultadosDesc": "Essaye un autre terme ou retire les filtres",
+    "sinResultadosDesc": "Essaie un autre terme ou enlève les filtres",
     "errorCarga": "Erreur lors du chargement des gîtes",
     "reintentar": "Réessayer",
     "seleccionarEtapa": "Sélectionner une étape",
-    "buscarEtapa": "Rechercher une étape…",
-    "limpiarFiltro": "Retirer le filtre",
+    "buscarEtapa": "Chercher une étape…",
+    "limpiarFiltro": "Enlever le filtre",
     "porCama": "par lit",
-    "habitacion": "ch.",
+    "habitacion": "chambre",
     "sobreEsteAlbergue": "À propos de ce gîte",
     "servicios": "Services",
     "contacto": "Contact",
@@ -96,13 +96,13 @@
       "desayuno": "Petit-déjeuner",
       "lavadora": "Lave-linge",
       "secadora": "Sèche-linge",
-      "parking_bici": "Parking vélo",
+      "parking_bici": "Parking vélos",
       "taquillas": "Casiers",
       "aire_acond": "Climatisation",
       "calefaccion": "Chauffage",
       "piscina": "Piscine",
       "jardin_terraza": "Jardin/Terrasse",
-      "admite_perros": "Accepte les chiens",
+      "admite_perros": "Chiens acceptés",
       "bar": "Bar",
       "restaurante": "Restaurant",
       "tienda": "Magasin",
@@ -110,7 +110,7 @@
       "bici": "Vélo"
     },
     "ocupacion": {
-      "libre": "Places disponibles",
+      "libre": "Places libres",
       "casi_lleno": "Presque complet",
       "completo": "Complet"
     }
@@ -119,6 +119,7 @@
     "registro": "Inscription",
     "iniciar_sesion": "Connexion",
     "cerrar_sesion": "Déconnexion",
+    "con_cuenta": "Tu as déjà un compte ? Connecte-toi",
     "email": "Email",
     "contrasena": "Mot de passe",
     "saltar": "Passer",
@@ -128,7 +129,7 @@
       "subtitulo_email": "Accède à ton Chemin, tes étapes et ta communauté de pèlerins.",
       "label_email": "Adresse email",
       "placeholder_email": "tonemail@email.com",
-      "comprobando": "Vérification en cours...",
+      "comprobando": "Vérification...",
       "continuar_email": "Continuer avec l'email",
       "google": "Se connecter avec Google",
       "no_cuenta": "Tu n'as pas encore de compte ?",
@@ -138,8 +139,8 @@
       "label_password": "Mot de passe",
       "placeholder_password": "Ton mot de passe",
       "olvidaste": "Tu as oublié ton mot de passe ?",
-      "entrando": "Connexion en cours...",
-      "entrar": "Se connecter",
+      "entrando": "Connexion...",
+      "entrar": "Connexion",
       "volver": "← Retour"
     },
     "registro_page": {
@@ -148,7 +149,7 @@
       "saltar": "Passer",
       "titulo_paso1": "Commence ton Chemin",
       "subtitulo_paso1": "Crée ton compte de pèlerin et rejoins la communauté.",
-      "bienvenido": "Bienvenue ! On dirait que tu es nouveau sur Ton Chemin 🐚",
+      "bienvenido": "Bienvenue ! Il semble que tu sois nouveau sur Mon Chemin 🐚",
       "google": "S'inscrire avec Google",
       "o_email": "ou avec l'email",
       "label_nombre": "Ton nom",
@@ -158,12 +159,12 @@
       "placeholder_password": "Minimum 8 caractères",
       "siguiente": "Suivant",
       "ya_tienes": "Tu as déjà un compte ?",
-      "inicia_sesion": "Se connecter",
-      "titulo_paso2": "Comment vas-tu faire le Chemin ?",
-      "subtitulo_paso2": "Ainsi nous pouvons te montrer les gîtes et étapes les plus pertinents pour toi.",
+      "inicia_sesion": "Connecte-toi",
+      "titulo_paso2": "Comment feras-tu le Chemin ?",
+      "subtitulo_paso2": "Ainsi, nous pouvons te montrer les gîtes et étapes les plus pertinents pour toi.",
       "de_donde": "D'où viens-tu ?",
       "creando": "Création du compte...",
-      "comenzar": "🐚 Commencer le Chemin",
+      "comenzar": "🐚 Commence le Chemin",
       "volver": "← Retour",
       "error_password": "Le mot de passe doit avoir au moins 8 caractères."
     },
@@ -175,7 +176,7 @@
     }
   },
   "perfil": {
-    "titulo": "Mon Profil",
+    "titulo": "Mon profil",
     "guardar": "Enregistrer les modifications",
     "guardando": "Enregistrement...",
     "nombre": "Nom",
@@ -197,33 +198,33 @@
     "sesion": "Session",
     "cerrar_sesion": "Déconnexion",
     "guardar_idioma": "Enregistrer",
-    "empty_camino": "Quand tu termineras une étape, ce sera visible ici.",
-    "empty_resenas": "Tes avis sur les gîtes et étapes apparaîtront ici.",
-    "empty_fotos": "Les photos que tu téléchargeras dans les étapes et gîtes apparaîtront ici.",
+    "empty_camino": "Quand tu complèteras une étape, cela apparaîtra ici.",
+    "empty_resenas": "Tes évaluations des gîtes et étapes apparaîtront ici.",
+    "empty_fotos": "Les photos que tu publies dans les étapes et gîtes apparaîtront ici.",
     "tabs": {
       "perfil": "Profil",
       "camino": "Chemin",
       "resenas": "Avis",
       "fotos": "Photos",
-      "config": "Config"
+      "config": "Paramètres"
     }
   },
   "general": {
     "cargando": "Chargement...",
-    "error": "Quelque chose s'est mal passé",
+    "error": "Une erreur est survenue",
     "volver": "Retour"
   },
   "home": {
     "features": {
-      "titulo_seccion": "Pourquoi Ton Chemin ?",
+      "titulo_seccion": "Pourquoi Mon Chemin ?",
       "subtitulo_seccion": "Tout ce dont tu as besoin,",
       "subtitulo_acento": "en un seul endroit",
       "idiomas_titulo": "7 langues",
-      "idiomas_desc": "Disponible en espagnol, anglais, allemand, français, italien, portugais et coréen. Le guide du Chemin de Saint-Jacques pour les pèlerins du monde entier.",
+      "idiomas_desc": "Disponible en espagnol, anglais, allemand, français, italien, portugais et coréen. Le guide du Chemin de Santiago pour les pèlerins du monde entier.",
       "albergues_titulo": "Tous les gîtes du Chemin",
       "albergues_desc": "Répertoire complet des gîtes avec places disponibles, tarifs, services et informations de contact à jour.",
       "pois_titulo": "Points d'intérêt et altitude",
-      "pois_desc": "Cartes détaillées avec profil d'altitude, fontaines, gîtes, églises, restaurants et autres points d'intérêt le long de chaque étape.",
+      "pois_desc": "Cartes détaillées avec profil d'altitude, sources, gîtes, églises, restaurants et autres points d'intérêt le long de chaque étape.",
       "meteo_titulo": "Informations météorologiques",
       "meteo_desc": "Prévisions météorologiques pour chaque étape avec données de température, précipitations et vent. Planifie ta journée avec des informations à jour."
     },
@@ -237,15 +238,21 @@
       "eyebrow": "Commence ton Chemin",
       "titulo": "Ton Chemin,",
       "titulo_acento": "ton histoire.",
-      "descripcion": "Planifie tes étapes, consulte les gîtes et accède à toutes les informations dont tu as besoin pour parcourir le Chemin de Saint-Jacques.",
+      "descripcion": "Planifie tes étapes, consulte les gîtes et accède à toutes les informations dont tu as besoin pour parcourir le Chemin de Santiago.",
       "boton": "Commencer gratuitement",
       "nota": "Sans carte de crédit · Toujours gratuit pour les pèlerins"
     }
   },
+  "landing": {
+    "siente_el": "Ressens le",
+    "camino": "Chemin.",
+    "subtitulo": "Planifie, explore et vis le Chemin de Santiago",
+    "descubre": "Découvrir le Chemin"
+  },
   "etapa": {
     "mapa": "Carte de l'étape",
     "perfil": "Profil de l'étape",
-    "tiempo_ruta": "Temps de trajet",
+    "tiempo_ruta": "Temps de route",
     "recorrido": "Parcours",
     "albergues": "Gîtes",
     "a_lo_largo": "Le long de l'étape",
@@ -286,7 +293,7 @@
         "iglesia": "Églises",
         "capilla": "Chapelles",
         "ermita": "Ermitages",
-        "cruceiro": "Cruceiros",
+        "cruceiro": "Croix du Chemin",
         "monumento": "Monuments",
         "yacimiento": "Sites archéologiques",
         "puente": "Ponts",
@@ -296,9 +303,9 @@
     "meteo": {
       "hoy": "Aujourd'hui",
       "precipitacion": "Précipitations",
-      "viento": "Vent maximum",
+      "viento": "Vent maximal",
       "prob": "Prob.",
-      "fuente": "Open-Meteo · prévisions jusqu'à 16 jours",
+      "fuente": "Open-Meteo · prévision jusqu'à 16 jours",
       "error": "Impossible de charger la prévision météorologique",
       "cargando": "Chargement de la prévision…",
       "dias": [
@@ -316,7 +323,7 @@
         "2": "Partiellement nuageux",
         "3": "Nuageux",
         "45": "Brouillard",
-        "48": "Brouillard avec givre",
+        "48": "Brouillard givrant",
         "51": "Bruine légère",
         "53": "Bruine modérée",
         "55": "Bruine dense",
@@ -353,7 +360,7 @@
       "cargando": "Chargement des commentaires...",
       "primero": "Sois le premier à commenter cette étape.",
       "placeholder_respuesta": "Écris ta réponse...",
-      "tu_valoracion": "Ton avis :",
+      "tu_valoracion": "Ton évaluation:",
       "enviando": "Envoi...",
       "publicar": "Publier",
       "cancelar": "Annuler",
@@ -367,31 +374,31 @@
       "hospitalero": "Hospitalier"
     },
     "panel": {
-      "valoracion_peregrinos": "Avis des pèlerins",
-      "valoracion": "avis",
-      "valoraciones": "avis",
-      "tu_valoracion": "Ton avis",
+      "valoracion_peregrinos": "Évaluation des pèlerins",
+      "valoracion": "évaluation",
+      "valoraciones": "évaluations",
+      "tu_valoracion": "Ton évaluation",
       "valora_etapa": "Évalue cette étape",
-      "como_describirias": "Comment décrirais-tu cette étape ?",
+      "como_describirias": "Comment décririais-tu cette étape ?",
       "banner_texto": "Rejoins la communauté des pèlerins pour évaluer les étapes, laisser des commentaires et partager ton expérience du Chemin.",
-      "iniciar_sesion": "Se connecter",
+      "iniciar_sesion": "Connecte-toi",
       "crear_cuenta": "Créer un compte"
     },
     "rating": {
       "malo": "Mauvais",
-      "regular": "Moyen",
+      "regular": "Correct",
       "bueno": "Bon",
       "muy_bueno": "Très bon",
       "excelente": "Excellent",
-      "toca_cambiar": "appuie pour modifier"
+      "toca_cambiar": "appuie pour changer"
     },
     "reacciones": {
       "util": "Utile",
       "bonito": "Beau",
       "dificil": "Difficile",
-      "cuidado": "À faire attention"
+      "cuidado": "Avec prudence"
     },
-    "etapa_placeholder": "Comment s'est passée ton expérience sur cette étape ? Raconte-nous...",
+    "etapa_placeholder": "Comment s'est passée ton expérience dans cette étape ? Raconte-nous...",
     "albergue_placeholder": "Partage ton expérience dans ce gîte…"
   },
   "mapa": {

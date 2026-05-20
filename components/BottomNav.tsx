@@ -10,6 +10,7 @@ import { useRouter, useSegments } from "expo-router";
 import { useTranslation } from "react-i18next";
 import Svg, { Path } from "react-native-svg";
 import { useNavigation } from "@/contexts/NavigationContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const GOLD = "#D4AF72";
 const SOFT = "#999";
@@ -140,34 +141,56 @@ export default function BottomNav() {
   const router = useRouter();
   const segments = useSegments();
   const { navAnim, showNav } = useNavigation();
+  const { session } = useAuth();
 
   const currentTab = (segments as string[])[1] ?? "index";
 
+  const handlePerfil = () => {
+    if (session) {
+      router.push("/(auth)/perfil");
+    } else {
+      router.push("/(auth)/login");
+    }
+  };
+
+  const handleMensajes = () => {
+    if (session) {
+      router.push("/(public)/albergues"); // TODO: ruta mensajes cuando exista
+    } else {
+      router.push("/(auth)/login");
+    }
+  };
+
   const tabs = [
-    { key: "index", label: t("nav.mapa"), Icon: IconMapa, route: "/(public)/" },
+    {
+      key: "index",
+      label: t("nav.mapa"),
+      Icon: IconMapa,
+      onPress: () => router.push("/(public)/"),
+    },
     {
       key: "etapas",
       label: t("nav.etapas"),
       Icon: IconEtapas,
-      route: "/(public)/etapas",
+      onPress: () => router.push("/(public)/etapas"),
     },
     {
       key: "albergues",
       label: t("nav.albergues"),
       Icon: IconAlbergues,
-      route: "/(public)/albergues",
+      onPress: () => router.push("/(public)/albergues"),
     },
     {
       key: "mensajes",
       label: t("nav.mensajes"),
       Icon: IconMensajes,
-      route: "/auth/login",
+      onPress: handleMensajes,
     },
     {
       key: "perfil",
       label: t("nav.perfil"),
       Icon: IconPerfil,
-      route: "/auth/login",
+      onPress: handlePerfil,
     },
   ];
 
@@ -184,7 +207,7 @@ export default function BottomNav() {
       ]}
     >
       <TouchableOpacity activeOpacity={1} onPress={showNav} style={styles.pill}>
-        {tabs.map(({ key, label, Icon, route }) => {
+        {tabs.map(({ key, label, Icon, onPress }) => {
           const active =
             currentTab === key ||
             (key === "index" &&
@@ -193,7 +216,7 @@ export default function BottomNav() {
             <TouchableOpacity
               key={key}
               style={[styles.tab, active && styles.tabActive]}
-              onPress={() => router.push(route as any)}
+              onPress={onPress}
               activeOpacity={0.7}
             >
               <Icon active={active} />

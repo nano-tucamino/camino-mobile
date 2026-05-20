@@ -18,12 +18,12 @@
   },
   "hero": {
     "titulo": "Dein Weg, in deiner Sprache",
-    "subtitulo": "Plane, erkunde und erlebe den Jakobsweg",
+    "subtitulo": "Plane, erkunde und erlebe den Camino de Santiago",
     "cta": "Den Weg erkunden",
     "vive_el": "Erlebe den",
     "camino": "Weg.",
     "explorar_etapas": "Etappen erkunden",
-    "ver_albergues": "Herbergen ansehen",
+    "ver_albergues": "Herbergen anzeigen",
     "slides": {
       "santiago_frase": "Das Ziel aller Wege",
       "roncesvalles_frase": "Der erste Schritt aller Wege",
@@ -31,7 +31,7 @@
       "burgos_frase": "Das Juwel der kastilischen Gotik",
       "leon_frase": "Licht, das Jahrhunderte der Geschichte durchdringt",
       "astorga_frase": "Wo Gaudí den Weg fand",
-      "ponferrada_frase": "Die Burg der Templer im Bierzo"
+      "ponferrada_frase": "Die Templerfestung des Bierzo"
     },
     "stats": {
       "km_label": "Französischer Weg",
@@ -42,15 +42,15 @@
   "etapas": {
     "titulo": "Die 34 Etappen",
     "subtitulo": "Französischer Weg · 825 km",
-    "completado": "Weg abgeschlossen!",
-    "casi": "fast!",
+    "completado": "Weg vollendet!",
+    "casi": "Fast geschafft!",
     "ultima_etapa": "letzte Etappe!",
     "variante": "Variante",
     "km": "km",
-    "desnivel": "Höhenunterschied",
+    "desnivel": "Höhendifferenz",
     "dificultad": {
       "baja": "Leicht",
-      "media": "Mittelschwer",
+      "media": "Moderat",
       "alta": "Schwierig",
       "muy_alta": "Sehr schwierig"
     }
@@ -65,7 +65,7 @@
     "plazas": "Plätze",
     "cargando": "Herbergen werden geladen…",
     "sinResultados": "Keine Ergebnisse",
-    "sinResultadosDesc": "Versuchen Sie einen anderen Begriff oder entfernen Sie die Filter",
+    "sinResultadosDesc": "Versuche einen anderen Begriff oder entferne die Filter",
     "errorCarga": "Fehler beim Laden der Herbergen",
     "reintentar": "Erneut versuchen",
     "seleccionarEtapa": "Etappe auswählen",
@@ -76,18 +76,18 @@
     "sobreEsteAlbergue": "Über diese Herberge",
     "servicios": "Dienstleistungen",
     "contacto": "Kontakt",
-    "canalAlbergue": "Herbergskanal",
+    "canalAlbergue": "Herbergs-Kanal",
     "canalPublicoDesc": "Öffentliche Fragen und Antworten",
     "mensajePrivado": "Private Nachricht",
-    "mensajePrivadoDesc": "Nur du und der Hospitalero",
+    "mensajePrivadoDesc": "Nur du und der Herbergswirt",
     "llamarWhatsapp": "Anrufen oder WhatsApp",
     "webOficial": "Offizielle Website",
-    "comentarioPlaceholder": "Teilen Sie Ihre Erfahrung in dieser Herberge mit…",
+    "comentarioPlaceholder": "Teile deine Erfahrung in dieser Herberge…",
     "tipo": {
-      "municipal": "Städtisch",
+      "municipal": "Kommunal",
       "privado": "Privat",
-      "parroquial": "Pfarrgemeinde",
-      "asociacion": "Verband"
+      "parroquial": "Pfarrei",
+      "asociacion": "Vereinigung"
     },
     "servicios_labels": {
       "wifi": "WiFi",
@@ -97,7 +97,7 @@
       "lavadora": "Waschmaschine",
       "secadora": "Trockner",
       "parking_bici": "Fahrradparkplatz",
-      "taquillas": "Schließfächer",
+      "taquillas": "Spinde",
       "aire_acond": "Klimaanlage",
       "calefaccion": "Heizung",
       "piscina": "Schwimmbad",
@@ -119,26 +119,27 @@
     "registro": "Registrierung",
     "iniciar_sesion": "Anmelden",
     "cerrar_sesion": "Abmelden",
+    "con_cuenta": "Hast du bereits ein Konto? Melde dich an",
     "email": "E-Mail",
     "contrasena": "Passwort",
     "saltar": "Überspringen",
     "login": {
-      "titulo_email": "Melde dich an oder registriere dich, um fortzufahren",
+      "titulo_email": "Melde dich an oder registriere dich zum Fortfahren",
       "titulo_password": "Geben Sie Ihr Passwort ein",
       "subtitulo_email": "Greifen Sie auf deinen Weg, deine Etappen und deine Pilgergemeinde zu.",
       "label_email": "E-Mail-Adresse",
       "placeholder_email": "deineemail@email.com",
-      "comprobando": "Überprüfen...",
+      "comprobando": "Wird überprüft...",
       "continuar_email": "Mit E-Mail fortfahren",
       "google": "Mit Google anmelden",
       "no_cuenta": "Hast du noch kein Konto?",
       "registrate": "Kostenlos registrieren",
       "no_puedes": "Kannst du dich nicht anmelden?",
-      "haz_clic": "Klick hier",
+      "haz_clic": "Klicke hier",
       "label_password": "Passwort",
       "placeholder_password": "Dein Passwort",
-      "olvidaste": "Passwort vergessen?",
-      "entrando": "Melden Sie sich an...",
+      "olvidaste": "Hast du dein Passwort vergessen?",
+      "entrando": "Wird angemeldet...",
       "entrar": "Anmelden",
       "volver": "← Zurück"
     },
@@ -147,8 +148,8 @@
       "de": "von",
       "saltar": "Überspringen",
       "titulo_paso1": "Beginne deinen Weg",
-      "subtitulo_paso1": "Erstelle dein Pilgerkonto und trete der Gemeinschaft bei.",
-      "bienvenido": "Willkommen! Es sieht so aus, als wärst du neu bei Dein Weg 🐚",
+      "subtitulo_paso1": "Erstelle dein Pilgerkonto und treten Sie der Gemeinde bei.",
+      "bienvenido": "Willkommen! Es scheint, dass du neu bei Dein Weg bist 🐚",
       "google": "Mit Google registrieren",
       "o_email": "oder mit E-Mail",
       "label_nombre": "Dein Name",
@@ -158,10 +159,10 @@
       "placeholder_password": "Mindestens 8 Zeichen",
       "siguiente": "Weiter",
       "ya_tienes": "Hast du bereits ein Konto?",
-      "inicia_sesion": "Melde dich an",
+      "inicia_sesion": "Anmelden",
       "titulo_paso2": "Wie wirst du den Weg machen?",
-      "subtitulo_paso2": "Damit wir dir die relevantesten Herbergen und Etappen zeigen können.",
-      "de_donde": "Woher kommst du?",
+      "subtitulo_paso2": "So können wir dir die relevantesten Herbergen und Etappen zeigen.",
+      "de_donde": "Von wo kommst du?",
       "creando": "Konto wird erstellt...",
       "comenzar": "🐚 Beginne den Weg",
       "volver": "← Zurück",
@@ -169,8 +170,8 @@
     },
     "confirmar": {
       "titulo": "Überprüfe deine E-Mail",
-      "descripcion": "Wir haben dir einen Bestätigungslink gesendet. Klicken Sie darauf, um Ihr Konto zu aktivieren und mit dem Weg zu beginnen.",
-      "spam": "Siehst du die E-Mail nicht? Überprüfen Sie Ihren Spam- oder Junk-Mail-Ordner.",
+      "descripcion": "Wir haben dir einen Bestätigungslink gesendet. Klicke darauf, um dein Konto zu aktivieren und deinen Weg zu beginnen.",
+      "spam": "Siehst du die E-Mail nicht? Überprüfe deinen Spam- oder Junk-Mail-Ordner.",
       "volver": "Zurück zur Anmeldung"
     }
   },
@@ -185,9 +186,9 @@
     "nombre_placeholder": "Dein Pilgername",
     "como_haces": "Wie machst du den Weg?",
     "con_quien": "Mit wem gehst du?",
-    "como_organizas": "Wie organisierst du den Weg?",
+    "como_organizas": "Wie organisierst du deinen Weg?",
     "cuantas_veces": "Wie oft hast du den Weg gemacht?",
-    "primera_vez": "Erste Zeit",
+    "primera_vez": "Erstes Mal",
     "progreso": "Fortschritt",
     "completado": "abgeschlossen",
     "etapas_restantes": "verbleibende Etappen",
@@ -197,7 +198,7 @@
     "sesion": "Sitzung",
     "cerrar_sesion": "Abmelden",
     "guardar_idioma": "Speichern",
-    "empty_camino": "Wenn du eine Etappe abgeschlossen hast, wird sie hier angezeigt.",
+    "empty_camino": "Wenn du eine Etappe abschließt, wird sie hier angezeigt.",
     "empty_resenas": "Deine Bewertungen von Herbergen und Etappen werden hier angezeigt.",
     "empty_fotos": "Fotos, die du bei Etappen und Herbergen hochlädst, werden hier angezeigt.",
     "tabs": {
@@ -219,38 +220,44 @@
       "subtitulo_seccion": "Alles, was du brauchst,",
       "subtitulo_acento": "an einem Ort",
       "idiomas_titulo": "7 Sprachen",
-      "idiomas_desc": "Verfügbar in Spanisch, Englisch, Deutsch, Französisch, Italienisch, Portugiesisch und Koreanisch. Der Jakobswegführer für Pilger aus aller Welt.",
+      "idiomas_desc": "Verfügbar in Spanisch, Englisch, Deutsch, Französisch, Italienisch, Portugiesisch und Koreanisch. Der Leitfaden des Camino de Santiago für Pilger aus aller Welt.",
       "albergues_titulo": "Alle Herbergen des Weges",
-      "albergues_desc": "Vollständiges Verzeichnis von Herbergen mit verfügbaren Plätzen, Preisen, Dienstleistungen und aktuellen Kontaktinformationen.",
+      "albergues_desc": "Umfassendes Verzeichnis von Herbergen mit verfügbaren Plätzen, Preisen, Dienstleistungen und aktuellen Kontaktinformationen.",
       "pois_titulo": "Sehenswürdigkeiten und Höhe",
       "pois_desc": "Detaillierte Karten mit Höhenprofil, Quellen, Herbergen, Kirchen, Restaurants und anderen Sehenswürdigkeiten entlang jeder Etappe.",
-      "meteo_titulo": "Wettermeldungen",
+      "meteo_titulo": "Wetterverhältnisse",
       "meteo_desc": "Wettervorhersage für jede Etappe mit Daten zu Temperatur, Niederschlag und Wind. Planen Sie Ihren Tag mit aktuellen Informationen."
     },
     "mapa": {
       "explorar": "Erkunden",
       "titulo": "Der Französische Weg",
       "subtitulo": "825 km · 34 Etappen · Saint-Jean → Santiago",
-      "ver_etapas": "Etappen ansehen →"
+      "ver_etapas": "Etappen anzeigen →"
     },
     "cta_final": {
       "eyebrow": "Beginne deinen Weg",
       "titulo": "Dein Weg,",
       "titulo_acento": "deine Geschichte.",
-      "descripcion": "Plane deine Etappen, konsultiere Herbergen und greifen auf alle Informationen zu, die du für den Jakobsweg brauchst.",
+      "descripcion": "Plane deine Etappen, konsultiere Herbergen und greife auf alle Informationen zu, die du brauchst, um den Camino de Santiago zu gehen.",
       "boton": "Kostenlos beginnen",
       "nota": "Keine Kreditkarte erforderlich · Immer kostenlos für Pilger"
     }
   },
+  "landing": {
+    "siente_el": "Spüre den",
+    "camino": "Weg.",
+    "subtitulo": "Plane, erkunde und erlebe den Camino de Santiago",
+    "descubre": "Erkunde den Weg"
+  },
   "etapa": {
-    "mapa": "Etappenkarte",
-    "perfil": "Etappenprofil",
-    "tiempo_ruta": "Zeit auf der Route",
-    "recorrido": "Route",
+    "mapa": "Karte der Etappe",
+    "perfil": "Profil der Etappe",
+    "tiempo_ruta": "Gehzeit",
+    "recorrido": "Strecke",
     "albergues": "Herbergen",
     "a_lo_largo": "Entlang der Etappe",
     "consejos": "Wegratschläge",
-    "experiencias": "Wegefahrungen",
+    "experiencias": "Wegesfahrungen",
     "comentarios": "Kommentare",
     "check": {
       "completada": "Etappe abgeschlossen",
@@ -265,40 +272,40 @@
     "perfil_elevacion": {
       "cota_max": "Max. Höhe",
       "cota_min": "Min. Höhe",
-      "desnivel_pos": "Höhenunterschied +",
-      "desnivel_neg": "Höhenunterschied −"
+      "desnivel_pos": "Anstieg +",
+      "desnivel_neg": "Abstieg −"
     },
     "pois": {
       "todos": "Alle",
       "servicios": "Dienstleistungen",
       "patrimonio": "Kulturerbe",
-      "entorno": "Umgebung",
+      "entorno": "Natur",
       "tipos": {
-        "fuente": "Wasserquellen",
+        "fuente": "Wassquellen",
         "restaurante": "Restaurants",
-        "supermercado": "Läden",
+        "supermercado": "Geschäfte",
         "farmacia": "Apotheken",
-        "medico": "Ärzte",
+        "medico": "Arzt",
         "albergue_rural": "Landherbergen",
-        "area_descanso": "Rastplätze",
+        "area_descanso": "Ruhebereiche",
         "mirador": "Aussichtspunkte",
         "refugio": "Schutzhütten",
         "iglesia": "Kirchen",
         "capilla": "Kapellen",
-        "ermita": "Eremitagen",
+        "ermita": "Einsiedeleien",
         "cruceiro": "Wegkreuze",
         "monumento": "Denkmäler",
         "yacimiento": "Ausgrabungsstätten",
         "puente": "Brücken",
-        "otro": "Sonstiges"
+        "otro": "Sonstige"
       }
     },
     "meteo": {
       "hoy": "Heute",
       "precipitacion": "Niederschlag",
-      "viento": "Maximaler Wind",
-      "prob": "Wahrsch.",
-      "fuente": "Open-Meteo · Vorhersage bis zu 16 Tagen",
+      "viento": "Maximale Windgeschwindigkeit",
+      "prob": "Wahrscheinlichkeit",
+      "fuente": "Open-Meteo · Vorhersage bis 16 Tage",
       "error": "Wettervorhersage konnte nicht geladen werden",
       "cargando": "Vorhersage wird geladen…",
       "dias": [
@@ -317,32 +324,32 @@
         "3": "Bewölkt",
         "45": "Nebel",
         "48": "Nebel mit Reif",
-        "51": "Leichte Nieselregen",
-        "53": "Mäßiger Nieselregen",
-        "55": "Dichter Nieselregen",
+        "51": "Leichter Niesel",
+        "53": "Mäßiger Niesel",
+        "55": "Dichter Niesel",
         "61": "Leichter Regen",
         "63": "Mäßiger Regen",
         "65": "Starker Regen",
         "71": "Leichter Schneefall",
         "73": "Mäßiger Schneefall",
         "75": "Starker Schneefall",
-        "80": "Leichte Schauer",
-        "81": "Mäßige Schauer",
-        "82": "Starke Schauer",
+        "80": "Leichte Regenschauer",
+        "81": "Mäßige Regenschauer",
+        "82": "Starke Regenschauer",
         "95": "Gewitter",
         "99": "Gewitter mit Hagel"
       },
       "viento_label": {
         "calma": "Windstille",
-        "flojo": "Leicht",
-        "moderado": "Mäßig",
+        "flojo": "Schwach",
+        "moderado": "Moderat",
         "fuerte": "Stark",
         "muy_fuerte": "Sehr stark"
       },
       "lluvia_label": {
         "sin_lluvia": "Kein Regen",
         "ligera": "Leicht",
-        "moderada": "Mäßig",
+        "moderada": "Moderat",
         "intensa": "Intensiv"
       }
     }
@@ -351,8 +358,8 @@
     "comentarios": {
       "titulo": "Kommentare",
       "cargando": "Kommentare werden geladen...",
-      "primero": "Schreiben Sie den ersten Kommentar zu dieser Etappe.",
-      "placeholder_respuesta": "Geben Sie Ihre Antwort ein...",
+      "primero": "Sei der erste, der diese Etappe kommentiert.",
+      "placeholder_respuesta": "Schreibe deine Antwort...",
       "tu_valoracion": "Deine Bewertung:",
       "enviando": "Wird gesendet...",
       "publicar": "Veröffentlichen",
@@ -362,18 +369,18 @@
       "editar": "Bearbeiten",
       "eliminar": "Löschen",
       "editado": "bearbeitet",
-      "inicia_sesion": "Melde dich an",
-      "para_comentar": "zum Kommentieren.",
-      "hospitalero": "Hospitalero"
+      "inicia_sesion": "Melden Sie sich an",
+      "para_comentar": "um zu kommentieren.",
+      "hospitalero": "Herbergswirt"
     },
     "panel": {
       "valoracion_peregrinos": "Pilgerbewertung",
       "valoracion": "Bewertung",
       "valoraciones": "Bewertungen",
       "tu_valoracion": "Deine Bewertung",
-      "valora_etapa": "Bewerten Sie diese Etappe",
+      "valora_etapa": "Bewerte diese Etappe",
       "como_describirias": "Wie würdest du diese Etappe beschreiben?",
-      "banner_texto": "Treten Sie der Pilgergemeinde bei, um Etappen zu bewerten, Kommentare zu hinterlassen und Ihre Wegefahrung zu teilen.",
+      "banner_texto": "Treten Sie der Pilgergemeinde bei, um Etappen zu bewerten, Kommentare zu hinterlassen und deine Camino-Erfahrung zu teilen.",
       "iniciar_sesion": "Anmelden",
       "crear_cuenta": "Konto erstellen"
     },
@@ -389,13 +396,13 @@
       "util": "Hilfreich",
       "bonito": "Schön",
       "dificil": "Schwierig",
-      "cuidado": "Vorsicht"
+      "cuidado": "Achtung"
     },
     "etapa_placeholder": "Wie war deine Erfahrung auf dieser Etappe? Erzähle uns...",
-    "albergue_placeholder": "Teilen Sie Ihre Erfahrung in dieser Herberge mit…"
+    "albergue_placeholder": "Teile deine Erfahrung in dieser Herberge…"
   },
   "mapa": {
-    "toca_explorar": "Tippen zum Erkunden",
+    "toca_explorar": "Zum Erkunden tippen",
     "cargando_etapas": "Etappen werden geladen...",
     "tu_posicion": "Deine Position",
     "sectores": "Französischer Weg · Sektoren",
