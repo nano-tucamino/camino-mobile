@@ -44,3 +44,14 @@ export async function apiDelete(path: string): Promise<void> {
   });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
 }
+
+export async function apiPut<T>(path: string, body: unknown): Promise<T> {
+  const headers = await getHeaders();
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}

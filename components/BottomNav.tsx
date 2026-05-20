@@ -212,7 +212,7 @@ export default function BottomNav() {
 const styles = StyleSheet.create({
   wrapper: {
     position: "absolute",
-    bottom: 24,
+    bottom: 34,
     left: 16,
     right: 16,
     alignItems: "center",

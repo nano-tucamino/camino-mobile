@@ -25,5 +25,15 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  return { session, user, loading };
+  const signOut = async () => {
+    await supabase.auth.signOut();
+  };
+
+  return {
+    session,
+    user,
+    loading,
+    token: session?.access_token ?? null,
+    signOut,
+  };
 }
