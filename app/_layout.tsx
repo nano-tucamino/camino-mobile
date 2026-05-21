@@ -57,8 +57,14 @@ export default function RootLayout() {
       segs[1] !== "login" &&
       segs[1] !== "confirmar" &&
       segs[1] !== "callback";
+
     if (!session && isProtected) {
       router.replace("/(auth)/login");
+    }
+
+    // NUEVO: si hay sesión y estamos en login, ir al perfil
+    if (session && inAuth && segs[1] === "login") {
+      router.replace("/(auth)/perfil/" as any);
     }
   }, [session, loading, segs]);
 
