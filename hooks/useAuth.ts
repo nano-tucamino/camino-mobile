@@ -38,9 +38,9 @@ export function useAuth() {
       options: {
         redirectTo: redirectUrl,
         skipBrowserRedirect: true,
+        scopes: "email profile",
       },
     });
-
     if (error || !data?.url) return { error };
 
     // Usar openBrowserAsync en lugar de openAuthSessionAsync

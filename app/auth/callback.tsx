@@ -17,14 +17,31 @@ export default function AuthCallback() {
       }
 
       setStatus("URL recibida ✓");
+
+      // Implicit flow: token en el fragment (#access_token=...)
+      // Expo Linking pone el fragment en queryParams también
       const parsed = Linking.parse(url);
       const params = (parsed.queryParams as Record<string, string>) ?? {};
 
-      if (params.code) {
-        setStatus("Verificando código...");
-        const { error } = await supabase.auth.exchangeCodeForSession(
-          params.code,
+      // Intentar extraer del fragment manualmente si no está en queryParams
+      let accessToken = params.access_token;
+      let refreshToken = params.refresh_token;
+
+      if (!accessToken && url.includes("#")) {
+        const fragment = url.split("#")[1];
+        const fragmentParams = Object.fromEntries(
+          fragment.split("&").map((p) => p.split("=").map(decodeURIComponent)),
         );
+        accessToken = fragmentParams.access_token;
+        refreshToken = fragmentParams.refresh_token;
+      }
+
+      if (accessToken) {
+        setStatus("Estableciendo sesión...");
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken ?? "",
+        });
         if (error) {
           setStatus(`Error: ${error.message}`);
           setTimeout(() => router.replace("/(auth)/login"), 3000);
@@ -35,16 +52,17 @@ export default function AuthCallback() {
         return;
       }
 
-      if (params.access_token) {
-        setStatus("Estableciendo sesión...");
-        const { error } = await supabase.auth.setSession({
-          access_token: params.access_token,
-          refresh_token: params.refresh_token ?? "",
-        });
+      // PKCE flow: code
+      if (params.code) {
+        setStatus("Verificando código...");
+        const { error } = await supabase.auth.exchangeCodeForSession(
+          params.code,
+        );
         if (error) {
           setStatus(`Error: ${error.message}`);
           setTimeout(() => router.replace("/(auth)/login"), 3000);
         } else {
+          setStatus("Sesión iniciada ✓");
           router.replace("/(auth)/perfil/" as any);
         }
         return;
