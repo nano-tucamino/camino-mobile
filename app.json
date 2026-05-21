@@ -27,13 +27,7 @@
         {
           "action": "VIEW",
           "autoVerify": true,
-          "data": [
-            {
-              "scheme": "caminomobile",
-              "host": "auth",
-              "pathPrefix": "/callback"
-            }
-          ],
+          "data": [{ "scheme": "caminomobile" }],
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ]

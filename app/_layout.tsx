@@ -8,42 +8,73 @@ import { useAuth } from "../hooks/useAuth";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import { supabase } from "../lib/supabase";
 
+function extractTokensFromUrl(url: string): {
+  accessToken?: string;
+  refreshToken?: string;
+  code?: string;
+} {
+  // Extraer del fragment (#access_token=...)
+  let accessToken: string | undefined;
+  let refreshToken: string | undefined;
+  let code: string | undefined;
+
+  if (url.includes("#")) {
+    const fragment = url.split("#")[1];
+    const params = Object.fromEntries(
+      fragment.split("&").map((p) => {
+        const [k, v] = p.split("=");
+        return [k, v ? decodeURIComponent(v) : ""];
+      }),
+    );
+    accessToken = params.access_token;
+    refreshToken = params.refresh_token;
+  }
+
+  // Extraer del query string (?code=... o ?access_token=...)
+  if (url.includes("?")) {
+    const query = url.split("?")[1].split("#")[0];
+    const params = Object.fromEntries(
+      query.split("&").map((p) => {
+        const [k, v] = p.split("=");
+        return [k, v ? decodeURIComponent(v) : ""];
+      }),
+    );
+    if (!accessToken) accessToken = params.access_token;
+    if (!refreshToken) refreshToken = params.refresh_token;
+    code = params.code;
+  }
+
+  return { accessToken, refreshToken, code };
+}
+
 export default function RootLayout() {
   const { session, loading } = useAuth();
   const router = useRouter();
   const segs = useSegments() as string[];
 
-  // Procesar deep links de OAuth
   useEffect(() => {
-    const handleUrl = async (url: string) => {
+    const handleUrl = async (url: string | null) => {
       if (!url || !url.startsWith("caminomobile://")) return;
 
-      const parsed = Linking.parse(url);
-      const params = (parsed.queryParams ?? {}) as Record<string, string>;
+      const { accessToken, refreshToken, code } = extractTokensFromUrl(url);
 
-      if (params.code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(
-          params.code,
-        );
-        if (!error) {
-          router.replace("/(auth)/perfil/" as any);
-        } else {
-          router.replace("/(auth)/login");
-        }
-      } else if (params.access_token) {
-        await supabase.auth.setSession({
-          access_token: params.access_token,
-          refresh_token: params.refresh_token ?? "",
+      if (accessToken) {
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken ?? "",
         });
-        router.replace("/(auth)/perfil/" as any);
-      } else {
-        router.replace("/(auth)/login");
+        if (!error) router.replace("/(auth)/perfil/" as any);
+        return;
+      }
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!error) router.replace("/(auth)/perfil/" as any);
+        return;
       }
     };
 
-    Linking.getInitialURL().then((url) => {
-      if (url) handleUrl(url);
-    });
+    Linking.getInitialURL().then(handleUrl);
     const sub = Linking.addEventListener("url", ({ url }) => handleUrl(url));
     return () => sub.remove();
   }, []);
@@ -61,8 +92,6 @@ export default function RootLayout() {
     if (!session && isProtected) {
       router.replace("/(auth)/login");
     }
-
-    // NUEVO: si hay sesión y estamos en login, ir al perfil
     if (session && inAuth && segs[1] === "login") {
       router.replace("/(auth)/perfil/" as any);
     }
