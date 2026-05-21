@@ -5,8 +5,6 @@ import { makeRedirectUri } from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { supabase } from "../lib/supabase";
 
-WebBrowser.maybeCompleteAuthSession();
-
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -40,18 +38,17 @@ export function useAuth() {
       options: {
         redirectTo: redirectUrl,
         skipBrowserRedirect: true,
-        queryParams: { access_type: "offline", prompt: "consent" },
       },
     });
 
     if (error || !data?.url) return { error };
 
-    const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
-
-    if (result.type === "success" && result.url) {
-      // El callback.tsx se encarga de procesar la URL
-      // onAuthStateChange actualizará la sesión automáticamente
-    }
+    // Usar openBrowserAsync en lugar de openAuthSessionAsync
+    // Android manejará el deep link automáticamente
+    await WebBrowser.openBrowserAsync(data.url, {
+      showInRecents: false,
+      dismissButtonStyle: "close",
+    });
 
     return { error: null };
   };
