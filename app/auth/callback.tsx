@@ -22,7 +22,7 @@ export default function AuthCallback() {
           params.code,
         );
         if (!error) {
-          router.replace("/(auth)/perfil");
+          router.replace("/(auth)/perfil/" as any);
           return;
         }
       }
@@ -33,7 +33,7 @@ export default function AuthCallback() {
           access_token: params.access_token,
           refresh_token: params.refresh_token ?? "",
         });
-        router.replace("/(auth)/perfil");
+        router.replace("/(auth)/perfil/" as any);
         return;
       }
 
