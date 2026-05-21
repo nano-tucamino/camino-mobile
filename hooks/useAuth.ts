@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { makeRedirectUri } from "expo-auth-session";
-import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import { supabase } from "../lib/supabase";
 
@@ -41,6 +40,7 @@ export function useAuth() {
       options: {
         redirectTo: redirectUrl,
         skipBrowserRedirect: true,
+        queryParams: { access_type: "offline", prompt: "consent" },
       },
     });
 
@@ -49,13 +49,8 @@ export function useAuth() {
     const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
 
     if (result.type === "success" && result.url) {
-      const { params } = QueryParams.getQueryParams(result.url);
-      if (params.access_token) {
-        await supabase.auth.setSession({
-          access_token: params.access_token,
-          refresh_token: params.refresh_token,
-        });
-      }
+      // El callback.tsx se encarga de procesar la URL
+      // onAuthStateChange actualizará la sesión automáticamente
     }
 
     return { error: null };

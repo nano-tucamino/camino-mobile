@@ -3,25 +3,58 @@ import "../lib/i18n";
 import { useEffect } from "react";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as Linking from "expo-linking";
 import { useAuth } from "../hooks/useAuth";
 import { NavigationProvider } from "@/contexts/NavigationContext";
+import { supabase } from "../lib/supabase";
 
 export default function RootLayout() {
   const { session, loading } = useAuth();
   const router = useRouter();
-  const segments = useSegments();
+  const segs = useSegments() as string[];
 
+  // Procesar deep links de OAuth
+  useEffect(() => {
+    const handleUrl = async (url: string) => {
+      if (!url || !url.startsWith("caminomobile://")) return;
+
+      const parsed = Linking.parse(url);
+      const params = (parsed.queryParams ?? {}) as Record<string, string>;
+
+      if (params.code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(
+          params.code,
+        );
+        if (!error) router.replace("/(auth)/perfil");
+      } else if (params.access_token) {
+        await supabase.auth.setSession({
+          access_token: params.access_token,
+          refresh_token: params.refresh_token ?? "",
+        });
+        router.replace("/(auth)/perfil");
+      }
+    };
+
+    Linking.getInitialURL().then((url) => {
+      if (url) handleUrl(url);
+    });
+    const sub = Linking.addEventListener("url", ({ url }) => handleUrl(url));
+    return () => sub.remove();
+  }, []);
+
+  // Guard de auth
   useEffect(() => {
     if (loading) return;
-    const inAuthGroup = segments[0] === "(auth)";
-    const segs = segments as string[];
-    const inProtectedRoute =
-      inAuthGroup && segs[1] !== "login" && segs[1] !== "confirmar";
-
-    if (!session && inProtectedRoute) {
+    const inAuth = segs[0] === "(auth)";
+    const isProtected =
+      inAuth &&
+      segs[1] !== "login" &&
+      segs[1] !== "confirmar" &&
+      segs[1] !== "callback";
+    if (!session && isProtected) {
       router.replace("/(auth)/login");
     }
-  }, [session, loading, segments]);
+  }, [session, loading, segs]);
 
   return (
     <NavigationProvider>
