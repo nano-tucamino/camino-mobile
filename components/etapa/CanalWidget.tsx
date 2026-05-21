@@ -460,3 +460,4 @@ const s = StyleSheet.create({
   },
   loginText: { fontSize: 14, fontWeight: "600" },
 });
+

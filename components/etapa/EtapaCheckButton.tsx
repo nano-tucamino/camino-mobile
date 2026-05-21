@@ -363,3 +363,4 @@ const s = StyleSheet.create({
   },
   guardarText: { fontSize: 13, fontWeight: "700", color: "white" },
 });
+

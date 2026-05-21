@@ -4,40 +4,39 @@ import { useEffect } from "react";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as Linking from "expo-linking";
-import { useAuth } from "../hooks/useAuth";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import { supabase } from "../lib/supabase";
 
-function extractTokensFromUrl(url: string): {
-  accessToken?: string;
-  refreshToken?: string;
-  code?: string;
-} {
-  // Extraer del fragment (#access_token=...)
+function extractTokensFromUrl(url: string) {
   let accessToken: string | undefined;
   let refreshToken: string | undefined;
   let code: string | undefined;
 
   if (url.includes("#")) {
-    const fragment = url.split("#")[1];
     const params = Object.fromEntries(
-      fragment.split("&").map((p) => {
-        const [k, v] = p.split("=");
-        return [k, v ? decodeURIComponent(v) : ""];
-      }),
+      url
+        .split("#")[1]
+        .split("&")
+        .map((p) => {
+          const [k, v] = p.split("=");
+          return [k, v ? decodeURIComponent(v) : ""];
+        }),
     );
     accessToken = params.access_token;
     refreshToken = params.refresh_token;
   }
 
-  // Extraer del query string (?code=... o ?access_token=...)
   if (url.includes("?")) {
-    const query = url.split("?")[1].split("#")[0];
     const params = Object.fromEntries(
-      query.split("&").map((p) => {
-        const [k, v] = p.split("=");
-        return [k, v ? decodeURIComponent(v) : ""];
-      }),
+      url
+        .split("?")[1]
+        .split("#")[0]
+        .split("&")
+        .map((p) => {
+          const [k, v] = p.split("=");
+          return [k, v ? decodeURIComponent(v) : ""];
+        }),
     );
     if (!accessToken) accessToken = params.access_token;
     if (!refreshToken) refreshToken = params.refresh_token;
@@ -47,7 +46,8 @@ function extractTokensFromUrl(url: string): {
   return { accessToken, refreshToken, code };
 }
 
-export default function RootLayout() {
+// Componente interno que ya tiene acceso al AuthContext
+function AppNavigator() {
   const { session, loading } = useAuth();
   const router = useRouter();
   const segs = useSegments() as string[];
@@ -55,7 +55,6 @@ export default function RootLayout() {
   useEffect(() => {
     const handleUrl = async (url: string | null) => {
       if (!url || !url.startsWith("caminomobile://")) return;
-
       const { accessToken, refreshToken, code } = extractTokensFromUrl(url);
 
       if (accessToken) {
@@ -79,7 +78,6 @@ export default function RootLayout() {
     return () => sub.remove();
   }, []);
 
-  // Guard de auth
   useEffect(() => {
     if (loading) return;
     const inAuth = segs[0] === "(auth)";
@@ -104,3 +102,13 @@ export default function RootLayout() {
     </NavigationProvider>
   );
 }
+
+// Root: AuthProvider envuelve todo
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <AppNavigator />
+    </AuthProvider>
+  );
+}
+

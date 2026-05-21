@@ -15,7 +15,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 const API_URL =
   process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com";
@@ -931,3 +931,4 @@ const styles = StyleSheet.create({
   },
   btnSecondaryText: { fontSize: 14, color: "#8B7355" },
 });
+

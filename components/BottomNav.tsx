@@ -10,7 +10,7 @@ import { useRouter, useSegments } from "expo-router";
 import { useTranslation } from "react-i18next";
 import Svg, { Path } from "react-native-svg";
 import { useNavigation } from "@/contexts/NavigationContext";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 const GOLD = "#D4AF72";
 const SOFT = "#999";

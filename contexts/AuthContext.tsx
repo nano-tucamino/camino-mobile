@@ -1,11 +1,28 @@
-// 📄 hooks/useAuth.ts
-import { useState, useEffect } from "react";
+// 📄 contexts/AuthContext.tsx
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { makeRedirectUri } from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { supabase } from "../lib/supabase";
 
-export function useAuth() {
+interface AuthContextType {
+  session: Session | null;
+  user: User | null;
+  loading: boolean;
+  token: string | null;
+  signInWithGoogle: () => Promise<{ error: any }>;
+  signInWithEmail: (email: string, password: string) => Promise<{ error: any }>;
+  signUpWithEmail: (
+    email: string,
+    password: string,
+    nombre: string,
+  ) => Promise<{ error: any }>;
+  signOut: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,10 +58,9 @@ export function useAuth() {
         scopes: "email profile",
       },
     });
+
     if (error || !data?.url) return { error };
 
-    // Usar openBrowserAsync en lugar de openAuthSessionAsync
-    // Android manejará el deep link automáticamente
     await WebBrowser.openBrowserAsync(data.url, {
       showInRecents: false,
       dismissButtonStyle: "close",
@@ -78,15 +94,27 @@ export function useAuth() {
     await supabase.auth.signOut();
   };
 
-  return {
-    session,
-    user,
-    loading,
-    token: session?.access_token ?? null,
-    signInWithGoogle,
-    signInWithEmail,
-    signUpWithEmail,
-    signOut,
-  };
+  return (
+    <AuthContext.Provider
+      value={{
+        session,
+        user,
+        loading,
+        token: session?.access_token ?? null,
+        signInWithGoogle,
+        signInWithEmail,
+        signUpWithEmail,
+        signOut,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  return ctx;
 }
 

@@ -1363,3 +1363,4 @@ const s = StyleSheet.create({
   },
   retryText: { color: C.blanco, fontWeight: "600" },
 });
+

@@ -811,3 +811,4 @@ const styles = StyleSheet.create({
     color: TINTA_SOFT,
   },
 });
+

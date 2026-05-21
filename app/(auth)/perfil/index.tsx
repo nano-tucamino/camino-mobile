@@ -18,7 +18,7 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
 import { apiGet, apiPut, apiPost, apiDelete } from "@/lib/api";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 const STATUS_BAR_HEIGHT =
   Platform.OS === "ios" ? 50 : (StatusBar.currentHeight ?? 24);
@@ -1168,3 +1168,4 @@ const s = StyleSheet.create({
   },
   btnLogoutText: { color: C.rojo, fontSize: 14, fontWeight: "500" },
 });
+

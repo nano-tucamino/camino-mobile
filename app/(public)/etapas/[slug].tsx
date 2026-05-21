@@ -2063,3 +2063,4 @@ const g = StyleSheet.create({
   valorText: { fontSize: 13, color: "#8B7355", marginLeft: 6 },
   sinValor: { fontSize: 13, color: "#8B7355" },
 });
+

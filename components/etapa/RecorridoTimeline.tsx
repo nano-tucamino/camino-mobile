@@ -890,3 +890,4 @@ const styles = StyleSheet.create({
   chevron: { fontSize: 18, color: "#B4A890", marginLeft: 2 },
   chevronOpen: { transform: [{ rotate: "90deg" }] },
 });
+

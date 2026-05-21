@@ -72,3 +72,4 @@ const s = StyleSheet.create({
   },
   btnText: { fontSize: 14, color: C.tinta, fontWeight: "500" },
 });
+

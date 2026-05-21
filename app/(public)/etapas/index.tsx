@@ -26,7 +26,7 @@ import {
   CheckCircle2,
   Circle as CircleIcon,
 } from "lucide-react-native";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 const API_BASE = "https://camino-api.onrender.com/api";
 const LOGO_URL =
@@ -712,3 +712,4 @@ const styles = StyleSheet.create({
   },
   selloWrapper: { opacity: 0.82, transform: [{ rotate: "-18deg" }] },
 });
+

@@ -754,3 +754,4 @@ const sg = StyleSheet.create({
   },
   dotActive: { backgroundColor: "white", width: 18 },
 });
+
