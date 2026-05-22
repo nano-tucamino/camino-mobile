@@ -27,7 +27,11 @@
         {
           "action": "VIEW",
           "autoVerify": true,
-          "data": [{ "scheme": "caminomobile" }],
+          "data": [
+            {
+              "scheme": "caminomobile"
+            }
+          ],
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
@@ -35,7 +39,17 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-router", "expo-web-browser"],
+    "plugins": [
+      "expo-router",
+      "expo-web-browser",
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsDownloadToken": "pk.eyJ1IjoibmFuZG94aWRvIiwiYSI6ImNta3pjZnN5bDAwMHczZXF6bXVkeXE0cXMifQ.IJUckGYoJ-0s7cWXCvpeIg"
+        }
+      ]
+    ],
+
     "extra": {
       "router": {},
       "eas": {

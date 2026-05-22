@@ -1140,6 +1140,7 @@ export type Database = {
           updated_at: string;
           verificado: boolean;
           verificado_at: string | null;
+          visible_en_mapa: boolean | null;
           web: string | null;
           whatsapp: string | null;
         };
@@ -1172,6 +1173,7 @@ export type Database = {
           updated_at?: string;
           verificado?: boolean;
           verificado_at?: string | null;
+          visible_en_mapa?: boolean | null;
           web?: string | null;
           whatsapp?: string | null;
         };
@@ -1204,6 +1206,7 @@ export type Database = {
           updated_at?: string;
           verificado?: boolean;
           verificado_at?: string | null;
+          visible_en_mapa?: boolean | null;
           web?: string | null;
           whatsapp?: string | null;
         };

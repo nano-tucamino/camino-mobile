@@ -3,16 +3,21 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL!;
 
 async function getHeaders(): Promise<HeadersInit> {
   const { supabase } = await import("./supabase");
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+
+  let session = (await supabase.auth.getSession()).data.session;
+
+  // Si no hay sesión, intentar refresh
+  if (!session?.access_token) {
+    const { data } = await supabase.auth.refreshSession();
+    session = data.session;
+  }
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
 
   if (session?.access_token) {
-    headers["X-Auth-Token"] = session.access_token;
+    headers["Authorization"] = `Bearer ${session.access_token}`;
   }
 
   return headers;
@@ -55,4 +60,3 @@ export async function apiPut<T>(path: string, body: unknown): Promise<T> {
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
-
