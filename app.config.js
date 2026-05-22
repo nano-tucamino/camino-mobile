@@ -37,16 +37,7 @@ export default {
     web: {
       favicon: "./assets/favicon.png",
     },
-    plugins: [
-      "expo-router",
-      "expo-web-browser",
-      [
-        "@rnmapbox/maps",
-        {
-          RNMapboxMapsDownloadToken: process.env.MAPBOX_DOWNLOADS_TOKEN,
-        },
-      ],
-    ],
+    plugins: ["expo-router", "expo-web-browser", "@rnmapbox/maps"],
     extra: {
       router: {},
       eas: {
