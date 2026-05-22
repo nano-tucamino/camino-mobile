@@ -207,6 +207,31 @@
       "resenas": "Avaliações",
       "fotos": "Fotos",
       "config": "Config"
+    },
+    "camino_label": "Caminho",
+    "peregrino": "Peregrino",
+    "foto_actualizada": "Foto atualizada",
+    "cerrar_sesion_confirm": "Tem certeza de que deseja fazer logout?",
+    "transporte_otro_placeholder": "Qual meio de transporte?",
+    "transporte": {
+      "a_pie": "A pé",
+      "bici": "Bicicleta",
+      "otro": "Outro"
+    },
+    "modalidad": {
+      "solo": "Sozinho",
+      "pareja": "Em casal",
+      "grupo": "Em grupo",
+      "familia": "Em família",
+      "familia_ninos": "Família com crianças"
+    },
+    "modo": {
+      "continuo": "De uma vez",
+      "continuo_sub": "Dia após dia sem parar",
+      "etapas_fds": "Fins de semana",
+      "etapas_fds_sub": "Etapas em dias alternados",
+      "etapas_sueltas": "Etapas isoladas",
+      "etapas_sueltas_sub": "Sem ordem nem continuidade"
     }
   },
   "general": {

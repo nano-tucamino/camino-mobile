@@ -207,6 +207,31 @@
       "resenas": "Bewertungen",
       "fotos": "Fotos",
       "config": "Einstellungen"
+    },
+    "camino_label": "Weg",
+    "peregrino": "Pilger",
+    "foto_actualizada": "Foto aktualisiert",
+    "cerrar_sesion_confirm": "Bist du sicher, dass du dich abmelden möchtest?",
+    "transporte_otro_placeholder": "Welches Verkehrsmittel?",
+    "transporte": {
+      "a_pie": "Zu Fuß",
+      "bici": "Fahrrad",
+      "otro": "Sonstiges"
+    },
+    "modalidad": {
+      "solo": "Allein",
+      "pareja": "Zu zweit",
+      "grupo": "In einer Gruppe",
+      "familia": "Mit der Familie",
+      "familia_ninos": "Familie mit Kindern"
+    },
+    "modo": {
+      "continuo": "Auf einmal",
+      "continuo_sub": "Tag für Tag ohne Unterbrechung",
+      "etapas_fds": "Wochenenden",
+      "etapas_fds_sub": "Etappen an einzelnen Tagen",
+      "etapas_sueltas": "Einzelne Etappen",
+      "etapas_sueltas_sub": "Ohne Reihenfolge oder Kontinuität"
     }
   },
   "general": {

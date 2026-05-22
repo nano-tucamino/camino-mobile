@@ -207,6 +207,31 @@
       "resenas": "レビュー",
       "fotos": "写真",
       "config": "設定"
+    },
+    "camino_label": "カミーノ",
+    "peregrino": "巡礼者",
+    "foto_actualizada": "写真が更新されました",
+    "cerrar_sesion_confirm": "ログアウトしてもよろしいですか？",
+    "transporte_otro_placeholder": "どの交通手段ですか？",
+    "transporte": {
+      "a_pie": "徒歩",
+      "bici": "自転車",
+      "otro": "その他"
+    },
+    "modalidad": {
+      "solo": "一人",
+      "pareja": "二人",
+      "grupo": "グループ",
+      "familia": "家族",
+      "familia_ninos": "子供連れの家族"
+    },
+    "modo": {
+      "continuo": "一度に",
+      "continuo_sub": "毎日休まず歩く",
+      "etapas_fds": "週末",
+      "etapas_fds_sub": "個別の日の区間",
+      "etapas_sueltas": "個別の区間",
+      "etapas_sueltas_sub": "順序や継続性なし"
     }
   },
   "general": {

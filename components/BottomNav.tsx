@@ -166,7 +166,7 @@ export default function BottomNav() {
       key: "index",
       label: t("nav.mapa"),
       Icon: IconMapa,
-      onPress: () => router.push("/(public)/"),
+      onPress: () => router.push("/(public)/mapa"),
     },
     {
       key: "etapas",
@@ -208,10 +208,7 @@ export default function BottomNav() {
     >
       <TouchableOpacity activeOpacity={1} onPress={showNav} style={styles.pill}>
         {tabs.map(({ key, label, Icon, onPress }) => {
-          const active =
-            currentTab === key ||
-            (key === "index" &&
-              (currentTab === "(public)" || currentTab === "index"));
+          const active = currentTab === key;
           return (
             <TouchableOpacity
               key={key}

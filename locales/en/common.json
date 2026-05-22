@@ -207,6 +207,31 @@
       "resenas": "Reviews",
       "fotos": "Photos",
       "config": "Settings"
+    },
+    "camino_label": "Route",
+    "peregrino": "Pilgrim",
+    "foto_actualizada": "Photo updated",
+    "cerrar_sesion_confirm": "Are you sure you want to log out?",
+    "transporte_otro_placeholder": "What transportation method?",
+    "transporte": {
+      "a_pie": "On foot",
+      "bici": "Bike",
+      "otro": "Other"
+    },
+    "modalidad": {
+      "solo": "Solo",
+      "pareja": "As a couple",
+      "grupo": "In a group",
+      "familia": "As a family",
+      "familia_ninos": "Family with children"
+    },
+    "modo": {
+      "continuo": "All at once",
+      "continuo_sub": "Day after day without stopping",
+      "etapas_fds": "Weekends",
+      "etapas_fds_sub": "Stages on separate days",
+      "etapas_sueltas": "Separate stages",
+      "etapas_sueltas_sub": "Without order or continuity"
     }
   },
   "general": {

@@ -207,6 +207,31 @@
       "resenas": "평가",
       "fotos": "사진",
       "config": "설정"
+    },
+    "camino_label": "카미노",
+    "peregrino": "순례자",
+    "foto_actualizada": "사진이 업데이트되었습니다",
+    "cerrar_sesion_confirm": "로그아웃하시겠습니까?",
+    "transporte_otro_placeholder": "어떤 교통수단으로?",
+    "transporte": {
+      "a_pie": "도보",
+      "bici": "자전거",
+      "otro": "기타"
+    },
+    "modalidad": {
+      "solo": "혼자",
+      "pareja": "짝",
+      "grupo": "그룹",
+      "familia": "가족",
+      "familia_ninos": "어린이 동반 가족"
+    },
+    "modo": {
+      "continuo": "한 번에",
+      "continuo_sub": "매일 계속 진행",
+      "etapas_fds": "주말",
+      "etapas_fds_sub": "개별 날짜의 구간",
+      "etapas_sueltas": "개별 구간",
+      "etapas_sueltas_sub": "순서 없이 연속성 없음"
     }
   },
   "general": {

@@ -189,6 +189,11 @@
     "como_organizas": "¿Cómo organizas el Camino?",
     "cuantas_veces": "¿Cuántas veces has hecho el Camino?",
     "primera_vez": "Primera vez",
+    "camino_label": "Camino",
+    "peregrino": "Peregrino",
+    "foto_actualizada": "Foto actualizada",
+    "cerrar_sesion_confirm": "¿Seguro que quieres cerrar sesión?",
+    "transporte_otro_placeholder": "¿En qué medio?",
     "progreso": "Progreso",
     "completado": "completado",
     "etapas_restantes": "etapas restantes",
@@ -207,6 +212,26 @@
       "resenas": "Reseñas",
       "fotos": "Fotos",
       "config": "Config"
+    },
+    "transporte": {
+      "a_pie": "A pie",
+      "bici": "Bici",
+      "otro": "Otro"
+    },
+    "modalidad": {
+      "solo": "Solo",
+      "pareja": "En pareja",
+      "grupo": "En grupo",
+      "familia": "En familia",
+      "familia_ninos": "Familia con niños"
+    },
+    "modo": {
+      "continuo": "De una vez",
+      "continuo_sub": "Día a día sin parar",
+      "etapas_fds": "Fines de semana",
+      "etapas_fds_sub": "Etapas en días sueltos",
+      "etapas_sueltas": "Etapas sueltas",
+      "etapas_sueltas_sub": "Sin orden ni continuidad"
     }
   },
   "general": {

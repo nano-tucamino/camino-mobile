@@ -326,15 +326,7 @@ export default function EtapaScreen() {
           }}
         >
           <ColapsableSection color={color} title="Mapa de la etapa" defaultOpen>
-            <View style={g.mapaPlaceholder}>
-              <Text style={{ fontSize: 40, marginBottom: 8 }}>🗺️</Text>
-              <Text style={[{ fontSize: 16, fontWeight: "700" }, { color }]}>
-                Mapa interactivo
-              </Text>
-              <Text style={{ fontSize: 12, color: "#8B7355", marginTop: 4 }}>
-                Mapbox — próxima sesión
-              </Text>
-            </View>
+            g.mapaPlaceholder
           </ColapsableSection>
 
           {waypoints.some((w: Waypoint) => w.elevacion != null) && (
@@ -2062,5 +2054,19 @@ const g = StyleSheet.create({
   valorRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   valorText: { fontSize: 13, color: "#8B7355", marginLeft: 6 },
   sinValor: { fontSize: 13, color: "#8B7355" },
-});
 
+  mapaBtn: {
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    padding: 24,
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderRadius: 12,
+    backgroundColor: "#F5F0E8",
+    width: "100%",
+  },
+  mapaBtnIcon: { fontSize: 40 },
+  mapaBtnText: { fontSize: 16, fontWeight: "700" },
+  mapaBtnSub: { fontSize: 12, color: "#8B7355" },
+});

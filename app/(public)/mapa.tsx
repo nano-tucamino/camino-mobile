@@ -20,6 +20,7 @@ import Mapbox, {
   UserTrackingMode,
 } from "@rnmapbox/maps";
 import { useTranslation } from "react-i18next";
+import { useLocalSearchParams } from "expo-router";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const API_URL =
@@ -81,8 +82,8 @@ export default function MapaScreen() {
     pois: true,
     negocios: false,
   });
+  const { etapa: etapaSlug } = useLocalSearchParams<{ etapa?: string }>();
 
-  // Cargar trazado completo
   useEffect(() => {
     const cargarRecorrido = async () => {
       try {
@@ -90,6 +91,14 @@ export default function MapaScreen() {
         if (!res.ok) throw new Error("Error cargando recorrido");
         const data: RecorridoGeoJSON = await res.json();
         setRecorrido(data);
+
+        // Si venimos desde una etapa, centrar en ella
+        if (etapaSlug && data.features) {
+          const feature = data.features.find(
+            (f: EtapaFeature) => f.properties.slug === etapaSlug,
+          );
+          if (feature) mostrarPanel(feature);
+        }
       } catch {
         setError(true);
       } finally {

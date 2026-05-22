@@ -282,11 +282,15 @@ export default function PerfilScreen() {
       setModalidad(perfilRes.perfil.modalidad_camino ?? "");
       setModoCamino(perfilRes.perfil.modo_camino ?? "");
       setNumeroCaminos(perfilRes.perfil.numero_caminos ?? 1);
-      setIdioma(perfilRes.perfil.idioma_preferido ?? "es");
       setAvatarUrl(perfilRes.perfil.avatar_url ?? null);
       setEtapasCompletadas(etapasRes.etapasCompletadas ?? []);
       setTotalEtapas(etapasRes.totalEtapas ?? 34);
       setComentarios(comentariosRes.comentarios ?? []);
+
+      // Aplicar idioma guardado en perfil
+      const idiomaGuardado = perfilRes.perfil.idioma_preferido ?? "es";
+      setIdioma(idiomaGuardado);
+      i18n.changeLanguage(idiomaGuardado);
     } catch {
       Alert.alert(t("general.error"));
     } finally {

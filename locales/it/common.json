@@ -207,6 +207,31 @@
       "resenas": "Recensioni",
       "fotos": "Foto",
       "config": "Config"
+    },
+    "camino_label": "Cammino",
+    "peregrino": "Pellegrino",
+    "foto_actualizada": "Foto aggiornata",
+    "cerrar_sesion_confirm": "Sei sicuro che vuoi disconnetterti?",
+    "transporte_otro_placeholder": "Con quale mezzo?",
+    "transporte": {
+      "a_pie": "A piedi",
+      "bici": "Bici",
+      "otro": "Altro"
+    },
+    "modalidad": {
+      "solo": "Da solo",
+      "pareja": "In coppia",
+      "grupo": "In gruppo",
+      "familia": "In famiglia",
+      "familia_ninos": "Famiglia con bambini"
+    },
+    "modo": {
+      "continuo": "In una volta",
+      "continuo_sub": "Giorno dopo giorno senza fermarsi",
+      "etapas_fds": "Fine settimana",
+      "etapas_fds_sub": "Tappe in giorni separati",
+      "etapas_sueltas": "Tappe separate",
+      "etapas_sueltas_sub": "Senza ordine né continuità"
     }
   },
   "general": {
