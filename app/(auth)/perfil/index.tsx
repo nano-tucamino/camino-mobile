@@ -219,7 +219,7 @@ const pillS = StyleSheet.create({
 // ─── Pantalla principal ───────────────────────────────────────
 export default function PerfilScreen() {
   const { t, i18n } = useTranslation();
-  const { user, token, signOut } = useAuth();
+  const { user, token, signOut, session } = useAuth();
 
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [email, setEmail] = useState("");
@@ -255,8 +255,10 @@ export default function PerfilScreen() {
   ];
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (session) {
+      loadData();
+    }
+  }, [session]);
 
   async function loadData() {
     try {
@@ -1168,4 +1170,3 @@ const s = StyleSheet.create({
   },
   btnLogoutText: { color: C.rojo, fontSize: 14, fontWeight: "500" },
 });
-
