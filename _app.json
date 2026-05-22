@@ -34,7 +34,8 @@
           ],
           "category": ["BROWSABLE", "DEFAULT"]
         }
-      ]
+      ],
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -45,7 +46,7 @@
       [
         "@rnmapbox/maps",
         {
-          "RNMapboxMapsDownloadToken": "pk.eyJ1IjoibmFuZG94aWRvIiwiYSI6ImNta3pjZnN5bDAwMHczZXF6bXVkeXE0cXMifQ.IJUckGYoJ-0s7cWXCvpeIg"
+          "RNMapboxMapsDownloadToken": "MAPBOX_DOWNLOADS_TOKEN"
         }
       ]
     ],
