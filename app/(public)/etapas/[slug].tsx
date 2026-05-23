@@ -326,7 +326,21 @@ export default function EtapaScreen() {
           }}
         >
           <ColapsableSection color={color} title="Mapa de la etapa" defaultOpen>
-            g.mapaPlaceholder
+            <TouchableOpacity
+              style={[g.mapaBtn, { borderColor: color }]}
+              onPress={() =>
+                router.push(`/(public)/mapa?etapa=${etapa.slug}` as any)
+              }
+              activeOpacity={0.85}
+            >
+              <Text style={[g.mapaBtnIcon, { color }]}>🗺️</Text>
+              <Text style={[g.mapaBtnText, { color }]}>
+                Ver etapa en el mapa
+              </Text>
+              <Text style={g.mapaBtnSub}>
+                {etapa.inicio_nombre} → {etapa.fin_nombre}
+              </Text>
+            </TouchableOpacity>
           </ColapsableSection>
 
           {waypoints.some((w: Waypoint) => w.elevacion != null) && (

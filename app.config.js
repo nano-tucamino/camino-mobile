@@ -37,7 +37,18 @@ export default {
     web: {
       favicon: "./assets/favicon.png",
     },
-    plugins: ["expo-router", "expo-web-browser", "@rnmapbox/maps"],
+    plugins: [
+      "expo-router",
+      "expo-web-browser",
+      "@rnmapbox/maps",
+      [
+        "expo-location",
+        {
+          locationAlwaysAndWhenInUsePermission:
+            "Allow $(PRODUCT_NAME) to access your location even when you are not using the app.",
+        },
+      ],
+    ],
     extra: {
       router: {},
       eas: {

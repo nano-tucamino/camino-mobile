@@ -46,7 +46,6 @@ function extractTokensFromUrl(url: string) {
   return { accessToken, refreshToken, code };
 }
 
-// Componente interno que ya tiene acceso al AuthContext
 function AppNavigator() {
   const { session, loading } = useAuth();
   const router = useRouter();
@@ -80,6 +79,10 @@ function AppNavigator() {
 
   useEffect(() => {
     if (loading) return;
+
+    const inRoot = segs.length === 0 || segs[0] === undefined;
+    const inLanding =
+      inRoot || (segs[0] !== "(auth)" && segs[0] !== "(public)");
     const inAuth = segs[0] === "(auth)";
     const isProtected =
       inAuth &&
@@ -87,9 +90,19 @@ function AppNavigator() {
       segs[1] !== "confirmar" &&
       segs[1] !== "callback";
 
+    // Si hay sesión y está en la landing → ir directo a la app
+    if (session && inLanding) {
+      router.replace("/(public)" as any);
+      return;
+    }
+
+    // Si no hay sesión y trata de acceder a zona protegida
     if (!session && isProtected) {
       router.replace("/(auth)/login");
+      return;
     }
+
+    // Si hay sesión y está en login → ir al perfil
     if (session && inAuth && segs[1] === "login") {
       router.replace("/(auth)/perfil/" as any);
     }
@@ -103,7 +116,6 @@ function AppNavigator() {
   );
 }
 
-// Root: AuthProvider envuelve todo
 export default function RootLayout() {
   return (
     <AuthProvider>
@@ -111,4 +123,3 @@ export default function RootLayout() {
     </AuthProvider>
   );
 }
-

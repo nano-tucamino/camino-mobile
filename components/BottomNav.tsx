@@ -163,7 +163,7 @@ export default function BottomNav() {
 
   const tabs = [
     {
-      key: "index",
+      key: "mapa",
       label: t("nav.mapa"),
       Icon: IconMapa,
       onPress: () => router.push("/(public)/mapa"),

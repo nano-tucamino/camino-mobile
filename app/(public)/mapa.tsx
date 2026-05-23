@@ -8,27 +8,25 @@ import {
   ActivityIndicator,
   Dimensions,
   Animated,
-  ScrollView,
 } from "react-native";
 import Mapbox, {
   MapView,
   Camera,
   ShapeSource,
   LineLayer,
+  CircleLayer,
   UserLocation,
   UserLocationRenderMode,
   UserTrackingMode,
 } from "@rnmapbox/maps";
-import { useTranslation } from "react-i18next";
-import { useLocalSearchParams } from "expo-router";
+import * as Location from "expo-location";
+import { useLocalSearchParams, router } from "expo-router";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const API_URL =
   process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN ?? "");
 
-// Coordenadas del Camino Francés — Saint-Jean → Santiago
 const CAMINO_BOUNDS = {
   center: [-3.5, 42.6] as [number, number],
   zoom: 6,
@@ -67,23 +65,34 @@ type CapasVisibles = {
 };
 
 export default function MapaScreen() {
-  const { t } = useTranslation();
   const cameraRef = useRef<Camera>(null);
   const panelAnim = useRef(new Animated.Value(0)).current;
+  const { etapa: etapaSlug } = useLocalSearchParams<{ etapa?: string }>();
 
   const [recorrido, setRecorrido] = useState<RecorridoGeoJSON | null>(null);
+  const [marcadores, setMarcadores] =
+    useState<GeoJSON.FeatureCollection | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [etapaSeleccionada, setEtapaSeleccionada] =
     useState<EtapaFeature | null>(null);
   const [gpsActivo, setGpsActivo] = useState(false);
+  const [permisoGPS, setPermisoGPS] = useState(false);
   const [capas, setCapas] = useState<CapasVisibles>({
     albergues: true,
     pois: true,
     negocios: false,
   });
-  const { etapa: etapaSlug } = useLocalSearchParams<{ etapa?: string }>();
 
+  // Pedir permiso GPS al montar
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      setPermisoGPS(status === "granted");
+    })();
+  }, []);
+
+  // Cargar trazado completo
   useEffect(() => {
     const cargarRecorrido = async () => {
       try {
@@ -92,7 +101,6 @@ export default function MapaScreen() {
         const data: RecorridoGeoJSON = await res.json();
         setRecorrido(data);
 
-        // Si venimos desde una etapa, centrar en ella
         if (etapaSlug && data.features) {
           const feature = data.features.find(
             (f: EtapaFeature) => f.properties.slug === etapaSlug,
@@ -108,17 +116,39 @@ export default function MapaScreen() {
     cargarRecorrido();
   }, []);
 
-  // Animar panel inferior
+  // Cargar marcadores cuando se selecciona etapa
+  useEffect(() => {
+    if (!etapaSeleccionada) return;
+    const cargarMarcadores = async () => {
+      try {
+        const slug = etapaSeleccionada.properties.slug;
+        const res = await fetch(`${API_URL}/api/mapa/etapa/${slug}`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const features = [
+          ...(capas.albergues ? (data.albergues?.features ?? []) : []),
+          ...(capas.pois ? (data.pois?.features ?? []) : []),
+        ];
+
+        setMarcadores({ type: "FeatureCollection", features });
+      } catch {
+        // silencioso
+      }
+    };
+    cargarMarcadores();
+  }, [etapaSeleccionada, capas.albergues, capas.pois]);
+
   const mostrarPanel = useCallback(
     (etapa: EtapaFeature) => {
       setEtapaSeleccionada(etapa);
+      setMarcadores(null);
       Animated.spring(panelAnim, {
         toValue: 1,
         useNativeDriver: true,
         tension: 65,
         friction: 11,
       }).start();
-      // Centrar cámara en la etapa
       cameraRef.current?.setCamera({
         centerCoordinate: [
           etapa.properties.centro_lng,
@@ -137,7 +167,10 @@ export default function MapaScreen() {
       useNativeDriver: true,
       tension: 65,
       friction: 11,
-    }).start(() => setEtapaSeleccionada(null));
+    }).start(() => {
+      setEtapaSeleccionada(null);
+      setMarcadores(null);
+    });
   }, [panelAnim]);
 
   const panelTranslateY = panelAnim.interpolate({
@@ -149,15 +182,17 @@ export default function MapaScreen() {
     setCapas((prev) => ({ ...prev, [capa]: !prev[capa] }));
   };
 
-  const centrarEnPosicion = () => {
+  const centrarEnPosicion = async () => {
+    if (!permisoGPS) {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+      setPermisoGPS(true);
+    }
     setGpsActivo(true);
-    // followUserLocation se controla via prop en <Camera>, no en setCamera
-    // setGpsActivo(true) hace que Camera re-renderice con followUserLocation={true}
   };
 
   const volverAlCamino = () => {
     setGpsActivo(false);
-    setEtapaSeleccionada(null);
     cerrarPanel();
     cameraRef.current?.setCamera({
       centerCoordinate: CAMINO_BOUNDS.center,
@@ -166,7 +201,6 @@ export default function MapaScreen() {
     });
   };
 
-  // Separar etapas principales de variantes
   const etapasPrincipales =
     recorrido?.features.filter((f) => !f.properties.es_variante) ?? [];
   const variantes =
@@ -180,6 +214,20 @@ export default function MapaScreen() {
   const geojsonVariantes: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",
     features: variantes as unknown as GeoJSON.Feature[],
+  };
+
+  const marcadoresAlbergues: GeoJSON.FeatureCollection = {
+    type: "FeatureCollection",
+    features: (marcadores?.features ?? []).filter(
+      (f) => f.properties?._layer === "albergue",
+    ),
+  };
+
+  const marcadoresPois: GeoJSON.FeatureCollection = {
+    type: "FeatureCollection",
+    features: (marcadores?.features ?? []).filter(
+      (f) => f.properties?._layer === "poi",
+    ),
   };
 
   if (loading) {
@@ -235,12 +283,10 @@ export default function MapaScreen() {
           />
         )}
 
-        {/* GPS del usuario */}
-        {gpsActivo && (
+        {gpsActivo && permisoGPS && (
           <UserLocation visible renderMode={UserLocationRenderMode.Normal} />
         )}
 
-        {/* Trazado principal — línea amarilla */}
         {etapasPrincipales.length > 0 && (
           <ShapeSource
             id="camino-principal"
@@ -250,7 +296,6 @@ export default function MapaScreen() {
               if (feature?.properties?.etapa_id) mostrarPanel(feature);
             }}
           >
-            {/* Sombra/borde para legibilidad */}
             <LineLayer
               id="camino-principal-borde"
               style={{
@@ -261,7 +306,6 @@ export default function MapaScreen() {
                 lineJoin: "round",
               }}
             />
-            {/* Línea amarilla principal */}
             <LineLayer
               id="camino-principal-linea"
               style={{
@@ -275,7 +319,6 @@ export default function MapaScreen() {
           </ShapeSource>
         )}
 
-        {/* Variantes — línea amarilla punteada más tenue */}
         {variantes.length > 0 && (
           <ShapeSource
             id="camino-variantes"
@@ -299,7 +342,6 @@ export default function MapaScreen() {
           </ShapeSource>
         )}
 
-        {/* Marcador etapa seleccionada */}
         {etapaSeleccionada && (
           <ShapeSource
             id="etapa-highlight"
@@ -320,65 +362,77 @@ export default function MapaScreen() {
             />
           </ShapeSource>
         )}
+
+        {capas.albergues && marcadoresAlbergues.features.length > 0 && (
+          <ShapeSource
+            id="albergues-markers"
+            shape={marcadoresAlbergues}
+            onPress={(e) => {
+              const props = e.features?.[0]?.properties;
+              if (props?.slug)
+                router.push(`/(public)/albergues/${props.slug}` as any);
+            }}
+          >
+            <CircleLayer
+              id="albergues-circle"
+              style={{
+                circleRadius: 7,
+                circleColor: "#2D5016",
+                circleStrokeWidth: 2,
+                circleStrokeColor: "#fff",
+                circleOpacity: 0.9,
+              }}
+            />
+          </ShapeSource>
+        )}
+
+        {capas.pois && marcadoresPois.features.length > 0 && (
+          <ShapeSource id="pois-markers" shape={marcadoresPois}>
+            <CircleLayer
+              id="pois-circle"
+              style={{
+                circleRadius: 5,
+                circleColor: "#C8A96E",
+                circleStrokeWidth: 1.5,
+                circleStrokeColor: "#fff",
+                circleOpacity: 0.85,
+              }}
+            />
+          </ShapeSource>
+        )}
       </MapView>
 
-      {/* Botones flotantes — esquina superior derecha */}
       <View style={styles.botonesFlotantes}>
-        {/* GPS */}
         <TouchableOpacity
           style={[styles.botonFlotante, gpsActivo && styles.botonActivo]}
           onPress={gpsActivo ? volverAlCamino : centrarEnPosicion}
         >
           <Text style={styles.botonIcono}>{gpsActivo ? "⊙" : "◎"}</Text>
         </TouchableOpacity>
-
-        {/* Volver vista completa */}
         <TouchableOpacity style={styles.botonFlotante} onPress={volverAlCamino}>
           <Text style={styles.botonIcono}>⊞</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Filtros de capas — esquina inferior izquierda */}
       <View style={styles.filtrosContainer}>
-        <TouchableOpacity
-          style={[styles.filtroBtn, capas.albergues && styles.filtroActivo]}
-          onPress={() => toggleCapa("albergues")}
-        >
-          <Text
-            style={[
-              styles.filtroText,
-              capas.albergues && styles.filtroTextoActivo,
-            ]}
+        {(["albergues", "pois", "negocios"] as const).map((capa) => (
+          <TouchableOpacity
+            key={capa}
+            style={[styles.filtroBtn, capas[capa] && styles.filtroActivo]}
+            onPress={() => toggleCapa(capa)}
           >
-            Albergues
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filtroBtn, capas.pois && styles.filtroActivo]}
-          onPress={() => toggleCapa("pois")}
-        >
-          <Text
-            style={[styles.filtroText, capas.pois && styles.filtroTextoActivo]}
-          >
-            POIs
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filtroBtn, capas.negocios && styles.filtroActivo]}
-          onPress={() => toggleCapa("negocios")}
-        >
-          <Text
-            style={[
-              styles.filtroText,
-              capas.negocios && styles.filtroTextoActivo,
-            ]}
-          >
-            Negocios
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.filtroText,
+                capas[capa] && styles.filtroTextoActivo,
+              ]}
+            >
+              {capa.charAt(0).toUpperCase() + capa.slice(1)}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
-      {/* Panel inferior — detalle de etapa */}
       {etapaSeleccionada && (
         <Animated.View
           style={[
@@ -386,9 +440,7 @@ export default function MapaScreen() {
             { transform: [{ translateY: panelTranslateY }] },
           ]}
         >
-          {/* Handle */}
           <View style={styles.panelHandle} />
-
           <View style={styles.panelHeader}>
             <View style={styles.panelEtapaBadge}>
               <Text style={styles.panelEtapaNum}>
@@ -417,7 +469,6 @@ export default function MapaScreen() {
             </Text>
           )}
 
-          {/* Stats */}
           <View style={styles.statsRow}>
             <View style={styles.stat}>
               <Text style={styles.statValor}>
@@ -447,8 +498,14 @@ export default function MapaScreen() {
             </View>
           </View>
 
-          {/* CTA */}
-          <TouchableOpacity style={styles.ctaBtn}>
+          <TouchableOpacity
+            style={styles.ctaBtn}
+            onPress={() =>
+              router.push(
+                `/(public)/etapas/${etapaSeleccionada.properties.slug}` as any,
+              )
+            }
+          >
             <Text style={styles.ctaText}>Ver ficha completa</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -458,13 +515,8 @@ export default function MapaScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1a1a1a",
-  },
-  map: {
-    flex: 1,
-  },
+  container: { flex: 1, backgroundColor: "#1a1a1a" },
+  map: { flex: 1 },
   centered: {
     flex: 1,
     alignItems: "center",
@@ -472,28 +524,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F0E8",
     gap: 16,
   },
-  loadingText: {
-    fontSize: 15,
-    color: "#8B6914",
-    fontFamily: "System",
-    marginTop: 8,
-  },
-  errorText: {
-    fontSize: 15,
-    color: "#666",
-  },
+  loadingText: { fontSize: 15, color: "#8B6914", marginTop: 8 },
+  errorText: { fontSize: 15, color: "#666" },
   retryBtn: {
     backgroundColor: "#C8A96E",
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
   },
-  retryText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-
-  // Botones flotantes
+  retryText: { color: "#fff", fontWeight: "600" },
   botonesFlotantes: {
     position: "absolute",
     top: 100,
@@ -513,15 +552,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
-  botonActivo: {
-    backgroundColor: "#F5C842",
-  },
-  botonIcono: {
-    fontSize: 20,
-    color: "#333",
-  },
-
-  // Filtros
+  botonActivo: { backgroundColor: "#F5C842" },
+  botonIcono: { fontSize: 20, color: "#333" },
   filtrosContainer: {
     position: "absolute",
     bottom: 120,
@@ -540,19 +572,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  filtroActivo: {
-    backgroundColor: "#2D5016",
-  },
-  filtroText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#333",
-  },
-  filtroTextoActivo: {
-    color: "#fff",
-  },
-
-  // Panel inferior
+  filtroActivo: { backgroundColor: "#2D5016" },
+  filtroText: { fontSize: 12, fontWeight: "600", color: "#333" },
+  filtroTextoActivo: { color: "#fff" },
   panel: {
     position: "absolute",
     bottom: 80,
@@ -584,11 +606,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 6,
   },
-  panelEtapaBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
+  panelEtapaBadge: { flexDirection: "row", alignItems: "center", gap: 8 },
   panelEtapaNum: {
     fontSize: 12,
     fontWeight: "700",
@@ -602,11 +620,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 10,
   },
-  varianteText: {
-    fontSize: 10,
-    color: "#2D5016",
-    fontWeight: "600",
-  },
+  varianteText: { fontSize: 10, color: "#2D5016", fontWeight: "600" },
   cerrarBtn: {
     width: 28,
     height: 28,
@@ -615,10 +629,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  cerrarText: {
-    fontSize: 12,
-    color: "#666",
-  },
+  cerrarText: { fontSize: 12, color: "#666" },
   panelNombre: {
     fontSize: 17,
     fontWeight: "700",
@@ -626,11 +637,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     lineHeight: 22,
   },
-  panelRuta: {
-    fontSize: 13,
-    color: "#888",
-    marginBottom: 16,
-  },
+  panelRuta: { fontSize: 13, color: "#888", marginBottom: 16 },
   statsRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -640,10 +647,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     marginBottom: 16,
   },
-  stat: {
-    flex: 1,
-    alignItems: "center",
-  },
+  stat: { flex: 1, alignItems: "center" },
   statValor: {
     fontSize: 15,
     fontWeight: "700",
@@ -656,20 +660,12 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  statDivider: {
-    width: 1,
-    height: 32,
-    backgroundColor: "#DDD",
-  },
+  statDivider: { width: 1, height: 32, backgroundColor: "#DDD" },
   ctaBtn: {
     backgroundColor: "#2D5016",
     paddingVertical: 13,
     borderRadius: 12,
     alignItems: "center",
   },
-  ctaText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "700",
-  },
+  ctaText: { color: "#fff", fontSize: 15, fontWeight: "700" },
 });
