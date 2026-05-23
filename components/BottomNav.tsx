@@ -153,14 +153,6 @@ export default function BottomNav() {
     }
   };
 
-  const handleMensajes = () => {
-    if (session) {
-      router.push("/(public)/albergues"); // TODO: ruta mensajes cuando exista
-    } else {
-      router.push("/(auth)/login");
-    }
-  };
-
   const tabs = [
     {
       key: "mapa",
@@ -180,12 +172,16 @@ export default function BottomNav() {
       Icon: IconAlbergues,
       onPress: () => router.push("/(public)/albergues"),
     },
-    {
-      key: "mensajes",
-      label: t("nav.mensajes"),
-      Icon: IconMensajes,
-      onPress: handleMensajes,
-    },
+    ...(session
+      ? [
+          {
+            key: "mensajes",
+            label: t("nav.mensajes"),
+            Icon: IconMensajes,
+            onPress: () => router.push("/(private)/mensajes"),
+          },
+        ]
+      : []),
     {
       key: "perfil",
       label: t("nav.perfil"),

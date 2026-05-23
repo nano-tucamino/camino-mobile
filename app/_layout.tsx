@@ -1,12 +1,14 @@
 // 📄 app/_layout.tsx
 import "../lib/i18n";
 import { useEffect } from "react";
+import { View } from "react-native";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as Linking from "expo-linking";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import { supabase } from "../lib/supabase";
+import BottomNav from "@/components/BottomNav";
 
 function extractTokensFromUrl(url: string) {
   let accessToken: string | undefined;
@@ -51,6 +53,8 @@ function AppNavigator() {
   const router = useRouter();
   const segs = useSegments() as string[];
 
+  const showNav = segs.length > 0 && segs[0] !== undefined;
+
   useEffect(() => {
     const handleUrl = async (url: string | null) => {
       if (!url || !url.startsWith("caminomobile://")) return;
@@ -90,19 +94,16 @@ function AppNavigator() {
       segs[1] !== "confirmar" &&
       segs[1] !== "callback";
 
-    // Si hay sesión y está en la landing → ir directo a la app
     if (session && inLanding) {
       router.replace("/(public)" as any);
       return;
     }
 
-    // Si no hay sesión y trata de acceder a zona protegida
     if (!session && isProtected) {
       router.replace("/(auth)/login");
       return;
     }
 
-    // Si hay sesión y está en login → ir al perfil
     if (session && inAuth && segs[1] === "login") {
       router.replace("/(auth)/perfil/" as any);
     }
@@ -110,8 +111,11 @@ function AppNavigator() {
 
   return (
     <NavigationProvider>
-      <Stack screenOptions={{ headerShown: false }} />
-      <StatusBar style="auto" />
+      <View style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false }} />
+        {showNav && <BottomNav />}
+        <StatusBar style="auto" />
+      </View>
     </NavigationProvider>
   );
 }

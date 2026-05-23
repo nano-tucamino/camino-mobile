@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
   RefreshControl,
   Image,
-  TextInput,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -33,13 +32,14 @@ import CanalWidget from "@/components/etapa/CanalWidget";
 import { useNavigation } from "@/contexts/NavigationContext";
 import { Linking } from "react-native";
 
+import { ChatRoom } from "@/components/chat/ChatRoom";
+import { getCanalEtapa } from "@/lib/chat";
+
 const { width: SW } = Dimensions.get("window");
 
-// ── Tipos ─────────────────────────────────────────────────────────────────────
 type Albergue = Tables<"albergues">;
 type Waypoint = Tables<"etapas_recorrido">;
 type Mensaje = Tables<"mensajes"> & { perfil?: { nombre_display: string } };
-type TipoAlb = Enums<"tipo_albergue">;
 
 interface EtapaFoto {
   url: string;
@@ -56,7 +56,6 @@ interface Consejo {
   [key: string]: any;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 function colorEtapa(n: number): string {
   if (n <= 5) return "#2D6A4F";
   if (n <= 9) return "#B5451B";
@@ -115,9 +114,6 @@ const CAT_ICON: Record<string, string> = {
 const TABS = ["mapa", "info", "albergues", "canal"] as const;
 type TabId = (typeof TABS)[number];
 
-// ═════════════════════════════════════════════════════════════════════════════
-// PANTALLA PRINCIPAL
-// ═════════════════════════════════════════════════════════════════════════════
 export default function EtapaScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { i18n } = useTranslation();
@@ -127,10 +123,10 @@ export default function EtapaScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("mapa");
-  const { onScroll: notifyScroll } = useNavigation();
-
   const [mensajesVistos, setMensajesVistos] = useState(0);
+  const [canalId, setCanalId] = useState<string | null>(null);
 
+  const { onScroll: notifyScroll } = useNavigation();
   const scrollRef = useRef<ScrollView>(null);
   const sectionY = useRef<Record<TabId, number>>({
     mapa: 0,
@@ -171,6 +167,14 @@ export default function EtapaScreen() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    if (data?.etapa?.id) {
+      getCanalEtapa(data.etapa.id)
+        .then(({ id }) => setCanalId(id))
+        .catch(() => {});
+    }
+  }, [data?.etapa?.id]);
 
   const scrollToTab = (tab: TabId) => {
     setActiveTab(tab);
@@ -232,7 +236,7 @@ export default function EtapaScreen() {
 
   return (
     <View style={g.root}>
-      {/* Header sticky (fade) */}
+      {/* Header sticky */}
       <Animated.View style={[g.stickyHeader, { opacity: headerOpacity }]}>
         <TouchableOpacity onPress={() => router.back()} style={g.backBtn}>
           <Text style={g.backIcon}>‹</Text>
@@ -281,7 +285,7 @@ export default function EtapaScreen() {
           onBack={() => router.back()}
         />
 
-        {/* TABS — debajo del hero */}
+        {/* TABS */}
         <View style={g.tabsBar}>
           {TABS.map((tab) => (
             <TouchableOpacity
@@ -422,15 +426,13 @@ export default function EtapaScreen() {
                   : undefined
               }
             >
-              <CanalEtapa
-                mensajes={mensajes as Mensaje[]}
-                color={color}
-                lang={lang}
-              />
+              <View style={{ height: 480 }}>
+                <ChatRoom conversacionId={canalId} />
+              </View>
             </ColapsableSection>
           </View>
 
-          {/* CONSEJOS  */}
+          {/* CONSEJOS */}
           {(consejos as Consejo[]).length > 0 && (
             <ColapsableSection
               color={color}
@@ -469,7 +471,8 @@ export default function EtapaScreen() {
               ))}
             </ColapsableSection>
           )}
-          {/* --- COMENTARIOS --- */}
+
+          {/* EXPERIENCIAS */}
           <ColapsableSection
             color={color}
             title="Experiencias"
@@ -544,12 +547,13 @@ export default function EtapaScreen() {
         />
         <View style={{ height: 100 }} />
       </Animated.ScrollView>
+
       <CanalWidget
-        etapaId={etapa.id}
+        canalId={canalId}
         etapaNombre={nombre}
-        mensajes={mensajes}
         color={color}
         lang={lang}
+        tieneRecientes={(mensajes as Mensaje[]).length > 0}
         visto={mensajes.length - mensajesVistos === 0}
         onOpen={() => setMensajesVistos(mensajes.length)}
       />
@@ -557,9 +561,9 @@ export default function EtapaScreen() {
   );
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
-// HERO GALERÍA
-// ═════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// HERO GALERÍA — sin cambios
+// ═══════════════════════════════════════════════════════════════
 function HeroGaleria({
   fotos,
   nombre,
@@ -763,9 +767,9 @@ const h = StyleSheet.create({
   thumb: { flex: 1, overflow: "hidden", position: "relative" },
 });
 
-// ═════════════════════════════════════════════════════════════════════════════
-// COLAPSABLE SECTION
-// ═════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// COLAPSABLE SECTION — sin cambios
+// ═══════════════════════════════════════════════════════════════
 function ColapsableSection({
   color,
   title,
@@ -845,9 +849,9 @@ const cs = StyleSheet.create({
   body: { paddingHorizontal: 20, paddingBottom: 20 },
 });
 
-// ═════════════════════════════════════════════════════════════════════════════
-// PERFIL ELEVACIÓN
-// ═════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// PERFIL ELEVACIÓN — sin cambios
+// ═══════════════════════════════════════════════════════════════
 function PerfilElevacionRN({
   waypoints,
   color,
@@ -889,7 +893,6 @@ function PerfilElevacionRN({
   const PAD = { top: 16, right: 12, bottom: 28, left: 40 };
   const iW = W - PAD.left - PAD.right,
     iH = H - PAD.top - PAD.bottom;
-
   const minKm = puntos[0].km,
     maxKm = puntos[puntos.length - 1].km;
   const elevs = puntos.map((p) => p.ele);
@@ -1064,9 +1067,9 @@ const pe = StyleSheet.create({
   pillLabel: { fontSize: 9, color: "#8B7355", textAlign: "center" },
 });
 
-// ═════════════════════════════════════════════════════════════════════════════
-// METEO WIDGET
-// ═════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// METEO WIDGET — sin cambios
+// ═══════════════════════════════════════════════════════════════
 function MeteoWidget({
   lugarNombre,
   color,
@@ -1316,66 +1319,15 @@ const m = StyleSheet.create({
   fuente: { fontSize: 10, color: "#B4A890", textAlign: "right", marginTop: 4 },
 });
 
-// ═════════════════════════════════════════════════════════════════════════════
-// RECORRIDO TIMELINE
-// ═════════════════════════════════════════════════════════════════════════════
-
-const tl = StyleSheet.create({
-  lineBase: {
-    position: "absolute",
-    left: 10,
-    top: 12,
-    bottom: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: "#E8E0D0",
-    borderStyle: "dashed",
-  },
-  lineProgress: {
-    position: "absolute",
-    left: 10,
-    top: 12,
-    borderLeftWidth: 4,
-    borderStyle: "dashed",
-  },
-  row: { flexDirection: "row", gap: 16, zIndex: 2 },
-  dot: {
-    position: "absolute",
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    marginTop: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  dotInner: { width: 7, height: 7, borderRadius: 4 },
-  content: { flex: 1, marginLeft: 4, paddingTop: 2 },
-  wpHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    flexWrap: "wrap",
-    marginBottom: 3,
-  },
-  wpNom: { fontSize: 14, fontWeight: "700" },
-  kmBadge: { borderRadius: 999, paddingHorizontal: 7, paddingVertical: 2 },
-  kmText: { fontSize: 11, color: "white", fontWeight: "600" },
-  elev: { fontSize: 11, color: "#8B7355" },
-  diffBadge: { borderRadius: 999, paddingHorizontal: 7, paddingVertical: 2 },
-  diffText: { fontSize: 11, fontWeight: "700" },
-  desc: { fontSize: 13, color: "#8B7355", lineHeight: 19, marginTop: 2 },
-});
-
-// ═════════════════════════════════════════════════════════════════════════════
-// ALBERGUES POR LOCALIDAD
-// ═════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// ALBERGUES POR LOCALIDAD — sin cambios
+// ═══════════════════════════════════════════════════════════════
 const OCUP_COLOR_ETQ: Record<string, string> = {
   libre: "#16a34a",
   casi_lleno: "#ca8a04",
   completo: "#dc2626",
 };
 
-// Card expandible para albergues plus/premium
 function AlbergueCardDestacada({
   albergue,
   color,
@@ -1401,7 +1353,6 @@ function AlbergueCardDestacada({
         activeOpacity={0.7}
         style={[abl.cardChip, { borderColor: color }]}
       >
-        {/* Miniatura */}
         <View style={abl.miniatura}>
           {foto ? (
             <Image source={{ uri: foto }} style={abl.miniaturaImg} />
@@ -1409,8 +1360,6 @@ function AlbergueCardDestacada({
             <Text style={abl.miniaturaEmoji}>🏠</Text>
           )}
         </View>
-
-        {/* Info */}
         <View style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 6 }}>
           <Text style={abl.cardChipNombre} numberOfLines={1}>
             {albergue.nombre}
@@ -1427,8 +1376,6 @@ function AlbergueCardDestacada({
             {precio && <Text style={abl.cardChipPrecio}>{precio}</Text>}
           </View>
         </View>
-
-        {/* Badge + chevron */}
         <View
           style={{
             flexDirection: "row",
@@ -1450,7 +1397,6 @@ function AlbergueCardDestacada({
           </Text>
         </View>
       </TouchableOpacity>
-
       {abierto && (
         <View style={[abl.cardExpanded, { borderColor: color }]}>
           {foto && (
@@ -1561,10 +1507,8 @@ function AlberguesPorLocalidad({
                 ›
               </Text>
             </TouchableOpacity>
-
             {abierta && (
               <View>
-                {/* Albergues destacados — cards expandibles */}
                 {destacados.length > 0 && (
                   <View
                     style={{
@@ -1584,8 +1528,6 @@ function AlberguesPorLocalidad({
                     ))}
                   </View>
                 )}
-
-                {/* Albergues normales — lista compacta */}
                 {resto.map((a, i) => {
                   const tipoColor =
                     TIPO_ALB_COLOR[a.tipo ?? "privado"] ?? "#C8622A";
@@ -1642,7 +1584,6 @@ function AlberguesPorLocalidad({
   );
 }
 
-// ─── Estilos nuevos para AlbergueCardDestacada ────────────────────────────
 const abl = StyleSheet.create({
   cardWrapper: { marginBottom: 4 },
   cardChip: {
@@ -1755,129 +1696,9 @@ const ab = StyleSheet.create({
   arrow: { fontSize: 16, color: "#C4A882" },
 });
 
-// ═════════════════════════════════════════════════════════════════════════════
-// CANAL DE ETAPA
-// ═════════════════════════════════════════════════════════════════════════════
-function CanalEtapa({
-  mensajes,
-  color,
-  lang,
-}: {
-  mensajes: Mensaje[];
-  color: string;
-  lang: string;
-}) {
-  const userId: string | null = null; // conectar con auth cuando esté listo
-
-  return (
-    <View>
-      <Text style={ca.sub}>Mensajes recientes de peregrinos en esta etapa</Text>
-      {mensajes.length === 0 ? (
-        <View style={ca.empty}>
-          <Text style={ca.emptyIcon}>💬</Text>
-          <Text style={ca.emptyText}>Todavía no hay mensajes</Text>
-        </View>
-      ) : (
-        <View style={{ gap: 8, marginBottom: 16 }}>
-          {mensajes.map((msg) => {
-            const flag = FLAG[msg.idioma_origen] ?? "🌍";
-            const l = lang.split("-")[0];
-            const texto = (msg.traducciones as any)?.[l] || msg.contenido;
-            return (
-              <View key={msg.id} style={ca.msgCard}>
-                <View style={ca.msgHead}>
-                  <View style={ca.avatar}>
-                    <Text style={{ fontSize: 12 }}>{flag}</Text>
-                  </View>
-                  <Text style={ca.autor}>
-                    {msg.perfil?.nombre_display ?? "Peregrino"}
-                  </Text>
-                  <Text style={ca.tiempo}>{timeAgo(msg.created_at)}</Text>
-                </View>
-                <Text style={ca.texto}>{texto}</Text>
-              </View>
-            );
-          })}
-        </View>
-      )}
-      {userId ? (
-        <View style={[ca.inputRow, { borderColor: color }]}>
-          <TextInput
-            style={ca.input}
-            placeholder="Escribe un mensaje..."
-            placeholderTextColor="#B4A890"
-            multiline
-          />
-          <TouchableOpacity style={[ca.sendBtn, { backgroundColor: color }]}>
-            <Text style={ca.sendIcon}>↑</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <TouchableOpacity
-          style={[ca.loginCTA, { borderColor: color }]}
-          onPress={() => router.push("/(auth)/login" as any)}
-        >
-          <Text style={[ca.loginText, { color }]}>
-            Inicia sesión para escribir
-          </Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
-}
-
-const ca = StyleSheet.create({
-  sub: { fontSize: 12, color: "#8B7355", marginBottom: 14, marginTop: -4 },
-  empty: { alignItems: "center", paddingVertical: 20 },
-  emptyIcon: { fontSize: 30, marginBottom: 6 },
-  emptyText: { fontSize: 13, color: "#8B7355" },
-  msgCard: { backgroundColor: "#FDF8F0", borderRadius: 10, padding: 12 },
-  msgHead: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 6,
-    gap: 8,
-  },
-  avatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#F0EBE0",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  autor: { flex: 1, fontSize: 12, fontWeight: "600", color: "#2C1F0E" },
-  tiempo: { fontSize: 11, color: "#8B7355" },
-  texto: { fontSize: 13, color: "#5C4A32", lineHeight: 19 },
-  inputRow: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    gap: 8,
-    borderWidth: 1.5,
-    borderRadius: 12,
-    padding: 8,
-  },
-  input: { flex: 1, fontSize: 14, color: "#2C1F0E", maxHeight: 80 },
-  sendBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  sendIcon: { color: "white", fontSize: 18, fontWeight: "700" },
-  loginCTA: {
-    borderWidth: 1.5,
-    borderRadius: 10,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  loginText: { fontSize: 14, fontWeight: "600" },
-});
-
-// ═════════════════════════════════════════════════════════════════════════════
-// NAVEGACIÓN ETAPAS
-// ═════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// NAVEGACIÓN ETAPAS — sin cambios
+// ═══════════════════════════════════════════════════════════════
 function NavEtapas({
   anterior,
   siguiente,
@@ -1965,9 +1786,9 @@ const nv = StyleSheet.create({
   badgeText: { color: "white", fontSize: 14, fontWeight: "700" },
 });
 
-// ═════════════════════════════════════════════════════════════════════════════
-// ESTILOS GLOBALES
-// ═════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// ESTILOS GLOBALES — sin cambios
+// ═══════════════════════════════════════════════════════════════
 const g = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#FAF7F2" },
   center: {
@@ -2068,7 +1889,6 @@ const g = StyleSheet.create({
   valorRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   valorText: { fontSize: 13, color: "#8B7355", marginLeft: 6 },
   sinValor: { fontSize: 13, color: "#8B7355" },
-
   mapaBtn: {
     alignItems: "center",
     justifyContent: "center",

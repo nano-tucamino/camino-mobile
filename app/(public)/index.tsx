@@ -33,8 +33,7 @@ import { useNavigation } from "@/contexts/NavigationContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 const { width, height } = Dimensions.get("window");
-const API_BASE =
-  process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com/api";
+const API_BASE = `${process.env.EXPO_PUBLIC_API_URL}/api`;
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
