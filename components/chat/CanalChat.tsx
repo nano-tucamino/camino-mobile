@@ -325,7 +325,7 @@ const s = StyleSheet.create({
     alignItems: "flex-end",
     paddingHorizontal: 12,
     paddingVertical: 8,
-    paddingBottom: Platform.OS === "android" ? 12 : 8,
+    paddingBottom: Platform.OS === "android" ? 55 : 8,
     gap: 8,
     borderTopWidth: 1,
     borderTopColor: "#E8E0D0",

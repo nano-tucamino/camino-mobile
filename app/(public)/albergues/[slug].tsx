@@ -28,6 +28,8 @@ import {
 } from "@/hooks/useInteractions";
 
 import i18n from "@/lib/i18n";
+import { useAuth } from "@/contexts/AuthContext";
+import { getCanalAlbergue, getDmAlbergue } from "@/lib/chat";
 
 const getServicioLabel = (key: string): string => {
   const label = i18n.t(`albergues.servicios_labels.${key}`);
@@ -662,9 +664,8 @@ export default function AlbergueSlugScreen() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
 
-  // TODO: conectar con auth cuando esté listo
-  const userId: string | undefined = undefined;
-
+  const { user } = useAuth();
+  const userId = user?.id;
   useEffect(() => {
     if (!slug) return;
     apiGet<{ albergue: AlbergueDetalle }>(`/api/albergues/${slug}`)
@@ -875,7 +876,19 @@ export default function AlbergueSlugScreen() {
         <View style={s.seccion}>
           <Text style={s.seccionTitulo}>{t("albergues.contacto")}</Text>
           <View style={{ gap: 10 }}>
-            <TouchableOpacity style={s.contactoItem} activeOpacity={0.7}>
+            {/* Canal público */}
+            <TouchableOpacity
+              style={s.contactoItem}
+              activeOpacity={0.7}
+              onPress={async () => {
+                try {
+                  const result = await getCanalAlbergue(albergue.id);
+                  router.push(`/(private)/mensajes/${result.id}` as any);
+                } catch (e: any) {
+                  Alert.alert("Error canal", String(e.message));
+                }
+              }}
+            >
               <View style={[s.contactoIcon, { backgroundColor: "#EAF1F7" }]}>
                 <Text style={s.contactoEmoji}>💬</Text>
               </View>
@@ -890,9 +903,18 @@ export default function AlbergueSlugScreen() {
               <Text style={s.contactoArrow}>›</Text>
             </TouchableOpacity>
 
+            {/* Mensaje privado */}
             <TouchableOpacity
               style={[s.contactoItem, s.contactoItemDark]}
               activeOpacity={0.7}
+              onPress={async () => {
+                if (!user) {
+                  router.push("/(auth)/login" as any);
+                  return;
+                }
+                const { id } = await getDmAlbergue(albergue.id);
+                router.push(`/(private)/mensajes/${id}` as any);
+              }}
             >
               <View
                 style={[
@@ -919,6 +941,7 @@ export default function AlbergueSlugScreen() {
               </Text>
             </TouchableOpacity>
 
+            {/* Teléfono — restaurar original */}
             {albergue.telefono && (
               <TouchableOpacity
                 style={s.contactoItem}
@@ -1363,4 +1386,3 @@ const s = StyleSheet.create({
   },
   retryText: { color: C.blanco, fontWeight: "600" },
 });
-

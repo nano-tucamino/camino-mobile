@@ -86,7 +86,11 @@ function AppNavigator() {
 
     const inRoot = segs.length === 0 || segs[0] === undefined;
     const inLanding =
-      inRoot || (segs[0] !== "(auth)" && segs[0] !== "(public)");
+      inRoot ||
+      (segs[0] !== "(auth)" &&
+        segs[0] !== "(public)" &&
+        segs[0] !== "(private)");
+
     const inAuth = segs[0] === "(auth)";
     const isProtected =
       inAuth &&
