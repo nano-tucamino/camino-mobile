@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ChatRoom } from "@/components/chat/ChatRoom";
+import CanalChat from "@/components/chat/CanalChat";
 import { supabase } from "@/lib/supabase";
 
 interface ConvInfo {
@@ -70,11 +70,7 @@ export default function ChatScreen() {
         </View>
       </View>
 
-      <ChatRoom
-        conversacionId={id ?? null}
-        titulo={titulo}
-        loadingConversacion={loading}
-      />
+      <CanalChat conversacionId={id ?? null} modo="inline" />
     </View>
   );
 }

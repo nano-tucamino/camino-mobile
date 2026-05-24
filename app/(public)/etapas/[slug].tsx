@@ -28,11 +28,10 @@ import { apiGet } from "@/lib/api";
 import type { Tables, Enums } from "@/types/database";
 import RecorridoTimeline from "@/components/etapa/RecorridoTimeline";
 import EtapaCheckButton from "@/components/etapa/EtapaCheckButton";
-import CanalWidget from "@/components/etapa/CanalWidget";
+import CanalChat from "@/components/chat/CanalChat";
 import { useNavigation } from "@/contexts/NavigationContext";
 import { Linking } from "react-native";
 
-import { ChatRoom } from "@/components/chat/ChatRoom";
 import { getCanalEtapa } from "@/lib/chat";
 
 const { width: SW } = Dimensions.get("window");
@@ -427,7 +426,11 @@ export default function EtapaScreen() {
               }
             >
               <View style={{ height: 480 }}>
-                <ChatRoom conversacionId={canalId} />
+                <CanalChat
+                  conversacionId={canalId}
+                  color={color}
+                  modo="inline"
+                />
               </View>
             </ColapsableSection>
           </View>
@@ -548,13 +551,12 @@ export default function EtapaScreen() {
         <View style={{ height: 100 }} />
       </Animated.ScrollView>
 
-      <CanalWidget
-        canalId={canalId}
+      <CanalChat
+        conversacionId={canalId}
         etapaNombre={nombre}
         color={color}
-        lang={lang}
+        modo="fab"
         tieneRecientes={(mensajes as Mensaje[]).length > 0}
-        visto={mensajes.length - mensajesVistos === 0}
         onOpen={() => setMensajesVistos(mensajes.length)}
       />
     </View>
