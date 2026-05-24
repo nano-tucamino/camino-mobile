@@ -31,6 +31,7 @@ import {
 import CanalEtapaWidget from "@/components/dashboard/CanalEtapaWidget";
 import { useNavigation } from "@/contexts/NavigationContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { Animated } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 const API_BASE = `${process.env.EXPO_PUBLIC_API_URL}/api`;
@@ -336,7 +337,7 @@ export default function DashboardScreen() {
         backgroundColor="transparent"
       />
 
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
         onScroll={() => notifyScroll()}
@@ -570,7 +571,7 @@ export default function DashboardScreen() {
         )}
 
         <View style={{ height: 110 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }

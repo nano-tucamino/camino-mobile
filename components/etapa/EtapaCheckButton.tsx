@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { apiPost, apiDelete } from "@/lib/api";
 import { router } from "expo-router";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Props {
   etapaId: string;
@@ -135,8 +136,9 @@ export default function EtapaCheckButton({
   const [loading, setLoading] = useState(false);
 
   // userId null hasta auth
-  const userId: string | null = null;
-  if (!userId)
+  const { user } = useAuth();
+
+  if (!user)
     return (
       <View style={s.wrapper}>
         <TouchableOpacity
@@ -363,4 +365,3 @@ const s = StyleSheet.create({
   },
   guardarText: { fontSize: 13, fontWeight: "700", color: "white" },
 });
-

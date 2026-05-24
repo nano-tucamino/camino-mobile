@@ -27,6 +27,7 @@ import {
   Circle as CircleIcon,
 } from "lucide-react-native";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigation } from "@/contexts/NavigationContext";
 
 const API_BASE = "https://camino-api.onrender.com/api";
 const LOGO_URL =
@@ -338,6 +339,7 @@ export default function EtapasScreen() {
   const lang = i18n.language?.split("-")[0] ?? "es";
   const { session } = useAuth();
   const logueado = !!session;
+  const { onScroll: notifyScroll } = useNavigation();
 
   const [items, setItems] = useState<ListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -462,6 +464,8 @@ export default function EtapasScreen() {
       <StatusBar barStyle="light-content" backgroundColor={TINTA} />
       <FlatList
         data={items}
+        onScroll={() => notifyScroll()}
+        scrollEventThrottle={16}
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
@@ -712,4 +716,3 @@ const styles = StyleSheet.create({
   },
   selloWrapper: { opacity: 0.82, transform: [{ rotate: "-18deg" }] },
 });
-

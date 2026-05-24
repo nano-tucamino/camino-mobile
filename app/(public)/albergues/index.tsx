@@ -18,6 +18,7 @@ import {
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { apiGet } from "@/lib/api";
+import { useNavigation } from "@/contexts/NavigationContext";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -391,6 +392,7 @@ function AlbergueCard({ albergue, onPress, t }: AlbergueCardProps) {
 
 export default function AlberguesScreen() {
   const { t } = useTranslation();
+  const { onScroll: notifyScroll } = useNavigation();
 
   const [albergues, setAlbergues] = useState<Albergue[]>([]);
   const [total, setTotal] = useState(0);
@@ -573,6 +575,8 @@ export default function AlberguesScreen() {
           </View>
         ) : (
           <FlatList
+            onScroll={() => notifyScroll()}
+            scrollEventThrottle={16}
             data={albergues}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
@@ -833,4 +837,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
