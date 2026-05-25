@@ -6,8 +6,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  Dimensions,
   Animated,
+  ScrollView,
+  Modal,
 } from "react-native";
 import Mapbox, {
   MapView,
@@ -17,10 +18,10 @@ import Mapbox, {
   CircleLayer,
   UserLocation,
   UserLocationRenderMode,
-  UserTrackingMode,
 } from "@rnmapbox/maps";
 import * as Location from "expo-location";
 import { useLocalSearchParams, router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 const API_URL =
   process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com";
@@ -34,37 +35,77 @@ const CAMINO_BOUNDS = {
 
 type EtapaFeature = {
   type: "Feature";
-  id: number;
-  geometry: { type: "LineString"; coordinates: number[][] };
   properties: {
-    etapa_id: number;
     numero: number;
-    nombre: string;
     slug: string;
-    es_variante: boolean;
-    distancia_km: number;
-    desnivel_pos: number;
-    desnivel_neg: number;
-    centro_lat: number;
-    centro_lng: number;
-    inicio: string | null;
-    fin: string | null;
+    color: string;
   };
+  geometry: { type: "LineString"; coordinates: number[][] };
+};
+
+type EtapaInfo = {
+  nombre: string;
+  inicio_nombre?: string;
+  fin_nombre?: string;
+  distancia_km?: number;
+  desnivel_pos?: number;
+  desnivel_neg?: number;
+  es_variante?: boolean;
 };
 
 type RecorridoGeoJSON = {
   type: "FeatureCollection";
   features: EtapaFeature[];
-  meta: { total_etapas: number; total_waypoints: number };
 };
 
-type CapasVisibles = {
+const GRUPOS_FILTROS = [
+  {
+    key: "infraestructura",
+    label: "Infraestructura",
+    emoji: "🏗️",
+    tipos: ["restaurante", "supermercado", "farmacia", "medico"],
+  },
+  {
+    key: "descanso",
+    label: "Descanso",
+    emoji: "💧",
+    tipos: ["fuente", "area_descanso", "mirador"],
+  },
+  {
+    key: "patrimonio",
+    label: "Patrimonio",
+    emoji: "⛪",
+    tipos: ["iglesia", "capilla", "cruceiro", "monumento", "yacimiento"],
+  },
+] as const;
+
+type GrupoKey = "infraestructura" | "descanso" | "patrimonio";
+
+type FiltrosActivos = {
   albergues: boolean;
-  pois: boolean;
   negocios: boolean;
+  infraestructura: boolean;
+  descanso: boolean;
+  patrimonio: boolean;
+};
+
+const TIPO_EMOJI: Record<string, string> = {
+  restaurante: "🍽️",
+  supermercado: "🛒",
+  farmacia: "💊",
+  medico: "🏥",
+  fuente: "💧",
+  area_descanso: "🌿",
+  mirador: "🔭",
+  iglesia: "⛪",
+  capilla: "⛪",
+  cruceiro: "✝️",
+  monumento: "🏛️",
+  yacimiento: "🏺",
 };
 
 export default function MapaScreen() {
+  const { t } = useTranslation();
   const cameraRef = useRef<Camera>(null);
   const panelAnim = useRef(new Animated.Value(0)).current;
   const { etapa: etapaSlug } = useLocalSearchParams<{ etapa?: string }>();
@@ -76,15 +117,25 @@ export default function MapaScreen() {
   const [error, setError] = useState(false);
   const [etapaSeleccionada, setEtapaSeleccionada] =
     useState<EtapaFeature | null>(null);
+  const [etapaInfo, setEtapaInfo] = useState<EtapaInfo | null>(null);
   const [gpsActivo, setGpsActivo] = useState(false);
   const [permisoGPS, setPermisoGPS] = useState(false);
-  const [capas, setCapas] = useState<CapasVisibles>({
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [etapasConMarcadores, setEtapasConMarcadores] = useState<Set<string>>(
+    new Set(),
+  );
+
+  const [filtros, setFiltros] = useState<FiltrosActivos>({
     albergues: true,
-    pois: true,
     negocios: false,
+    infraestructura: false,
+    descanso: false,
+    patrimonio: false,
   });
 
-  // Pedir permiso GPS al montar
+  const [filtrosPendientes, setFiltrosPendientes] =
+    useState<FiltrosActivos>(filtros);
+
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -92,18 +143,17 @@ export default function MapaScreen() {
     })();
   }, []);
 
-  // Cargar trazado completo
   useEffect(() => {
     const cargarRecorrido = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/mapa/recorrido-completo`);
+        const res = await fetch(`${API_URL}/data/camino-etapas.geojson`);
         if (!res.ok) throw new Error("Error cargando recorrido");
         const data: RecorridoGeoJSON = await res.json();
         setRecorrido(data);
 
         if (etapaSlug && data.features) {
           const feature = data.features.find(
-            (f: EtapaFeature) => f.properties.slug === etapaSlug,
+            (f) => f.properties.slug === etapaSlug,
           );
           if (feature) mostrarPanel(feature);
         }
@@ -116,7 +166,16 @@ export default function MapaScreen() {
     cargarRecorrido();
   }, []);
 
-  // Cargar marcadores cuando se selecciona etapa
+  const tiposActivos = useCallback((): string[] => {
+    const tipos: string[] = [];
+    GRUPOS_FILTROS.forEach((grupo) => {
+      if (filtros[grupo.key as GrupoKey]) {
+        tipos.push(...grupo.tipos);
+      }
+    });
+    return tipos;
+  }, [filtros]);
+
   useEffect(() => {
     if (!etapaSeleccionada) return;
     const cargarMarcadores = async () => {
@@ -126,9 +185,13 @@ export default function MapaScreen() {
         if (!res.ok) return;
         const data = await res.json();
 
+        const tipos = tiposActivos();
         const features = [
-          ...(capas.albergues ? (data.albergues?.features ?? []) : []),
-          ...(capas.pois ? (data.pois?.features ?? []) : []),
+          ...(filtros.albergues ? (data.albergues?.features ?? []) : []),
+          ...(filtros.negocios ? (data.negocios?.features ?? []) : []),
+          ...(data.pois?.features ?? []).filter((f: any) =>
+            tipos.includes(f.properties?.tipo),
+          ),
         ];
 
         setMarcadores({ type: "FeatureCollection", features });
@@ -137,28 +200,95 @@ export default function MapaScreen() {
       }
     };
     cargarMarcadores();
-  }, [etapaSeleccionada, capas.albergues, capas.pois]);
+  }, [etapaSeleccionada, filtros]);
 
   const mostrarPanel = useCallback(
-    (etapa: EtapaFeature) => {
+    async (etapa: EtapaFeature) => {
       setEtapaSeleccionada(etapa);
-      setMarcadores(null);
+      setEtapaInfo(null);
+
       Animated.spring(panelAnim, {
         toValue: 1,
         useNativeDriver: true,
         tension: 65,
         friction: 11,
       }).start();
+
+      const coords = etapa.geometry.coordinates;
+      const mid = coords[Math.floor(coords.length / 2)];
       cameraRef.current?.setCamera({
-        centerCoordinate: [
-          etapa.properties.centro_lng,
-          etapa.properties.centro_lat,
-        ],
+        centerCoordinate: [mid[0], mid[1]],
         zoomLevel: 9,
         animationDuration: 800,
       });
+
+      try {
+        const res = await fetch(
+          `${API_URL}/api/etapas/${etapa.properties.slug}/info`,
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setEtapaInfo(data.etapa);
+        }
+      } catch {
+        // silencioso
+      }
     },
     [panelAnim],
+  );
+
+  const cargarMarcadoresPorZoom = useCallback(
+    async (zoom: number, bounds: { ne: number[]; sw: number[] }) => {
+      if (zoom < 9 || !recorrido) return;
+
+      const etapasVisibles = recorrido.features.filter((f) => {
+        const coords = f.geometry.coordinates;
+        const mid = coords[Math.floor(coords.length / 2)];
+        return (
+          mid[0] >= bounds.sw[0] &&
+          mid[0] <= bounds.ne[0] &&
+          mid[1] >= bounds.sw[1] &&
+          mid[1] <= bounds.ne[1]
+        );
+      });
+
+      const tipos = tiposActivos();
+
+      for (const etapa of etapasVisibles) {
+        const slug = etapa.properties.slug;
+        if (etapasConMarcadores.has(slug)) continue;
+
+        try {
+          const res = await fetch(`${API_URL}/api/mapa/etapa/${slug}`);
+          if (!res.ok) continue;
+          const data = await res.json();
+
+          const nuevos = [
+            ...(filtros.albergues ? (data.albergues?.features ?? []) : []),
+            ...(filtros.negocios ? (data.negocios?.features ?? []) : []),
+            ...(data.pois?.features ?? []).filter((f: any) =>
+              tipos.includes(f.properties?.tipo),
+            ),
+          ];
+
+          setMarcadores((prev) => ({
+            type: "FeatureCollection",
+            features: [
+              ...(prev?.features ?? []).filter(
+                (f) =>
+                  !nuevos.find((n) => n.properties?.id === f.properties?.id),
+              ),
+              ...nuevos,
+            ],
+          }));
+
+          setEtapasConMarcadores((prev) => new Set([...prev, slug]));
+        } catch {
+          // silencioso
+        }
+      }
+    },
+    [recorrido, filtros, etapasConMarcadores, tiposActivos],
   );
 
   const cerrarPanel = useCallback(() => {
@@ -169,26 +299,44 @@ export default function MapaScreen() {
       friction: 11,
     }).start(() => {
       setEtapaSeleccionada(null);
-      setMarcadores(null);
+      setEtapaInfo(null);
     });
   }, [panelAnim]);
+
+  const aplicarFiltros = () => {
+    setFiltros(filtrosPendientes);
+    setEtapasConMarcadores(new Set());
+    setMarcadores(null);
+    setMostrarFiltros(false);
+  };
 
   const panelTranslateY = panelAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [300, 0],
   });
 
-  const toggleCapa = (capa: keyof CapasVisibles) => {
-    setCapas((prev) => ({ ...prev, [capa]: !prev[capa] }));
-  };
-
   const centrarEnPosicion = async () => {
-    if (!permisoGPS) {
+    let tienePermiso = permisoGPS;
+    if (!tienePermiso) {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") return;
       setPermisoGPS(true);
+      tienePermiso = true;
     }
-    setGpsActivo(true);
+    try {
+      const loc = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      setGpsActivo(true);
+      cameraRef.current?.setCamera({
+        centerCoordinate: [loc.coords.longitude, loc.coords.latitude],
+        zoomLevel: 13,
+        animationMode: "flyTo",
+        animationDuration: 1000,
+      });
+    } catch {
+      setGpsActivo(true);
+    }
   };
 
   const volverAlCamino = () => {
@@ -201,19 +349,9 @@ export default function MapaScreen() {
     });
   };
 
-  const etapasPrincipales =
-    recorrido?.features.filter((f) => !f.properties.es_variante) ?? [];
-  const variantes =
-    recorrido?.features.filter((f) => f.properties.es_variante) ?? [];
-
-  const geojsonPrincipal: GeoJSON.FeatureCollection = {
+  const geojsonCompleto: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",
-    features: etapasPrincipales as unknown as GeoJSON.Feature[],
-  };
-
-  const geojsonVariantes: GeoJSON.FeatureCollection = {
-    type: "FeatureCollection",
-    features: variantes as unknown as GeoJSON.Feature[],
+    features: (recorrido?.features ?? []) as unknown as GeoJSON.Feature[],
   };
 
   const marcadoresAlbergues: GeoJSON.FeatureCollection = {
@@ -229,6 +367,15 @@ export default function MapaScreen() {
       (f) => f.properties?._layer === "poi",
     ),
   };
+
+  const marcadoresNegocios: GeoJSON.FeatureCollection = {
+    type: "FeatureCollection",
+    features: (marcadores?.features ?? []).filter(
+      (f) => f.properties?._layer === "negocio",
+    ),
+  };
+
+  const numFiltrosActivos = Object.values(filtros).filter(Boolean).length;
 
   if (loading) {
     return (
@@ -263,41 +410,39 @@ export default function MapaScreen() {
         compassEnabled
         compassPosition={{ top: 100, right: 16 }}
         onPress={cerrarPanel}
+        onRegionDidChange={async (feature) => {
+          const zoom = feature.properties.zoomLevel;
+          const bounds = feature.properties.visibleBounds;
+          if (!bounds) return;
+          await cargarMarcadoresPorZoom(zoom, {
+            ne: bounds[0] as number[],
+            sw: bounds[1] as number[],
+          });
+        }}
       >
-        {gpsActivo ? (
-          <Camera
-            ref={cameraRef}
-            followUserLocation
-            followUserMode={UserTrackingMode.Follow}
-            zoomLevel={12}
-            animationMode="flyTo"
-            animationDuration={1000}
-          />
-        ) : (
-          <Camera
-            ref={cameraRef}
-            centerCoordinate={CAMINO_BOUNDS.center}
-            zoomLevel={CAMINO_BOUNDS.zoom}
-            animationMode="flyTo"
-            animationDuration={1200}
-          />
-        )}
+        <Camera
+          ref={cameraRef}
+          centerCoordinate={CAMINO_BOUNDS.center}
+          zoomLevel={CAMINO_BOUNDS.zoom}
+          animationMode="flyTo"
+          animationDuration={1200}
+        />
 
         {gpsActivo && permisoGPS && (
           <UserLocation visible renderMode={UserLocationRenderMode.Normal} />
         )}
 
-        {etapasPrincipales.length > 0 && (
+        {(recorrido?.features.length ?? 0) > 0 && (
           <ShapeSource
-            id="camino-principal"
-            shape={geojsonPrincipal}
+            id="camino-completo"
+            shape={geojsonCompleto}
             onPress={(e) => {
               const feature = e.features?.[0] as unknown as EtapaFeature;
-              if (feature?.properties?.etapa_id) mostrarPanel(feature);
+              if (feature?.properties?.slug) mostrarPanel(feature);
             }}
           >
             <LineLayer
-              id="camino-principal-borde"
+              id="camino-borde"
               style={{
                 lineColor: "#8B6914",
                 lineWidth: 6,
@@ -307,36 +452,13 @@ export default function MapaScreen() {
               }}
             />
             <LineLayer
-              id="camino-principal-linea"
+              id="camino-linea"
               style={{
                 lineColor: "#F5C842",
                 lineWidth: 4,
                 lineOpacity: 1,
                 lineCap: "round",
                 lineJoin: "round",
-              }}
-            />
-          </ShapeSource>
-        )}
-
-        {variantes.length > 0 && (
-          <ShapeSource
-            id="camino-variantes"
-            shape={geojsonVariantes}
-            onPress={(e) => {
-              const feature = e.features?.[0] as unknown as EtapaFeature;
-              if (feature?.properties?.etapa_id) mostrarPanel(feature);
-            }}
-          >
-            <LineLayer
-              id="camino-variantes-linea"
-              style={{
-                lineColor: "#F5C842",
-                lineWidth: 2.5,
-                lineOpacity: 0.65,
-                lineCap: "round",
-                lineJoin: "round",
-                lineDasharray: [2, 3],
               }}
             />
           </ShapeSource>
@@ -363,7 +485,7 @@ export default function MapaScreen() {
           </ShapeSource>
         )}
 
-        {capas.albergues && marcadoresAlbergues.features.length > 0 && (
+        {filtros.albergues && marcadoresAlbergues.features.length > 0 && (
           <ShapeSource
             id="albergues-markers"
             shape={marcadoresAlbergues}
@@ -375,6 +497,7 @@ export default function MapaScreen() {
           >
             <CircleLayer
               id="albergues-circle"
+              minZoomLevel={9}
               style={{
                 circleRadius: 7,
                 circleColor: "#2D5016",
@@ -386,10 +509,11 @@ export default function MapaScreen() {
           </ShapeSource>
         )}
 
-        {capas.pois && marcadoresPois.features.length > 0 && (
+        {marcadoresPois.features.length > 0 && (
           <ShapeSource id="pois-markers" shape={marcadoresPois}>
             <CircleLayer
               id="pois-circle"
+              minZoomLevel={11}
               style={{
                 circleRadius: 5,
                 circleColor: "#C8A96E",
@@ -400,8 +524,33 @@ export default function MapaScreen() {
             />
           </ShapeSource>
         )}
+
+        {filtros.negocios && marcadoresNegocios.features.length > 0 && (
+          <ShapeSource
+            id="negocios-markers"
+            shape={marcadoresNegocios}
+            onPress={(e) => {
+              const props = e.features?.[0]?.properties;
+              if (props?.slug)
+                router.push(`/(public)/negocios/${props.slug}` as any);
+            }}
+          >
+            <CircleLayer
+              id="negocios-circle"
+              minZoomLevel={10}
+              style={{
+                circleRadius: 8,
+                circleColor: "#C8622A",
+                circleStrokeWidth: 2,
+                circleStrokeColor: "#fff",
+                circleOpacity: 0.95,
+              }}
+            />
+          </ShapeSource>
+        )}
       </MapView>
 
+      {/* Botones flotantes GPS */}
       <View style={styles.botonesFlotantes}>
         <TouchableOpacity
           style={[styles.botonFlotante, gpsActivo && styles.botonActivo]}
@@ -414,25 +563,24 @@ export default function MapaScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.filtrosContainer}>
-        {(["albergues", "pois", "negocios"] as const).map((capa) => (
-          <TouchableOpacity
-            key={capa}
-            style={[styles.filtroBtn, capas[capa] && styles.filtroActivo]}
-            onPress={() => toggleCapa(capa)}
-          >
-            <Text
-              style={[
-                styles.filtroText,
-                capas[capa] && styles.filtroTextoActivo,
-              ]}
-            >
-              {capa.charAt(0).toUpperCase() + capa.slice(1)}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      {/* Botón filtros */}
+      <TouchableOpacity
+        style={styles.botonFiltros}
+        onPress={() => {
+          setFiltrosPendientes(filtros);
+          setMostrarFiltros(true);
+        }}
+      >
+        <Text style={styles.botonFiltrosIcono}>⚙️</Text>
+        <Text style={styles.botonFiltrosTexto}>Filtros</Text>
+        {numFiltrosActivos > 0 && (
+          <View style={styles.filtroBadge}>
+            <Text style={styles.filtroBadgeTexto}>{numFiltrosActivos}</Text>
+          </View>
+        )}
+      </TouchableOpacity>
 
+      {/* Panel etapa */}
       {etapaSeleccionada && (
         <Animated.View
           style={[
@@ -446,7 +594,7 @@ export default function MapaScreen() {
               <Text style={styles.panelEtapaNum}>
                 Etapa {etapaSeleccionada.properties.numero}
               </Text>
-              {etapaSeleccionada.properties.es_variante && (
+              {etapaInfo?.es_variante && (
                 <View style={styles.varianteBadge}>
                   <Text style={styles.varianteText}>Variante</Text>
                 </View>
@@ -458,41 +606,34 @@ export default function MapaScreen() {
           </View>
 
           <Text style={styles.panelNombre}>
-            {etapaSeleccionada.properties.nombre}
+            {etapaInfo?.nombre ??
+              `Etapa ${etapaSeleccionada.properties.numero}`}
           </Text>
 
-          {(etapaSeleccionada.properties.inicio ||
-            etapaSeleccionada.properties.fin) && (
+          {(etapaInfo?.inicio_nombre || etapaInfo?.fin_nombre) && (
             <Text style={styles.panelRuta}>
-              {etapaSeleccionada.properties.inicio} →{" "}
-              {etapaSeleccionada.properties.fin}
+              {etapaInfo.inicio_nombre} → {etapaInfo.fin_nombre}
             </Text>
           )}
 
           <View style={styles.statsRow}>
             <View style={styles.stat}>
               <Text style={styles.statValor}>
-                {etapaSeleccionada.properties.distancia_km
-                  ? `${etapaSeleccionada.properties.distancia_km} km`
-                  : "—"}
+                {etapaInfo?.distancia_km ? `${etapaInfo.distancia_km} km` : "—"}
               </Text>
               <Text style={styles.statLabel}>Distancia</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Text style={styles.statValor}>
-                {etapaSeleccionada.properties.desnivel_pos
-                  ? `+${etapaSeleccionada.properties.desnivel_pos} m`
-                  : "—"}
+                {etapaInfo?.desnivel_pos ? `+${etapaInfo.desnivel_pos} m` : "—"}
               </Text>
               <Text style={styles.statLabel}>Subida</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Text style={styles.statValor}>
-                {etapaSeleccionada.properties.desnivel_neg
-                  ? `-${etapaSeleccionada.properties.desnivel_neg} m`
-                  : "—"}
+                {etapaInfo?.desnivel_neg ? `-${etapaInfo.desnivel_neg} m` : "—"}
               </Text>
               <Text style={styles.statLabel}>Bajada</Text>
             </View>
@@ -510,6 +651,116 @@ export default function MapaScreen() {
           </TouchableOpacity>
         </Animated.View>
       )}
+
+      {/* Modal filtros */}
+      <Modal
+        visible={mostrarFiltros}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setMostrarFiltros(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setMostrarFiltros(false)}
+        />
+        <View style={styles.filtrosSheet}>
+          <View style={styles.filtrosHandle} />
+          <Text style={styles.filtrosTitulo}>Filtros del mapa</Text>
+
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Text style={styles.filtrosGrupoTitulo}>Alojamiento</Text>
+            <TouchableOpacity
+              style={[
+                styles.filtroItem,
+                filtrosPendientes.albergues && styles.filtroItemActivo,
+              ]}
+              onPress={() =>
+                setFiltrosPendientes((p) => ({ ...p, albergues: !p.albergues }))
+              }
+            >
+              <Text style={styles.filtroItemEmoji}>🏠</Text>
+              <Text style={styles.filtroItemLabel}>Albergues</Text>
+              <View
+                style={[
+                  styles.filtroToggle,
+                  filtrosPendientes.albergues && styles.filtroToggleActivo,
+                ]}
+              >
+                {filtrosPendientes.albergues && (
+                  <Text style={styles.filtroToggleCheck}>✓</Text>
+                )}
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.filtroItem,
+                filtrosPendientes.negocios && styles.filtroItemActivo,
+              ]}
+              onPress={() =>
+                setFiltrosPendientes((p) => ({ ...p, negocios: !p.negocios }))
+              }
+            >
+              <Text style={styles.filtroItemEmoji}>🏪</Text>
+              <Text style={styles.filtroItemLabel}>Negocios del Camino</Text>
+              <View
+                style={[
+                  styles.filtroToggle,
+                  filtrosPendientes.negocios && styles.filtroToggleActivo,
+                ]}
+              >
+                {filtrosPendientes.negocios && (
+                  <Text style={styles.filtroToggleCheck}>✓</Text>
+                )}
+              </View>
+            </TouchableOpacity>
+
+            <Text style={[styles.filtrosGrupoTitulo, { marginTop: 16 }]}>
+              Puntos de interés
+            </Text>
+            {GRUPOS_FILTROS.map((grupo) => (
+              <TouchableOpacity
+                key={grupo.key}
+                style={[
+                  styles.filtroItem,
+                  filtrosPendientes[grupo.key as GrupoKey] &&
+                    styles.filtroItemActivo,
+                ]}
+                onPress={() =>
+                  setFiltrosPendientes((p) => ({
+                    ...p,
+                    [grupo.key]: !p[grupo.key as GrupoKey],
+                  }))
+                }
+              >
+                <Text style={styles.filtroItemEmoji}>{grupo.emoji}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.filtroItemLabel}>{grupo.label}</Text>
+                  <Text style={styles.filtroItemSub}>
+                    {grupo.tipos.map((tp) => TIPO_EMOJI[tp] ?? "").join(" ")}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.filtroToggle,
+                    filtrosPendientes[grupo.key as GrupoKey] &&
+                      styles.filtroToggleActivo,
+                  ]}
+                >
+                  {filtrosPendientes[grupo.key as GrupoKey] && (
+                    <Text style={styles.filtroToggleCheck}>✓</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <TouchableOpacity style={styles.aplicarBtn} onPress={aplicarFiltros}>
+            <Text style={styles.aplicarBtnTexto}>Aplicar filtros</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -554,27 +805,34 @@ const styles = StyleSheet.create({
   },
   botonActivo: { backgroundColor: "#F5C842" },
   botonIcono: { fontSize: 20, color: "#333" },
-  filtrosContainer: {
+  botonFiltros: {
     position: "absolute",
     bottom: 120,
     left: 16,
     flexDirection: "row",
-    gap: 8,
-  },
-  filtroBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    paddingHorizontal: 14,
+    paddingVertical: 9,
     borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.92)",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
-    shadowRadius: 3,
-    elevation: 3,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  filtroActivo: { backgroundColor: "#2D5016" },
-  filtroText: { fontSize: 12, fontWeight: "600", color: "#333" },
-  filtroTextoActivo: { color: "#fff" },
+  botonFiltrosIcono: { fontSize: 16 },
+  botonFiltrosTexto: { fontSize: 13, fontWeight: "600", color: "#333" },
+  filtroBadge: {
+    backgroundColor: "#C8622A",
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  filtroBadgeTexto: { fontSize: 10, color: "#fff", fontWeight: "700" },
   panel: {
     position: "absolute",
     bottom: 80,
@@ -668,4 +926,94 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ctaText: { color: "#fff", fontSize: 15, fontWeight: "700" },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+  },
+  filtrosSheet: {
+    backgroundColor: "#FEFCF8",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+    paddingTop: 12,
+    maxHeight: "75%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 12,
+  },
+  filtrosHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#DDD",
+    alignSelf: "center",
+    marginBottom: 16,
+  },
+  filtrosTitulo: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    marginBottom: 16,
+  },
+  filtrosGrupoTitulo: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#C8A96E",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginBottom: 8,
+  },
+  filtroItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: "#E8E0D0",
+    backgroundColor: "#fff",
+    marginBottom: 8,
+  },
+  filtroItemActivo: {
+    borderColor: "#2D5016",
+    backgroundColor: "#F0F7EE",
+  },
+  filtroItemEmoji: { fontSize: 22 },
+  filtroItemLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#2C1F0E",
+    flex: 1,
+  },
+  filtroItemSub: {
+    fontSize: 12,
+    color: "#8B7355",
+    marginTop: 2,
+  },
+  filtroToggle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#DDD",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  filtroToggleActivo: {
+    backgroundColor: "#2D5016",
+    borderColor: "#2D5016",
+  },
+  filtroToggleCheck: { fontSize: 12, color: "#fff", fontWeight: "700" },
+  aplicarBtn: {
+    backgroundColor: "#2D5016",
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 16,
+  },
+  aplicarBtnTexto: { fontSize: 15, fontWeight: "700", color: "#fff" },
 });

@@ -16,6 +16,9 @@ import * as ImagePicker from "expo-image-picker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
+import Mapbox, { MapView, Camera, PointAnnotation } from "@rnmapbox/maps";
+
+Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN ?? "");
 
 const API_URL =
   process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com";
@@ -68,16 +71,22 @@ const SERVICIOS_CONFIG = [
   { key: "piscina", label: "Piscina", emoji: "🏊" },
 ];
 
-type TabKey = "estado" | "info" | "servicios" | "fotos" | "cierre";
+type TabKey =
+  | "estado"
+  | "info"
+  | "servicios"
+  | "fotos"
+  | "cierre"
+  | "ubicacion_mapa";
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "estado", label: "Estado" },
   { key: "info", label: "Info" },
+  { key: "ubicacion_mapa", label: "Ubicación" }, // ← nuevo
   { key: "servicios", label: "Servicios" },
   { key: "fotos", label: "Fotos" },
   { key: "cierre", label: "Cierre" },
 ];
-
 export default function MiAlbergueScreen() {
   const insets = useSafeAreaInsets();
   const { token } = useAuth();
@@ -100,6 +109,9 @@ export default function MiAlbergueScreen() {
   const [precioCama, setPrecioCama] = useState("");
   const [plazas, setPlazas] = useState("");
   const [descripcion, setDescripcion] = useState("");
+
+  const [coordsLat, setCoordsLat] = useState<number | null>(null);
+  const [coordsLng, setCoordsLng] = useState<number | null>(null);
 
   // Servicios
   const [servicios, setServicios] = useState<Record<string, boolean>>(
@@ -135,6 +147,8 @@ export default function MiAlbergueScreen() {
         setPlazas(String(a.plazas_totales ?? ""));
         setDescripcion(a.descripcion ?? "");
         setFotos(a.fotos_urls ?? []);
+        if (a.coords_lat) setCoordsLat(a.coords_lat);
+        if (a.coords_lng) setCoordsLng(a.coords_lng);
         setCierreDesde(a.cierre_desde ?? "");
         setCierreHasta(a.cierre_hasta ?? "");
         setServicios(
@@ -273,6 +287,18 @@ export default function MiAlbergueScreen() {
     setCierreHasta("");
     await apiPut("info", { cierre_desde: null, cierre_hasta: null });
     showSaved("Cierre eliminado ✓");
+  }
+
+  // ── Guardar ubicación ──────────────────────────────────────
+  async function guardarUbicacion() {
+    if (!coordsLat || !coordsLng) return;
+    setSaving(true);
+    const ok = await apiPut("info", {
+      coords_lat: coordsLat,
+      coords_lng: coordsLng,
+    });
+    setSaving(false);
+    showSaved(ok ? "Ubicación guardada ✓" : "Error al guardar");
   }
 
   // ── Loading ────────────────────────────────────────────────
@@ -674,6 +700,78 @@ export default function MiAlbergueScreen() {
             </View>
           </View>
         )}
+
+        {/* ─ UBICACIÓN ─ */}
+        {activeTab === "ubicacion_mapa" && (
+          <View>
+            <Text style={styles.tabDesc}>
+              Toca el mapa para mover el pin a la posición exacta de tu
+              albergue. Los peregrinos verán esta ubicación.
+            </Text>
+
+            {/* Mapa con pin arrastrable */}
+            <View style={styles.mapaContainer}>
+              <MapView
+                style={StyleSheet.absoluteFillObject}
+                styleURL="mapbox://styles/mapbox/outdoors-v12"
+                logoEnabled={false}
+                attributionEnabled={false}
+                onPress={(e) => {
+                  const [lng, lat] = e.geometry.coordinates;
+                  setCoordsLat(lat);
+                  setCoordsLng(lng);
+                }}
+              >
+                <Camera
+                  centerCoordinate={
+                    coordsLng && coordsLat
+                      ? [coordsLng, coordsLat]
+                      : [-5.726, 42.4837] // Villar de Mazarife como fallback
+                  }
+                  zoomLevel={15}
+                  animationDuration={0}
+                />
+                {coordsLat && coordsLng && (
+                  <PointAnnotation
+                    id="albergue-pin"
+                    coordinate={[coordsLng, coordsLat]}
+                    onSelected={() => {}}
+                  >
+                    <View style={styles.pin}>
+                      <Text style={styles.pinEmoji}>🏠</Text>
+                    </View>
+                  </PointAnnotation>
+                )}
+              </MapView>
+            </View>
+
+            {/* Coords actuales */}
+            <View style={styles.coordsInfo}>
+              {coordsLat && coordsLng ? (
+                <Text style={styles.coordsText}>
+                  📍 {coordsLat.toFixed(6)}, {coordsLng.toFixed(6)}
+                </Text>
+              ) : (
+                <Text style={styles.coordsEmpty}>
+                  Sin ubicación — toca el mapa para fijar el pin
+                </Text>
+              )}
+            </View>
+
+            <TouchableOpacity
+              style={[
+                styles.btnPrimary,
+                (!coordsLat || !coordsLng || saving) && styles.btnDisabled,
+              ]}
+              onPress={guardarUbicacion}
+              disabled={!coordsLat || !coordsLng || saving}
+            >
+              <Text style={styles.btnPrimaryText}>
+                {saving ? "Guardando..." : "Guardar ubicación"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -930,5 +1028,39 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   btnSecondaryText: { fontSize: 14, color: "#8B7355" },
-});
 
+  // Ubicación mapa
+  mapaContainer: {
+    height: 280,
+    borderRadius: 14,
+    overflow: "hidden",
+    marginBottom: 12,
+    backgroundColor: "#E8E0D0",
+  },
+  pin: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pinEmoji: {
+    fontSize: 32,
+  },
+  coordsInfo: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#E8E0D0",
+    padding: 12,
+    marginBottom: 16,
+    alignItems: "center",
+  },
+  coordsText: {
+    fontSize: 13,
+    color: "#2C1F0E",
+    fontWeight: "500",
+  },
+  coordsEmpty: {
+    fontSize: 13,
+    color: "#C4A882",
+    fontStyle: "italic",
+  },
+});
