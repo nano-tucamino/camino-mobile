@@ -42,6 +42,8 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [modo, setModo] = useState<"login" | "registro">("login");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+  const [mostrarPasswordRegistro, setMostrarPasswordRegistro] = useState(false);
 
   async function handleGoogle() {
     setLoading(true);
@@ -86,7 +88,7 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: C.fondo }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
         contentContainerStyle={s.scroll}
@@ -172,6 +174,7 @@ export default function LoginScreen() {
                 )}
               </TouchableOpacity>
 
+              {/* Switch modo login/registro — CORREGIDO */}
               <TouchableOpacity
                 style={s.switchModo}
                 onPress={() => {
@@ -181,12 +184,14 @@ export default function LoginScreen() {
               >
                 <Text style={s.switchModoText}>
                   {modo === "login"
-                    ? `${t("auth.registro_page.ya_tienes")} `
-                    : `${t("auth.login.no_cuenta")} `}
+                    ? `${t("auth.login.no_cuenta")} `
+                    : `${t("auth.registro_page.ya_tienes")} `}
                   <Text style={{ color: C.acento, fontWeight: "600" }}>
                     {modo === "login"
-                      ? t("auth.registro_page.ya_tienes")
-                      : t("auth.registro_page.registrate")}
+                      ? (t("auth.registro_page.registrate") ??
+                        "Regístrate gratis")
+                      : (t("auth.registro_page.inicia_sesion") ??
+                        "Inicia sesión")}
                   </Text>
                 </Text>
               </TouchableOpacity>
@@ -214,14 +219,22 @@ export default function LoginScreen() {
               <Text style={s.emailMostrado}>{email}</Text>
 
               <Text style={s.label}>{t("auth.login.label_password")}</Text>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder={t("auth.login.placeholder_password")}
-                placeholderTextColor={C.piedraDark}
-                secureTextEntry
-                style={s.input}
-              />
+              <View style={s.inputContainer}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder={t("auth.login.placeholder_password")}
+                  placeholderTextColor={C.piedraDark}
+                  secureTextEntry={!mostrarPassword}
+                  style={s.inputWithIcon}
+                />
+                <TouchableOpacity
+                  onPress={() => setMostrarPassword(!mostrarPassword)}
+                  style={s.eyeBtn}
+                >
+                  <Text style={s.eyeIcon}>{mostrarPassword ? "🙈" : "👁️"}</Text>
+                </TouchableOpacity>
+              </View>
 
               {error !== "" && <Text style={s.error}>{error}</Text>}
 
@@ -236,6 +249,11 @@ export default function LoginScreen() {
                 ) : (
                   <Text style={s.btnPrimaryText}>{t("auth.login.entrar")}</Text>
                 )}
+              </TouchableOpacity>
+
+              {/* Recuperar contraseña */}
+              <TouchableOpacity style={s.olvidaste}>
+                <Text style={s.olvidasteText}>{t("auth.login.olvidaste")}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -272,14 +290,26 @@ export default function LoginScreen() {
               <Text style={[s.label, { marginTop: 12 }]}>
                 {t("auth.registro_page.label_password")}
               </Text>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder={t("auth.registro_page.placeholder_password")}
-                placeholderTextColor={C.piedraDark}
-                secureTextEntry
-                style={s.input}
-              />
+              <View style={s.inputContainer}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder={t("auth.registro_page.placeholder_password")}
+                  placeholderTextColor={C.piedraDark}
+                  secureTextEntry={!mostrarPasswordRegistro}
+                  style={s.inputWithIcon}
+                />
+                <TouchableOpacity
+                  onPress={() =>
+                    setMostrarPasswordRegistro(!mostrarPasswordRegistro)
+                  }
+                  style={s.eyeBtn}
+                >
+                  <Text style={s.eyeIcon}>
+                    {mostrarPasswordRegistro ? "🙈" : "👁️"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
               {error !== "" && <Text style={s.error}>{error}</Text>}
 
@@ -386,6 +416,29 @@ const s = StyleSheet.create({
     backgroundColor: C.blanco,
     marginBottom: 16,
   },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: C.piedra,
+    borderRadius: 10,
+    backgroundColor: C.blanco,
+    marginBottom: 16,
+  },
+  inputWithIcon: {
+    flex: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 14,
+    color: C.tinta,
+  },
+  eyeBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  eyeIcon: {
+    fontSize: 16,
+  },
 
   error: { fontSize: 13, color: C.rojo, marginBottom: 12 },
 
@@ -406,4 +459,7 @@ const s = StyleSheet.create({
 
   volver: { marginBottom: 16 },
   volverText: { fontSize: 13, color: C.acento, fontWeight: "500" },
+
+  olvidaste: { alignItems: "center", marginTop: 12 },
+  olvidasteText: { fontSize: 13, color: C.tintaSoft },
 });

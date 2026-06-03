@@ -18,10 +18,12 @@ import Mapbox, {
   CircleLayer,
   UserLocation,
   UserLocationRenderMode,
+  UserTrackingMode,
 } from "@rnmapbox/maps";
 import * as Location from "expo-location";
 import { useLocalSearchParams, router } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { Linking } from "react-native";
 
 const API_URL =
   process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com";
@@ -35,11 +37,7 @@ const CAMINO_BOUNDS = {
 
 type EtapaFeature = {
   type: "Feature";
-  properties: {
-    numero: number;
-    slug: string;
-    color: string;
-  };
+  properties: { numero: number; slug: string; color: string };
   geometry: { type: "LineString"; coordinates: number[][] };
 };
 
@@ -61,21 +59,24 @@ type RecorridoGeoJSON = {
 const GRUPOS_FILTROS = [
   {
     key: "infraestructura",
-    label: "Infraestructura",
+    labelKey: "mapa.infraestructura",
     emoji: "🏗️",
     tipos: ["restaurante", "supermercado", "farmacia", "medico"],
+    subEmojis: "🍽️ 🛒 💊 🏥",
   },
   {
     key: "descanso",
-    label: "Descanso",
+    labelKey: "mapa.descanso",
     emoji: "💧",
     tipos: ["fuente", "area_descanso", "mirador"],
+    subEmojis: "💧 🌿 🔭",
   },
   {
     key: "patrimonio",
-    label: "Patrimonio",
+    labelKey: "mapa.patrimonio",
     emoji: "⛪",
     tipos: ["iglesia", "capilla", "cruceiro", "monumento", "yacimiento"],
+    subEmojis: "⛪ ✝️ 🏛️ 🏺",
   },
 ] as const;
 
@@ -89,25 +90,11 @@ type FiltrosActivos = {
   patrimonio: boolean;
 };
 
-const TIPO_EMOJI: Record<string, string> = {
-  restaurante: "🍽️",
-  supermercado: "🛒",
-  farmacia: "💊",
-  medico: "🏥",
-  fuente: "💧",
-  area_descanso: "🌿",
-  mirador: "🔭",
-  iglesia: "⛪",
-  capilla: "⛪",
-  cruceiro: "✝️",
-  monumento: "🏛️",
-  yacimiento: "🏺",
-};
-
 export default function MapaScreen() {
   const { t } = useTranslation();
   const cameraRef = useRef<Camera>(null);
   const panelAnim = useRef(new Animated.Value(0)).current;
+  const filtrosAnim = useRef(new Animated.Value(0)).current;
   const { etapa: etapaSlug } = useLocalSearchParams<{ etapa?: string }>();
 
   const [recorrido, setRecorrido] = useState<RecorridoGeoJSON | null>(null);
@@ -124,17 +111,58 @@ export default function MapaScreen() {
   const [etapasConMarcadores, setEtapasConMarcadores] = useState<Set<string>>(
     new Set(),
   );
-
   const [filtros, setFiltros] = useState<FiltrosActivos>({
     albergues: true,
-    negocios: false,
+    negocios: true,
     infraestructura: false,
     descanso: false,
     patrimonio: false,
   });
-
   const [filtrosPendientes, setFiltrosPendientes] =
     useState<FiltrosActivos>(filtros);
+
+  const [albergueSeleccionado, setAlbergueSeleccionado] = useState<{
+    nombre: string;
+    localidad: string;
+    slug: string;
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  const [poiSeleccionado, setPoiSeleccionado] = useState<{
+    nombre: string;
+    tipo: string;
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  // Estado adicional para el modo seguimiento
+  const [modoSeguimiento, setModoSeguimiento] = useState(false);
+
+  const centrarEnPosicion = async () => {
+    let tienePermiso = permisoGPS;
+    if (!tienePermiso) {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+      setPermisoGPS(true);
+      tienePermiso = true;
+    }
+    try {
+      const loc = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      setGpsActivo(true);
+      setModoSeguimiento(true);
+      cameraRef.current?.setCamera({
+        centerCoordinate: [loc.coords.longitude, loc.coords.latitude],
+        zoomLevel: 15,
+        animationMode: "flyTo",
+        animationDuration: 1000,
+      });
+    } catch {
+      setGpsActivo(true);
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -147,10 +175,9 @@ export default function MapaScreen() {
     const cargarRecorrido = async () => {
       try {
         const res = await fetch(`${API_URL}/data/camino-etapas.geojson`);
-        if (!res.ok) throw new Error("Error cargando recorrido");
+        if (!res.ok) throw new Error();
         const data: RecorridoGeoJSON = await res.json();
         setRecorrido(data);
-
         if (etapaSlug && data.features) {
           const feature = data.features.find(
             (f) => f.properties.slug === etapaSlug,
@@ -169,22 +196,20 @@ export default function MapaScreen() {
   const tiposActivos = useCallback((): string[] => {
     const tipos: string[] = [];
     GRUPOS_FILTROS.forEach((grupo) => {
-      if (filtros[grupo.key as GrupoKey]) {
-        tipos.push(...grupo.tipos);
-      }
+      if (filtros[grupo.key as GrupoKey]) tipos.push(...grupo.tipos);
     });
     return tipos;
   }, [filtros]);
 
   useEffect(() => {
     if (!etapaSeleccionada) return;
-    const cargarMarcadores = async () => {
+    const cargar = async () => {
       try {
-        const slug = etapaSeleccionada.properties.slug;
-        const res = await fetch(`${API_URL}/api/mapa/etapa/${slug}`);
+        const res = await fetch(
+          `${API_URL}/api/mapa/etapa/${etapaSeleccionada.properties.slug}`,
+        );
         if (!res.ok) return;
         const data = await res.json();
-
         const tipos = tiposActivos();
         const features = [
           ...(filtros.albergues ? (data.albergues?.features ?? []) : []),
@@ -193,27 +218,22 @@ export default function MapaScreen() {
             tipos.includes(f.properties?.tipo),
           ),
         ];
-
         setMarcadores({ type: "FeatureCollection", features });
-      } catch {
-        // silencioso
-      }
+      } catch {}
     };
-    cargarMarcadores();
+    cargar();
   }, [etapaSeleccionada, filtros]);
 
   const mostrarPanel = useCallback(
     async (etapa: EtapaFeature) => {
       setEtapaSeleccionada(etapa);
       setEtapaInfo(null);
-
       Animated.spring(panelAnim, {
         toValue: 1,
         useNativeDriver: true,
         tension: 65,
         friction: 11,
       }).start();
-
       const coords = etapa.geometry.coordinates;
       const mid = coords[Math.floor(coords.length / 2)];
       cameraRef.current?.setCamera({
@@ -221,7 +241,6 @@ export default function MapaScreen() {
         zoomLevel: 9,
         animationDuration: 800,
       });
-
       try {
         const res = await fetch(
           `${API_URL}/api/etapas/${etapa.properties.slug}/info`,
@@ -230,9 +249,7 @@ export default function MapaScreen() {
           const data = await res.json();
           setEtapaInfo(data.etapa);
         }
-      } catch {
-        // silencioso
-      }
+      } catch {}
     },
     [panelAnim],
   );
@@ -240,7 +257,7 @@ export default function MapaScreen() {
   const cargarMarcadoresPorZoom = useCallback(
     async (zoom: number, bounds: { ne: number[]; sw: number[] }) => {
       if (zoom < 9 || !recorrido) return;
-
+      const tipos = tiposActivos();
       const etapasVisibles = recorrido.features.filter((f) => {
         const coords = f.geometry.coordinates;
         const mid = coords[Math.floor(coords.length / 2)];
@@ -251,18 +268,13 @@ export default function MapaScreen() {
           mid[1] <= bounds.ne[1]
         );
       });
-
-      const tipos = tiposActivos();
-
       for (const etapa of etapasVisibles) {
         const slug = etapa.properties.slug;
         if (etapasConMarcadores.has(slug)) continue;
-
         try {
           const res = await fetch(`${API_URL}/api/mapa/etapa/${slug}`);
           if (!res.ok) continue;
           const data = await res.json();
-
           const nuevos = [
             ...(filtros.albergues ? (data.albergues?.features ?? []) : []),
             ...(filtros.negocios ? (data.negocios?.features ?? []) : []),
@@ -270,7 +282,6 @@ export default function MapaScreen() {
               tipos.includes(f.properties?.tipo),
             ),
           ];
-
           setMarcadores((prev) => ({
             type: "FeatureCollection",
             features: [
@@ -281,11 +292,8 @@ export default function MapaScreen() {
               ...nuevos,
             ],
           }));
-
           setEtapasConMarcadores((prev) => new Set([...prev, slug]));
-        } catch {
-          // silencioso
-        }
+        } catch {}
       }
     },
     [recorrido, filtros, etapasConMarcadores, tiposActivos],
@@ -303,11 +311,31 @@ export default function MapaScreen() {
     });
   }, [panelAnim]);
 
+  const abrirFiltros = () => {
+    setFiltrosPendientes(filtros);
+    setMostrarFiltros(true);
+    Animated.spring(filtrosAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 65,
+      friction: 11,
+    }).start();
+  };
+
+  const cerrarFiltros = () => {
+    Animated.spring(filtrosAnim, {
+      toValue: 0,
+      useNativeDriver: true,
+      tension: 65,
+      friction: 11,
+    }).start(() => setMostrarFiltros(false));
+  };
+
   const aplicarFiltros = () => {
     setFiltros(filtrosPendientes);
     setEtapasConMarcadores(new Set());
     setMarcadores(null);
-    setMostrarFiltros(false);
+    cerrarFiltros();
   };
 
   const panelTranslateY = panelAnim.interpolate({
@@ -315,33 +343,15 @@ export default function MapaScreen() {
     outputRange: [300, 0],
   });
 
-  const centrarEnPosicion = async () => {
-    let tienePermiso = permisoGPS;
-    if (!tienePermiso) {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") return;
-      setPermisoGPS(true);
-      tienePermiso = true;
-    }
-    try {
-      const loc = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
-      setGpsActivo(true);
-      cameraRef.current?.setCamera({
-        centerCoordinate: [loc.coords.longitude, loc.coords.latitude],
-        zoomLevel: 13,
-        animationMode: "flyTo",
-        animationDuration: 1000,
-      });
-    } catch {
-      setGpsActivo(true);
-    }
-  };
+  const filtrosTranslateY = filtrosAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [400, 0],
+  });
 
   const volverAlCamino = () => {
     setGpsActivo(false);
     cerrarPanel();
+    setModoSeguimiento(false);
     cameraRef.current?.setCamera({
       centerCoordinate: CAMINO_BOUNDS.center,
       zoomLevel: CAMINO_BOUNDS.zoom,
@@ -381,7 +391,7 @@ export default function MapaScreen() {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#C8A96E" />
-        <Text style={styles.loadingText}>Cargando el Camino...</Text>
+        <Text style={styles.loadingText}>{t("mapa.cargando")}</Text>
       </View>
     );
   }
@@ -389,12 +399,12 @@ export default function MapaScreen() {
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.errorText}>No se pudo cargar el mapa</Text>
+        <Text style={styles.errorText}>{t("mapa.error_carga")}</Text>
         <TouchableOpacity
           style={styles.retryBtn}
           onPress={() => setError(false)}
         >
-          <Text style={styles.retryText}>Reintentar</Text>
+          <Text style={styles.retryText}>{t("mapa.reintentar")}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -426,8 +436,12 @@ export default function MapaScreen() {
           zoomLevel={CAMINO_BOUNDS.zoom}
           animationMode="flyTo"
           animationDuration={1200}
+          followUserLocation={modoSeguimiento}
+          followUserMode={
+            modoSeguimiento ? UserTrackingMode.FollowWithCourse : undefined
+          }
+          followZoomLevel={modoSeguimiento ? 15 : undefined}
         />
-
         {gpsActivo && permisoGPS && (
           <UserLocation visible renderMode={UserLocationRenderMode.Normal} />
         )}
@@ -485,32 +499,91 @@ export default function MapaScreen() {
           </ShapeSource>
         )}
 
+        {/* Albergues — 3 niveles: sin registrar (gris), registrado (verde), pro (dorado) */}
         {filtros.albergues && marcadoresAlbergues.features.length > 0 && (
           <ShapeSource
             id="albergues-markers"
             shape={marcadoresAlbergues}
             onPress={(e) => {
               const props = e.features?.[0]?.properties;
-              if (props?.slug)
-                router.push(`/(public)/albergues/${props.slug}` as any);
+              const coords = (e.features?.[0]?.geometry as any)?.coordinates;
+              if (props?.slug && coords) {
+                setAlbergueSeleccionado({
+                  nombre: props.nombre,
+                  localidad: props.localidad,
+                  slug: props.slug,
+                  lng: coords[0],
+                  lat: coords[1],
+                });
+              }
             }}
           >
+            {/* Borde exterior para Pro */}
+            <CircleLayer
+              id="albergues-pro-halo"
+              minZoomLevel={9}
+              style={{
+                circleRadius: 11,
+                circleColor: "#F5C842",
+                circleOpacity: [
+                  "case",
+                  ["==", ["get", "plan"], "pro"],
+                  0.3,
+                  0,
+                ] as any,
+              }}
+            />
             <CircleLayer
               id="albergues-circle"
               minZoomLevel={9}
               style={{
-                circleRadius: 7,
-                circleColor: "#2D5016",
+                circleRadius: [
+                  "case",
+                  ["==", ["get", "plan"], "pro"],
+                  9,
+                  ["==", ["get", "registrado"], true],
+                  7,
+                  5,
+                ] as any,
+                circleColor: [
+                  "case",
+                  ["==", ["get", "plan"], "pro"],
+                  "#F5C842",
+                  ["==", ["get", "registrado"], true],
+                  "#2D5016",
+                  "#9CA3AF",
+                ] as any,
                 circleStrokeWidth: 2,
                 circleStrokeColor: "#fff",
-                circleOpacity: 0.9,
+                circleOpacity: [
+                  "case",
+                  ["==", ["get", "registrado"], true],
+                  0.95,
+                  0.5,
+                ] as any,
               }}
             />
           </ShapeSource>
         )}
 
+        {/* POIs */}
         {marcadoresPois.features.length > 0 && (
-          <ShapeSource id="pois-markers" shape={marcadoresPois}>
+          <ShapeSource
+            id="pois-markers"
+            shape={marcadoresPois}
+            onPress={(e) => {
+              const props = e.features?.[0]?.properties;
+              const coords = (e.features?.[0]?.geometry as any)?.coordinates;
+              if (props && coords) {
+                setPoiSeleccionado({
+                  nombre: props.nombre,
+                  tipo: props.tipo,
+                  lng: coords[0],
+                  lat: coords[1],
+                });
+              }
+            }}
+          >
             <CircleLayer
               id="pois-circle"
               minZoomLevel={11}
@@ -525,6 +598,7 @@ export default function MapaScreen() {
           </ShapeSource>
         )}
 
+        {/* Negocios */}
         {filtros.negocios && marcadoresNegocios.features.length > 0 && (
           <ShapeSource
             id="negocios-markers"
@@ -550,7 +624,7 @@ export default function MapaScreen() {
         )}
       </MapView>
 
-      {/* Botones flotantes GPS */}
+      {/* Botones GPS */}
       <View style={styles.botonesFlotantes}>
         <TouchableOpacity
           style={[styles.botonFlotante, gpsActivo && styles.botonActivo]}
@@ -564,15 +638,9 @@ export default function MapaScreen() {
       </View>
 
       {/* Botón filtros */}
-      <TouchableOpacity
-        style={styles.botonFiltros}
-        onPress={() => {
-          setFiltrosPendientes(filtros);
-          setMostrarFiltros(true);
-        }}
-      >
+      <TouchableOpacity style={styles.botonFiltros} onPress={abrirFiltros}>
         <Text style={styles.botonFiltrosIcono}>⚙️</Text>
-        <Text style={styles.botonFiltrosTexto}>Filtros</Text>
+        <Text style={styles.botonFiltrosTexto}>{t("mapa.filtros")}</Text>
         {numFiltrosActivos > 0 && (
           <View style={styles.filtroBadge}>
             <Text style={styles.filtroBadgeTexto}>{numFiltrosActivos}</Text>
@@ -592,11 +660,11 @@ export default function MapaScreen() {
           <View style={styles.panelHeader}>
             <View style={styles.panelEtapaBadge}>
               <Text style={styles.panelEtapaNum}>
-                Etapa {etapaSeleccionada.properties.numero}
+                {t("mapa.etapa")} {etapaSeleccionada.properties.numero}
               </Text>
               {etapaInfo?.es_variante && (
                 <View style={styles.varianteBadge}>
-                  <Text style={styles.varianteText}>Variante</Text>
+                  <Text style={styles.varianteText}>{t("mapa.variante")}</Text>
                 </View>
               )}
             </View>
@@ -607,7 +675,7 @@ export default function MapaScreen() {
 
           <Text style={styles.panelNombre}>
             {etapaInfo?.nombre ??
-              `Etapa ${etapaSeleccionada.properties.numero}`}
+              `${t("mapa.etapa")} ${etapaSeleccionada.properties.numero}`}
           </Text>
 
           {(etapaInfo?.inicio_nombre || etapaInfo?.fin_nombre) && (
@@ -621,21 +689,21 @@ export default function MapaScreen() {
               <Text style={styles.statValor}>
                 {etapaInfo?.distancia_km ? `${etapaInfo.distancia_km} km` : "—"}
               </Text>
-              <Text style={styles.statLabel}>Distancia</Text>
+              <Text style={styles.statLabel}>{t("mapa.distancia")}</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Text style={styles.statValor}>
                 {etapaInfo?.desnivel_pos ? `+${etapaInfo.desnivel_pos} m` : "—"}
               </Text>
-              <Text style={styles.statLabel}>Subida</Text>
+              <Text style={styles.statLabel}>{t("mapa.subida")}</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Text style={styles.statValor}>
                 {etapaInfo?.desnivel_neg ? `-${etapaInfo.desnivel_neg} m` : "—"}
               </Text>
-              <Text style={styles.statLabel}>Bajada</Text>
+              <Text style={styles.statLabel}>{t("mapa.bajada")}</Text>
             </View>
           </View>
 
@@ -647,120 +715,204 @@ export default function MapaScreen() {
               )
             }
           >
-            <Text style={styles.ctaText}>Ver ficha completa</Text>
+            <Text style={styles.ctaText}>{t("mapa.ver_ficha")}</Text>
           </TouchableOpacity>
         </Animated.View>
       )}
 
-      {/* Modal filtros */}
-      <Modal
-        visible={mostrarFiltros}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setMostrarFiltros(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setMostrarFiltros(false)}
-        />
-        <View style={styles.filtrosSheet}>
-          <View style={styles.filtrosHandle} />
-          <Text style={styles.filtrosTitulo}>Filtros del mapa</Text>
-
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.filtrosGrupoTitulo}>Alojamiento</Text>
+      {albergueSeleccionado && (
+        <View style={styles.popupAlbergue}>
+          <TouchableOpacity
+            style={styles.popupCerrar}
+            onPress={() => setAlbergueSeleccionado(null)}
+          >
+            <Text style={styles.popupCerrarText}>✕</Text>
+          </TouchableOpacity>
+          <Text style={styles.popupNombre}>{albergueSeleccionado.nombre}</Text>
+          <Text style={styles.popupLocalidad}>
+            {albergueSeleccionado.localidad}
+          </Text>
+          <View style={styles.popupBtns}>
             <TouchableOpacity
-              style={[
-                styles.filtroItem,
-                filtrosPendientes.albergues && styles.filtroItemActivo,
-              ]}
-              onPress={() =>
-                setFiltrosPendientes((p) => ({ ...p, albergues: !p.albergues }))
-              }
+              style={styles.popupBtnFicha}
+              onPress={() => {
+                setAlbergueSeleccionado(null);
+                router.push(
+                  `/(public)/albergues/${albergueSeleccionado.slug}` as any,
+                );
+              }}
             >
-              <Text style={styles.filtroItemEmoji}>🏠</Text>
-              <Text style={styles.filtroItemLabel}>Albergues</Text>
-              <View
-                style={[
-                  styles.filtroToggle,
-                  filtrosPendientes.albergues && styles.filtroToggleActivo,
-                ]}
-              >
-                {filtrosPendientes.albergues && (
-                  <Text style={styles.filtroToggleCheck}>✓</Text>
-                )}
-              </View>
+              <Text style={styles.popupBtnFichaText}>
+                {t("mapa.ver_ficha")}
+              </Text>
             </TouchableOpacity>
-
             <TouchableOpacity
-              style={[
-                styles.filtroItem,
-                filtrosPendientes.negocios && styles.filtroItemActivo,
-              ]}
-              onPress={() =>
-                setFiltrosPendientes((p) => ({ ...p, negocios: !p.negocios }))
-              }
+              style={styles.popupBtnNav}
+              onPress={() => {
+                const { lat, lng } = albergueSeleccionado;
+                Linking.openURL(
+                  `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`,
+                );
+              }}
             >
-              <Text style={styles.filtroItemEmoji}>🏪</Text>
-              <Text style={styles.filtroItemLabel}>Negocios del Camino</Text>
-              <View
-                style={[
-                  styles.filtroToggle,
-                  filtrosPendientes.negocios && styles.filtroToggleActivo,
-                ]}
-              >
-                {filtrosPendientes.negocios && (
-                  <Text style={styles.filtroToggleCheck}>✓</Text>
-                )}
-              </View>
+              <Text style={styles.popupBtnNavText}>🧭 Ir</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
-            <Text style={[styles.filtrosGrupoTitulo, { marginTop: 16 }]}>
-              Puntos de interés
-            </Text>
-            {GRUPOS_FILTROS.map((grupo) => (
+      {poiSeleccionado && (
+        <View style={styles.popupAlbergue}>
+          <TouchableOpacity
+            style={styles.popupCerrar}
+            onPress={() => setPoiSeleccionado(null)}
+          >
+            <Text style={styles.popupCerrarText}>✕</Text>
+          </TouchableOpacity>
+          <Text style={styles.popupNombre}>{poiSeleccionado.nombre}</Text>
+          <Text style={styles.popupLocalidad}>
+            {t(`etapa.pois.tipos.${poiSeleccionado.tipo}`) ??
+              poiSeleccionado.tipo}
+          </Text>
+          <TouchableOpacity
+            style={[styles.popupBtnNav, { alignSelf: "stretch" }]}
+            onPress={() => {
+              const { lat, lng } = poiSeleccionado;
+              Linking.openURL(
+                `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`,
+              );
+            }}
+          >
+            <Text style={styles.popupBtnNavText}>🧭 Cómo llegar</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Bottom sheet filtros — sin modal intrusivo */}
+      {mostrarFiltros && (
+        <>
+          <TouchableOpacity
+            style={styles.filtrosOverlay}
+            activeOpacity={1}
+            onPress={cerrarFiltros}
+          />
+          <Animated.View
+            style={[
+              styles.filtrosSheet,
+              { transform: [{ translateY: filtrosTranslateY }] },
+            ]}
+          >
+            <View style={styles.filtrosHandle} />
+            <Text style={styles.filtrosTitulo}>{t("mapa.filtros")}</Text>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* Alojamiento */}
+              <Text style={styles.filtrosGrupoTitulo}>
+                {t("mapa.alojamiento")}
+              </Text>
+
               <TouchableOpacity
-                key={grupo.key}
                 style={[
                   styles.filtroItem,
-                  filtrosPendientes[grupo.key as GrupoKey] &&
-                    styles.filtroItemActivo,
+                  filtrosPendientes.albergues && styles.filtroItemActivo,
                 ]}
                 onPress={() =>
                   setFiltrosPendientes((p) => ({
                     ...p,
-                    [grupo.key]: !p[grupo.key as GrupoKey],
+                    albergues: !p.albergues,
                   }))
                 }
               >
-                <Text style={styles.filtroItemEmoji}>{grupo.emoji}</Text>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.filtroItemLabel}>{grupo.label}</Text>
-                  <Text style={styles.filtroItemSub}>
-                    {grupo.tipos.map((tp) => TIPO_EMOJI[tp] ?? "").join(" ")}
-                  </Text>
-                </View>
+                <Text style={styles.filtroItemEmoji}>🏠</Text>
+                <Text style={styles.filtroItemLabel}>
+                  {t("mapa.albergues")}
+                </Text>
                 <View
                   style={[
                     styles.filtroToggle,
-                    filtrosPendientes[grupo.key as GrupoKey] &&
-                      styles.filtroToggleActivo,
+                    filtrosPendientes.albergues && styles.filtroToggleActivo,
                   ]}
                 >
-                  {filtrosPendientes[grupo.key as GrupoKey] && (
+                  {filtrosPendientes.albergues && (
                     <Text style={styles.filtroToggleCheck}>✓</Text>
                   )}
                 </View>
               </TouchableOpacity>
-            ))}
-          </ScrollView>
 
-          <TouchableOpacity style={styles.aplicarBtn} onPress={aplicarFiltros}>
-            <Text style={styles.aplicarBtnTexto}>Aplicar filtros</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+              <TouchableOpacity
+                style={[
+                  styles.filtroItem,
+                  filtrosPendientes.negocios && styles.filtroItemActivo,
+                ]}
+                onPress={() =>
+                  setFiltrosPendientes((p) => ({ ...p, negocios: !p.negocios }))
+                }
+              >
+                <Text style={styles.filtroItemEmoji}>🏪</Text>
+                <Text style={styles.filtroItemLabel}>{t("mapa.negocios")}</Text>
+                <View
+                  style={[
+                    styles.filtroToggle,
+                    filtrosPendientes.negocios && styles.filtroToggleActivo,
+                  ]}
+                >
+                  {filtrosPendientes.negocios && (
+                    <Text style={styles.filtroToggleCheck}>✓</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+
+              {/* POIs */}
+              <Text style={[styles.filtrosGrupoTitulo, { marginTop: 16 }]}>
+                {t("mapa.puntos_interes")}
+              </Text>
+
+              {GRUPOS_FILTROS.map((grupo) => (
+                <TouchableOpacity
+                  key={grupo.key}
+                  style={[
+                    styles.filtroItem,
+                    filtrosPendientes[grupo.key as GrupoKey] &&
+                      styles.filtroItemActivo,
+                  ]}
+                  onPress={() =>
+                    setFiltrosPendientes((p) => ({
+                      ...p,
+                      [grupo.key]: !p[grupo.key as GrupoKey],
+                    }))
+                  }
+                >
+                  <Text style={styles.filtroItemEmoji}>{grupo.emoji}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.filtroItemLabel}>
+                      {t(grupo.labelKey)}
+                    </Text>
+                    <Text style={styles.filtroItemSub}>{grupo.subEmojis}</Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.filtroToggle,
+                      filtrosPendientes[grupo.key as GrupoKey] &&
+                        styles.filtroToggleActivo,
+                    ]}
+                  >
+                    {filtrosPendientes[grupo.key as GrupoKey] && (
+                      <Text style={styles.filtroToggleCheck}>✓</Text>
+                    )}
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity
+              style={styles.aplicarBtn}
+              onPress={aplicarFiltros}
+            >
+              <Text style={styles.aplicarBtnTexto}>{t("mapa.filtros")} ✓</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </>
+      )}
     </View>
   );
 }
@@ -926,18 +1078,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ctaText: { color: "#fff", fontSize: 15, fontWeight: "700" },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+  filtrosOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
   filtrosSheet: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: "#FEFCF8",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
     paddingBottom: 40,
     paddingTop: 12,
-    maxHeight: "75%",
+    maxHeight: "55%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
@@ -978,10 +1138,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginBottom: 8,
   },
-  filtroItemActivo: {
-    borderColor: "#2D5016",
-    backgroundColor: "#F0F7EE",
-  },
+  filtroItemActivo: { borderColor: "#2D5016", backgroundColor: "#F0F7EE" },
   filtroItemEmoji: { fontSize: 22 },
   filtroItemLabel: {
     fontSize: 14,
@@ -989,11 +1146,7 @@ const styles = StyleSheet.create({
     color: "#2C1F0E",
     flex: 1,
   },
-  filtroItemSub: {
-    fontSize: 12,
-    color: "#8B7355",
-    marginTop: 2,
-  },
+  filtroItemSub: { fontSize: 12, color: "#8B7355", marginTop: 2 },
   filtroToggle: {
     width: 24,
     height: 24,
@@ -1003,10 +1156,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  filtroToggleActivo: {
-    backgroundColor: "#2D5016",
-    borderColor: "#2D5016",
-  },
+  filtroToggleActivo: { backgroundColor: "#2D5016", borderColor: "#2D5016" },
   filtroToggleCheck: { fontSize: 12, color: "#fff", fontWeight: "700" },
   aplicarBtn: {
     backgroundColor: "#2D5016",
@@ -1016,4 +1166,56 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   aplicarBtnTexto: { fontSize: 15, fontWeight: "700", color: "#fff" },
+
+  popupAlbergue: {
+    position: "absolute",
+    bottom: 100,
+    left: 16,
+    right: 16,
+    backgroundColor: "#FEFCF8",
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  popupCerrar: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#F0EDE8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  popupCerrarText: { fontSize: 11, color: "#666" },
+  popupNombre: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    marginBottom: 2,
+    paddingRight: 24,
+  },
+  popupLocalidad: { fontSize: 12, color: "#888", marginBottom: 12 },
+  popupBtns: { flexDirection: "row", gap: 8 },
+  popupBtnFicha: {
+    flex: 1,
+    backgroundColor: "#2D5016",
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  popupBtnFichaText: { color: "#fff", fontSize: 13, fontWeight: "600" },
+  popupBtnNav: {
+    backgroundColor: "#F5C842",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  popupBtnNavText: { fontSize: 13, fontWeight: "700", color: "#1a1a1a" },
 });

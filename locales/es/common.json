@@ -253,12 +253,7 @@
       "meteo_titulo": "Información meteorológica",
       "meteo_desc": "Previsión del tiempo para cada etapa con datos de temperatura, precipitación y viento. Planifica tu jornada con información actualizada."
     },
-    "mapa": {
-      "explorar": "Explorar",
-      "titulo": "El Camino Francés",
-      "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
-      "ver_etapas": "Ver etapas →"
-    },
+
     "cta_final": {
       "eyebrow": "Comienza tu Camino",
       "titulo": "Tu Camino,",
@@ -425,6 +420,22 @@
     "tu_posicion": "Tu posición",
     "sectores": "Camino Francés · Sectores",
     "etapa": "Etapa",
-    "aqui": "aquí"
+    "aqui": "aquí",
+    "cargando": "Cargando el Camino...",
+    "error_carga": "No se pudo cargar el mapa",
+    "reintentar": "Reintentar",
+    "filtros": "Filtros",
+    "alojamiento": "Alojamiento",
+    "albergues": "Albergues",
+    "negocios": "Negocios del Camino",
+    "puntos_interes": "Puntos de interés",
+    "infraestructura": "Infraestructura",
+    "descanso": "Descanso",
+    "patrimonio": "Patrimonio",
+    "distancia": "Distancia",
+    "subida": "Subida",
+    "bajada": "Bajada",
+    "ver_ficha": "Ver ficha completa",
+    "variante": "Variante"
   }
 }

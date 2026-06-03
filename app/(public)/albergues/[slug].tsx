@@ -68,6 +68,8 @@ interface AlbergueDetalle {
   servicios: Record<string, boolean> | null;
   plan: string | null;
   etapas: { numero: number; nombre: string; slug: string } | null;
+  coords_lat: number | null;
+  coords_lng: number | null;
 }
 
 // ─── Colores ──────────────────────────────────────────────────────────────────
@@ -940,6 +942,28 @@ export default function AlbergueSlugScreen() {
                 ›
               </Text>
             </TouchableOpacity>
+
+            {/* Cómo llegar */}
+            {albergue.coords_lat && albergue.coords_lng && (
+              <TouchableOpacity
+                style={s.contactoItem}
+                activeOpacity={0.7}
+                onPress={() =>
+                  Linking.openURL(
+                    `https://www.google.com/maps/dir/?api=1&destination=${albergue.coords_lat},${albergue.coords_lng}&travelmode=walking`,
+                  )
+                }
+              >
+                <View style={[s.contactoIcon, { backgroundColor: "#FFF3E0" }]}>
+                  <Text style={s.contactoEmoji}>🧭</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.contactoTitulo}>Cómo llegar</Text>
+                  <Text style={s.contactoSub}>{albergue.localidad}</Text>
+                </View>
+                <Text style={s.contactoArrow}>›</Text>
+              </TouchableOpacity>
+            )}
 
             {/* Teléfono — restaurar original */}
             {albergue.telefono && (

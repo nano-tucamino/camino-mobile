@@ -28,7 +28,7 @@ export default {
       intentFilters: [
         {
           action: "VIEW",
-          autoVerify: true,
+          autoVerify: false,
           data: [{ scheme: "caminomobile" }],
           category: ["BROWSABLE", "DEFAULT"],
         },
