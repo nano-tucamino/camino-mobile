@@ -15,6 +15,7 @@ import Mapbox, {
   Camera,
   ShapeSource,
   LineLayer,
+  SymbolLayer,
   CircleLayer,
   UserLocation,
   UserLocationRenderMode,
@@ -138,6 +139,8 @@ export default function MapaScreen() {
 
   // Estado adicional para el modo seguimiento
   const [modoSeguimiento, setModoSeguimiento] = useState(false);
+  const headingRef = useRef<number>(0);
+  const [headingSmoothed, setHeadingSmoothed] = useState<number>(0);
 
   const centrarEnPosicion = async () => {
     let tienePermiso = permisoGPS;
@@ -163,6 +166,19 @@ export default function MapaScreen() {
       setGpsActivo(true);
     }
   };
+
+  useEffect(() => {
+    if (!modoSeguimiento || !permisoGPS) return;
+    const sub = Location.watchHeadingAsync((heading) => {
+      // Filtro exponencial — α=0.15 suaviza sin lag excesivo
+      headingRef.current =
+        headingRef.current * 0.85 + heading.trueHeading * 0.15;
+      setHeadingSmoothed(headingRef.current);
+    });
+    return () => {
+      sub.then((s) => s.remove());
+    };
+  }, [modoSeguimiento, permisoGPS]);
 
   useEffect(() => {
     (async () => {
@@ -273,7 +289,10 @@ export default function MapaScreen() {
         if (etapasConMarcadores.has(slug)) continue;
         try {
           const res = await fetch(`${API_URL}/api/mapa/etapa/${slug}`);
-          if (!res.ok) continue;
+          if (!res.ok) {
+            console.warn("[mapa] Error HTTP cargando etapa", slug, res.status);
+            continue;
+          }
           const data = await res.json();
           const nuevos = [
             ...(filtros.albergues ? (data.albergues?.features ?? []) : []),
@@ -293,7 +312,9 @@ export default function MapaScreen() {
             ],
           }));
           setEtapasConMarcadores((prev) => new Set([...prev, slug]));
-        } catch {}
+        } catch (err) {
+          console.warn("[mapa] Excepción cargando etapa", slug, err);
+        }
       }
     },
     [recorrido, filtros, etapasConMarcadores, tiposActivos],
@@ -441,9 +462,10 @@ export default function MapaScreen() {
             modoSeguimiento ? UserTrackingMode.FollowWithCourse : undefined
           }
           followZoomLevel={modoSeguimiento ? 15 : undefined}
+          followHeading={modoSeguimiento ? headingSmoothed : undefined}
         />
         {gpsActivo && permisoGPS && (
-          <UserLocation visible renderMode={UserLocationRenderMode.Normal} />
+          <UserLocation visible renderMode={UserLocationRenderMode.Native} />
         )}
 
         {(recorrido?.features.length ?? 0) > 0 && (
@@ -518,21 +540,23 @@ export default function MapaScreen() {
               }
             }}
           >
-            {/* Borde exterior para Pro */}
+            {/* Halo dorado para Pro */}
             <CircleLayer
               id="albergues-pro-halo"
               minZoomLevel={9}
               style={{
-                circleRadius: 11,
+                circleRadius: 18,
                 circleColor: "#F5C842",
                 circleOpacity: [
                   "case",
                   ["==", ["get", "plan"], "pro"],
-                  0.3,
+                  0.25,
                   0,
                 ] as any,
+                circleBlur: 0.5,
               }}
             />
+            {/* Círculo de fondo — 3 niveles */}
             <CircleLayer
               id="albergues-circle"
               minZoomLevel={9}
@@ -540,10 +564,10 @@ export default function MapaScreen() {
                 circleRadius: [
                   "case",
                   ["==", ["get", "plan"], "pro"],
-                  9,
+                  14,
                   ["==", ["get", "registrado"], true],
-                  7,
-                  5,
+                  12,
+                  10,
                 ] as any,
                 circleColor: [
                   "case",
@@ -557,15 +581,33 @@ export default function MapaScreen() {
                 circleStrokeColor: "#fff",
                 circleOpacity: [
                   "case",
+                  ["==", ["get", "plan"], "pro"],
+                  1,
                   ["==", ["get", "registrado"], true],
                   0.95,
                   0.5,
                 ] as any,
               }}
             />
+            {/* Icono casa encima */}
+            <SymbolLayer
+              id="albergues-icon"
+              minZoomLevel={9}
+              style={{
+                textField: "🏠",
+                textSize: [
+                  "case",
+                  ["==", ["get", "plan"], "pro"],
+                  14,
+                  12,
+                ] as any,
+                textAnchor: "center",
+                textAllowOverlap: true,
+                textIgnorePlacement: true,
+              }}
+            />
           </ShapeSource>
         )}
-
         {/* POIs */}
         {marcadoresPois.features.length > 0 && (
           <ShapeSource

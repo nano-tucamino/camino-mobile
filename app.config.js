@@ -39,6 +39,13 @@ export default {
     },
     plugins: [
       "expo-router",
+      [
+        "@sentry/react-native/expo",
+        {
+          organization: "caminosantiagoapp",
+          project: "camino-mobile",
+        },
+      ],
       "expo-web-browser",
       "@rnmapbox/maps",
       [

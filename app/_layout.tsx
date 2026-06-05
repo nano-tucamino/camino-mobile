@@ -9,6 +9,14 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import { supabase } from "../lib/supabase";
 import BottomNav from "@/components/BottomNav";
+import * as Sentry from "@sentry/react-native";
+
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  debug: __DEV__,
+  tracesSampleRate: 1.0,
+  environment: __DEV__ ? "development" : "production",
+});
 
 function extractTokensFromUrl(url: string) {
   let accessToken: string | undefined;
@@ -124,10 +132,12 @@ function AppNavigator() {
   );
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <AuthProvider>
       <AppNavigator />
     </AuthProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);
