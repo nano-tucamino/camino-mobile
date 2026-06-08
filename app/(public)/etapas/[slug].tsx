@@ -49,6 +49,7 @@ interface NavEtapa {
   numero: number;
   inicio_nombre: string;
   fin_nombre: string;
+  nombre_variante?: string | null;
 }
 interface Consejo {
   categoria: string;
@@ -201,7 +202,13 @@ export default function EtapaScreen() {
     etapa,
     fotos = [] as EtapaFoto[],
     valoraciones = { total: 0, media: 0 },
-    navegacion = {} as { anterior?: NavEtapa; siguiente?: NavEtapa },
+    navegacion = {} as {
+      anterior?: NavEtapa;
+      siguiente?: NavEtapa;
+      variantes_siguiente?: NavEtapa[];
+      variantes_anterior?: NavEtapa[];
+    },
+
     waypoints = [] as Waypoint[],
     consejos = [] as Consejo[],
     albergues = [] as Albergue[],
@@ -311,6 +318,8 @@ export default function EtapaScreen() {
         <NavEtapas
           anterior={navegacion.anterior}
           siguiente={navegacion.siguiente}
+          variantesSiguiente={navegacion.variantes_siguiente ?? []}
+          variantesAnterior={navegacion.variantes_anterior ?? []}
           numero={etapa.numero}
           color={color}
         />
@@ -545,6 +554,8 @@ export default function EtapaScreen() {
         <NavEtapas
           anterior={navegacion.anterior}
           siguiente={navegacion.siguiente}
+          variantesSiguiente={navegacion.variantes_siguiente ?? []}
+          variantesAnterior={navegacion.variantes_anterior ?? []}
           numero={etapa.numero}
           color={color}
         />
@@ -1312,8 +1323,6 @@ const m = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0EBE0",
   },
   rowIcon: { fontSize: 16, marginRight: 10 },
   rowLabel: { flex: 1, fontSize: 13, color: "#8B7355" },
@@ -1706,52 +1715,113 @@ function NavEtapas({
   siguiente,
   numero,
   color,
+  variantesSiguiente = [],
+  variantesAnterior = [],
 }: {
   anterior?: NavEtapa;
   siguiente?: NavEtapa;
   numero: number;
   color: string;
+  variantesSiguiente?: NavEtapa[];
+  variantesAnterior?: NavEtapa[];
 }) {
   return (
-    <View style={nv.row}>
-      {anterior ? (
-        <TouchableOpacity
-          style={nv.btn}
-          onPress={() =>
-            router.push(`/(public)/etapas/${anterior.slug}` as any)
-          }
-        >
-          <Text style={nv.arrow}>‹</Text>
-          <View>
-            <Text style={nv.label}>Etapa {anterior.numero}</Text>
-            <Text style={nv.nombre} numberOfLines={1}>
-              {anterior.inicio_nombre} →
-            </Text>
-          </View>
-        </TouchableOpacity>
-      ) : (
-        <View style={{ flex: 1 }} />
-      )}
-      <View style={[nv.badge, { backgroundColor: color }]}>
-        <Text style={nv.badgeText}>{numero}</Text>
+    <View style={nv.container}>
+      <View style={nv.row}>
+        {/* IZQUIERDA */}
+        {anterior ? (
+          <TouchableOpacity
+            style={nv.btn}
+            onPress={() =>
+              router.push(`/(public)/etapas/${anterior.slug}` as any)
+            }
+          >
+            <Text style={nv.arrow}>‹</Text>
+            <View>
+              <Text style={nv.label}>Etapa {anterior.numero}</Text>
+              <Text style={nv.nombre} numberOfLines={1}>
+                {anterior.inicio_nombre} →
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <View style={{ flex: 1 }} />
+        )}
+
+        {/* BADGE */}
+        <View style={[nv.badge, { backgroundColor: color }]}>
+          <Text style={nv.badgeText}>
+            {numero > 34 ? `F${numero - 100}` : numero}
+          </Text>
+        </View>
+
+        {/* DERECHA */}
+        {siguiente ? (
+          <TouchableOpacity
+            style={[nv.btn, { justifyContent: "flex-end" }]}
+            onPress={() =>
+              router.push(`/(public)/etapas/${siguiente.slug}` as any)
+            }
+          >
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={nv.label}>Etapa {siguiente.numero}</Text>
+              <Text style={nv.nombre} numberOfLines={1}>
+                → {siguiente.fin_nombre}
+              </Text>
+            </View>
+            <Text style={nv.arrow}>›</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={{ flex: 1 }} />
+        )}
       </View>
-      {siguiente ? (
-        <TouchableOpacity
-          style={[nv.btn, { justifyContent: "flex-end" }]}
-          onPress={() =>
-            router.push(`/(public)/etapas/${siguiente.slug}` as any)
-          }
-        >
-          <View style={{ alignItems: "flex-end" }}>
-            <Text style={nv.label}>Etapa {siguiente.numero}</Text>
-            <Text style={nv.nombre} numberOfLines={1}>
-              → {siguiente.fin_nombre}
-            </Text>
-          </View>
-          <Text style={nv.arrow}>›</Text>
-        </TouchableOpacity>
-      ) : (
-        <View style={{ flex: 1 }} />
+
+      {/* VARIANTES SIGUIENTE */}
+      {variantesSiguiente.length > 0 && (
+        <View style={nv.variantesRow}>
+          {variantesSiguiente.map((v) => (
+            <TouchableOpacity
+              key={v.slug}
+              style={nv.varianteBtn}
+              onPress={() => router.push(`/(public)/etapas/${v.slug}` as any)}
+            >
+              <Text style={nv.varianteIcon}>↳</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={nv.varianteLabel}>
+                  {v.nombre_variante ?? "Variante"}
+                </Text>
+                <Text style={nv.varianteNombre} numberOfLines={1}>
+                  {v.inicio_nombre} → {v.fin_nombre}
+                </Text>
+              </View>
+              <Text style={nv.arrow}>›</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* VARIANTES ANTERIOR */}
+      {variantesAnterior.length > 0 && (
+        <View style={nv.variantesRow}>
+          {variantesAnterior.map((v) => (
+            <TouchableOpacity
+              key={v.slug}
+              style={nv.varianteBtn}
+              onPress={() => router.push(`/(public)/etapas/${v.slug}` as any)}
+            >
+              <Text style={nv.arrow}>‹</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={nv.varianteLabel}>
+                  {v.nombre_variante ?? "Variante"}
+                </Text>
+                <Text style={nv.varianteNombre} numberOfLines={1}>
+                  {v.inicio_nombre} → {v.fin_nombre}
+                </Text>
+              </View>
+              <Text style={nv.varianteIcon}>↲</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       )}
     </View>
   );
@@ -1786,6 +1856,36 @@ const nv = StyleSheet.create({
     marginHorizontal: 8,
   },
   badgeText: { color: "white", fontSize: 14, fontWeight: "700" },
+
+  container: {
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0EBE0",
+  },
+  variantesRow: { paddingHorizontal: 16, paddingBottom: 10, gap: 6 },
+  varianteBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    backgroundColor: "#F5F0E8",
+    borderRadius: 8,
+  },
+  varianteIcon: { fontSize: 14, color: "#7C3AED" },
+  varianteLabel: {
+    fontSize: 9,
+    color: "#7C3AED",
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  varianteNombre: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#2C1F0E",
+    maxWidth: 160,
+  },
 });
 
 // ═══════════════════════════════════════════════════════════════
