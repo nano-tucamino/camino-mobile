@@ -239,7 +239,11 @@ function EtapaCard({
               completada && styles.numeroTextCompletada,
             ]}
           >
-            {etapa.es_variante ? "↳" : String(etapa.numero).padStart(2, "0")}
+            {etapa.es_variante
+              ? "↳"
+              : etapa.numero > 34
+                ? `F${etapa.numero - 100}`
+                : String(etapa.numero).padStart(2, "0")}
           </Text>
         </View>
 
