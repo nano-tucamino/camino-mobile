@@ -31,6 +31,8 @@ interface Props {
   modo?: "fab" | "inline";
   tieneRecientes?: boolean;
   onOpen?: () => void;
+  open?: boolean;
+  onClose?: () => void;
 }
 
 export default function CanalChat({
@@ -40,6 +42,8 @@ export default function CanalChat({
   modo = "inline",
   tieneRecientes = false,
   onOpen,
+  open: openProp,
+  onClose,
 }: Props) {
   const { user } = useAuth();
   const { mensajes, loading, sending, error, enviar, cargarMas, hayMas } =
@@ -100,8 +104,15 @@ export default function CanalChat({
       toValue: DRAWER_HEIGHT,
       duration: 250,
       useNativeDriver: true,
-    }).start(() => setOpen(false));
+    }).start(() => {
+      setOpen(false);
+      onClose?.();
+    });
   };
+
+  useEffect(() => {
+    if (openProp) openDrawer();
+  }, [openProp]);
 
   const handleEnviar = async () => {
     const t = texto.trim();

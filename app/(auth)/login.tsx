@@ -98,9 +98,7 @@ export default function LoginScreen() {
         {/* Logo / marca */}
         <View style={s.marca}>
           <Image
-            source={{
-              uri: "https://res.cloudinary.com/dazuwnm1k/image/upload/v1776719543/logo-1_u5yiqq.png",
-            }}
+            source={require("../../assets/logo-azul.png")}
             style={s.logo}
             resizeMode="contain"
           />
@@ -130,7 +128,12 @@ export default function LoginScreen() {
                 disabled={loading}
                 activeOpacity={0.8}
               >
-                <Text style={s.btnGoogleIcon}>G</Text>
+                <Image
+                  source={require("../../assets/google-icon.png")}
+                  style={s.googleIcon}
+                  resizeMode="contain"
+                />
+
                 <Text style={s.btnGoogleText}>
                   {modo === "login"
                     ? t("auth.login.google")
@@ -188,8 +191,7 @@ export default function LoginScreen() {
                     : `${t("auth.registro_page.ya_tienes")} `}
                   <Text style={{ color: C.acento, fontWeight: "600" }}>
                     {modo === "login"
-                      ? (t("auth.registro_page.registrate") ??
-                        "Regístrate gratis")
+                      ? (t("auth.login.registrate") ?? "Regístrate gratis")
                       : (t("auth.registro_page.inicia_sesion") ??
                         "Inicia sesión")}
                   </Text>
@@ -385,7 +387,7 @@ const s = StyleSheet.create({
     backgroundColor: C.blanco,
     marginBottom: 16,
   },
-  btnGoogleIcon: { fontSize: 16, fontWeight: "700", color: "#4285F4" },
+  googleIcon: { width: 32, height: 32 },
   btnGoogleText: { fontSize: 14, fontWeight: "500", color: C.tinta },
 
   separador: {

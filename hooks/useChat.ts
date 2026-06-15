@@ -37,7 +37,7 @@ export function useChat({
   const [hayMas, setHayMas] = useState(false);
 
   const userLocale = locale ?? i18n.language ?? "en";
-  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+
   const LIMIT = 50;
 
   // ─── Carga inicial ───────────────────────────────────────────────────────
@@ -75,8 +75,9 @@ export function useChat({
 
     cargar();
 
+    const channelTopic = `chat:${conversacionId}:${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel(`chat:${conversacionId}`)
+      .channel(channelTopic)
       .on(
         "postgres_changes",
         {
@@ -134,8 +135,6 @@ export function useChat({
         },
       )
       .subscribe();
-
-    channelRef.current = channel;
 
     return () => {
       supabase.removeChannel(channel);

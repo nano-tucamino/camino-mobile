@@ -153,14 +153,15 @@ export default function EtapaScreen() {
   const [activeTab, setActiveTab] = useState<TabId>("mapa");
   const [mensajesVistos, setMensajesVistos] = useState(0);
   const [canalId, setCanalId] = useState<string | null>(null);
+  const [canalAbierto, setCanalAbierto] = useState(false);
 
   const { onScroll: notifyScroll } = useNavigation();
   const scrollRef = useRef<ScrollView>(null);
-  const sectionY = useRef<Record<TabId, number>>({
-    mapa: 0,
-    info: 0,
-    albergues: 0,
-    canal: 0,
+  const sectionRefs = useRef<Record<TabId, View | null>>({
+    mapa: null,
+    info: null,
+    albergues: null,
+    canal: null,
   });
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -206,10 +207,19 @@ export default function EtapaScreen() {
 
   const scrollToTab = (tab: TabId) => {
     setActiveTab(tab);
-    scrollRef.current?.scrollTo({
-      y: sectionY.current[tab] - 44,
-      animated: true,
-    });
+    const node = sectionRefs.current[tab];
+    if (node && scrollRef.current) {
+      node.measureLayout(
+        scrollRef.current as any,
+        (_x: number, y: number) => {
+          scrollRef.current?.scrollTo({
+            y: Math.max(y - 44, 0),
+            animated: true,
+          });
+        },
+        () => {},
+      );
+    }
   };
 
   if (loading)
@@ -361,8 +371,8 @@ export default function EtapaScreen() {
 
         {/* ── MAPA ── */}
         <View
-          onLayout={(e) => {
-            sectionY.current.mapa = e.nativeEvent.layout.y;
+          ref={(r) => {
+            sectionRefs.current.mapa = r;
           }}
         >
           <ColapsableSection color={color} title="Mapa de la etapa" defaultOpen>
@@ -393,8 +403,8 @@ export default function EtapaScreen() {
 
         {/* ── INFO ── */}
         <View
-          onLayout={(e) => {
-            sectionY.current.info = e.nativeEvent.layout.y;
+          ref={(r) => {
+            sectionRefs.current.info = r;
           }}
         >
           {(waypoints as Waypoint[]).length > 0 && (
@@ -418,8 +428,8 @@ export default function EtapaScreen() {
 
           {/* ── ALBERGUES ── */}
           <View
-            onLayout={(e) => {
-              sectionY.current.albergues = e.nativeEvent.layout.y;
+            ref={(r) => {
+              sectionRefs.current.albergues = r;
             }}
           >
             <ColapsableSection
@@ -438,31 +448,27 @@ export default function EtapaScreen() {
 
           {/* ── CANAL ── */}
           <View
-            onLayout={(e) => {
-              sectionY.current.canal = e.nativeEvent.layout.y;
+            ref={(r) => {
+              sectionRefs.current.canal = r;
             }}
           >
-            <ColapsableSection
-              color={color}
-              title="Canal de la etapa"
-              onOpen={() => setMensajesVistos(mensajes.length)}
+            <TouchableOpacity
+              style={cs.wrapper}
+              activeOpacity={0.7}
+              onPress={() => {
+                setMensajesVistos(mensajes.length);
+                setCanalAbierto(true);
+              }}
             >
-              <View style={{ height: 480 }}>
-                {canalId ? (
-                  <CanalChat
-                    conversacionId={canalId}
-                    color={color}
-                    modo="inline"
-                  />
-                ) : (
-                  <ActivityIndicator
-                    size="small"
-                    color={color}
-                    style={{ marginTop: 40 }}
-                  />
+              <View style={cs.header}>
+                <View style={[cs.bar, { backgroundColor: color }]} />
+                <Text style={cs.title}>Canal de la etapa</Text>
+                {mensajes.length > 0 && (
+                  <Text style={cs.extra}>{mensajes.length} mensajes</Text>
                 )}
+                <Text style={cs.chevron}>›</Text>
               </View>
-            </ColapsableSection>
+            </TouchableOpacity>
           </View>
 
           {/* CONSEJOS */}
@@ -590,6 +596,8 @@ export default function EtapaScreen() {
         modo="fab"
         tieneRecientes={(mensajes as Mensaje[]).length > 0}
         onOpen={() => setMensajesVistos(mensajes.length)}
+        open={canalAbierto}
+        onClose={() => setCanalAbierto(false)}
       />
     </View>
   );
