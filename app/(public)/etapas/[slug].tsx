@@ -27,6 +27,7 @@ import Svg, {
 import { apiGet } from "@/lib/api";
 import type { Tables, Enums } from "@/types/database";
 import RecorridoTimeline from "@/components/etapa/RecorridoTimeline";
+import ExperienciasPanel from "@/components/etapa/ExperienciasPanel";
 import EtapaCheckButton from "@/components/etapa/EtapaCheckButton";
 import CanalChat from "@/components/chat/CanalChat";
 import { useNavigation } from "@/contexts/NavigationContext";
@@ -512,63 +513,7 @@ export default function EtapaScreen() {
           )}
 
           {/* EXPERIENCIAS */}
-          <ColapsableSection
-            color={color}
-            title="Experiencias"
-            preview={
-              valoraciones.total > 0 ? (
-                <View style={g.valorRow}>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Text
-                      key={i}
-                      style={{
-                        fontSize: 20,
-                        color:
-                          i <= Math.round(valoraciones.media)
-                            ? "#BA7517"
-                            : "#E8E0D0",
-                      }}
-                    >
-                      ★
-                    </Text>
-                  ))}
-                  <Text style={g.valorText}>
-                    {valoraciones.media?.toFixed(1)} · {valoraciones.total}{" "}
-                    valoraciones
-                  </Text>
-                </View>
-              ) : (
-                <Text style={g.sinValor}>Sé el primero en valorar</Text>
-              )
-            }
-          >
-            <View style={g.valorRow}>
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Text
-                  key={i}
-                  style={{
-                    fontSize: 28,
-                    color:
-                      i <= Math.round(valoraciones.media)
-                        ? "#BA7517"
-                        : "#E8E0D0",
-                  }}
-                >
-                  ★
-                </Text>
-              ))}
-            </View>
-            {valoraciones.total > 0 ? (
-              <Text style={[g.valorText, { marginTop: 6 }]}>
-                {valoraciones.media?.toFixed(1)} · {valoraciones.total}{" "}
-                valoraciones
-              </Text>
-            ) : (
-              <Text style={[g.sinValor, { marginTop: 6 }]}>
-                Sé el primero en valorar esta etapa
-              </Text>
-            )}
-          </ColapsableSection>
+          <ExperienciasPanel entityId={etapa.id} color={color} lang={lang} />
         </View>
 
         <EtapaCheckButton
