@@ -1,5 +1,5 @@
 // 📄 app/(public)/index.tsx
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -223,7 +223,7 @@ const FALLBACK_HERO =
 export default function DashboardScreen() {
   const router = useRouter();
   const { i18n } = useTranslation();
-  const { session, perfil } = useAuth();
+  const { session, perfil, loading: authLoading } = useAuth();
   const lang = i18n.language?.split("-")[0] ?? "es";
 
   const [etapa, setEtapa] = useState<EtapaResumen | null>(null);
@@ -241,7 +241,6 @@ export default function DashboardScreen() {
       let data: any = null;
 
       if (session) {
-        // Intentar obtener ubicación y etapa cercana
         try {
           const { status } = await Location.getForegroundPermissionsAsync();
           if (status === "granted") {
@@ -254,34 +253,36 @@ export default function DashboardScreen() {
             const cercana = await res.json();
             if (cercana.en_camino && cercana.etapa) {
               data = { etapa: cercana.etapa };
-              setEnCamino(true);
-              setDistanciaMetros(cercana.distancia_metros);
             }
           }
-        } catch {
-          // Si falla la ubicación, caer a aleatoria
+        } catch {}
+
+        if (!data) {
+          if (perfil?.etapa_actual_slug) {
+            const res = await fetch(
+              `${API_BASE}/etapas/${perfil.etapa_actual_slug}/resumen`,
+            );
+            if (res.ok) {
+              const json = await res.json();
+              if (json?.etapa) data = json;
+            }
+          }
+          if (!data) {
+            router.replace("/(auth)/seleccionar-sector" as any);
+            return;
+          }
         }
+
+        // Usuario con sesión: nunca se renderiza el dashboard, redirige a la ficha
+        router.replace(`/(public)/etapas/${data.etapa.slug}` as any);
+        return;
       }
 
-      // Fallback: etapa aleatoria
-      if (!data) {
-        if (session && perfil?.etapa_actual_slug) {
-          const res = await fetch(
-            `${API_BASE}/etapas/${perfil.etapa_actual_slug}/resumen`,
-          );
-          data = await res.json();
-          setEnCamino(false);
-          setDistanciaMetros(null);
-        } else if (session && !perfil?.etapa_actual_slug) {
-          router.replace("/(auth)/seleccionar-sector" as any);
-          return;
-        } else {
-          const res = await fetch(`${API_BASE}/etapas/aleatoria`);
-          data = await res.json();
-          setEnCamino(false);
-          setDistanciaMetros(null);
-        }
-      }
+      // Sin sesión: dashboard de descubrimiento con etapa aleatoria
+      const res = await fetch(`${API_BASE}/etapas/aleatoria`);
+      data = await res.json();
+      setEnCamino(false);
+      setDistanciaMetros(null);
 
       if (!data.etapa) throw new Error("Sin etapa");
       setEtapa(data.etapa);
@@ -301,9 +302,14 @@ export default function DashboardScreen() {
     }
   }, [session, perfil]);
 
+  const yaEjecutado = useRef(false);
+
   useEffect(() => {
+    if (authLoading) return;
+    if (yaEjecutado.current) return;
+    yaEjecutado.current = true;
     cargar();
-  }, [cargar]);
+  }, [authLoading, cargar]);
 
   const onRefresh = () => {
     setRefreshing(true);

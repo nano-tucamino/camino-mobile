@@ -1154,13 +1154,16 @@ function MeteoWidget({
   useEffect(() => {
     (async () => {
       try {
-        const g = await (
+        const geo = await (
           await fetch(
-            `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(lugarNombre)}&count=1&language=es&format=json`,
+            `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(lugarNombre)}&count=5&language=es&format=json`,
           )
         ).json();
-        if (!g.results?.length) throw new Error();
-        const { latitude: lat, longitude: lng, elevation: elev } = g.results[0];
+        if (!geo.results?.length) throw new Error();
+        const resultado =
+          geo.results.find((r: any) => r.country_code === "ES") ??
+          geo.results[0];
+        const { latitude: lat, longitude: lng, elevation: elev } = resultado;
         setElev(Math.round(elev));
         const today = new Date(),
           end = new Date(today);

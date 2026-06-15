@@ -62,18 +62,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchPerfil]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchPerfil();
+        await fetchPerfil();
       }
       setLoading(false);
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "INITIAL_SESSION") return; // ya gestionado por getSession()
+
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -85,7 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, [fetchPerfil]);
-
   const signInWithGoogle = async () => {
     const redirectUrl = makeRedirectUri({
       scheme: "caminomobile",
