@@ -31,7 +31,7 @@ export function useChat({
   locale,
 }: UseChatOptions): UseChatReturn {
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hayMas, setHayMas] = useState(false);

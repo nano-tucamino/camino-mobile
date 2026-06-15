@@ -34,6 +34,34 @@ import { Linking } from "react-native";
 
 import { getCanalEtapa } from "@/lib/chat";
 
+function encodePolyline(coords: [number, number][], precision = 5): string {
+  const factor = Math.pow(10, precision);
+  let output = "";
+  let prevLat = 0,
+    prevLng = 0;
+  for (const [lng, lat] of coords) {
+    const lat5 = Math.round(lat * factor);
+    const lng5 = Math.round(lng * factor);
+    output += encodeSignedNumber(lat5 - prevLat);
+    output += encodeSignedNumber(lng5 - prevLng);
+    prevLat = lat5;
+    prevLng = lng5;
+  }
+  return output;
+}
+
+function encodeSignedNumber(num: number): string {
+  let sgnNum = num << 1;
+  if (num < 0) sgnNum = ~sgnNum;
+  let result = "";
+  while (sgnNum >= 0x20) {
+    result += String.fromCharCode((0x20 | (sgnNum & 0x1f)) + 63);
+    sgnNum >>= 5;
+  }
+  result += String.fromCharCode(sgnNum + 63);
+  return result;
+}
+
 const { width: SW } = Dimensions.get("window");
 
 type Albergue = Tables<"albergues">;
@@ -338,21 +366,11 @@ export default function EtapaScreen() {
           }}
         >
           <ColapsableSection color={color} title="Mapa de la etapa" defaultOpen>
-            <TouchableOpacity
-              style={[g.mapaBtn, { borderColor: color }]}
-              onPress={() =>
-                router.push(`/(public)/mapa?etapa=${etapa.slug}` as any)
-              }
-              activeOpacity={0.85}
-            >
-              <Text style={[g.mapaBtnIcon, { color }]}>🗺️</Text>
-              <Text style={[g.mapaBtnText, { color }]}>
-                Ver etapa en el mapa
-              </Text>
-              <Text style={g.mapaBtnSub}>
-                {etapa.inicio_nombre} → {etapa.fin_nombre}
-              </Text>
-            </TouchableOpacity>
+            <MapaMiniatura
+              waypoints={waypoints as Waypoint[]}
+              color={color}
+              slug={etapa.slug}
+            />
           </ColapsableSection>
 
           {waypoints.some((w: Waypoint) => w.elevacion != null) && (
@@ -428,18 +446,21 @@ export default function EtapaScreen() {
               color={color}
               title="Canal de la etapa"
               onOpen={() => setMensajesVistos(mensajes.length)}
-              extra={
-                mensajes.length - mensajesVistos > 0
-                  ? `${mensajes.length - mensajesVistos} mensajes`
-                  : undefined
-              }
             >
               <View style={{ height: 480 }}>
-                <CanalChat
-                  conversacionId={canalId}
-                  color={color}
-                  modo="inline"
-                />
+                {canalId ? (
+                  <CanalChat
+                    conversacionId={canalId}
+                    color={color}
+                    modo="inline"
+                  />
+                ) : (
+                  <ActivityIndicator
+                    size="small"
+                    color={color}
+                    style={{ marginTop: 40 }}
+                  />
+                )}
               </View>
             </ColapsableSection>
           </View>
@@ -1081,7 +1102,7 @@ const pe = StyleSheet.create({
 });
 
 // ═══════════════════════════════════════════════════════════════
-// METEO WIDGET — sin cambios
+// METEO WIDGET —
 // ═══════════════════════════════════════════════════════════════
 function MeteoWidget({
   lugarNombre,
@@ -1274,6 +1295,97 @@ function MeteoWidget({
     </View>
   );
 }
+
+//==================================================================
+// MAPA MINIATURA
+//==================================================================
+function MapaMiniatura({
+  waypoints,
+  color,
+  slug,
+}: {
+  waypoints: Waypoint[];
+  color: string;
+  slug: string;
+}) {
+  const coords = (waypoints as any[])
+    .filter((w) => w.lat != null && w.lng != null)
+    .sort(
+      (a, b) =>
+        (parseFloat(String(a.km_acumulado)) || 0) -
+        (parseFloat(String(b.km_acumulado)) || 0),
+    )
+    .map((w) => [Number(w.lng), Number(w.lat)] as [number, number]);
+
+  const token = process.env.EXPO_PUBLIC_MAPBOX_TOKEN;
+
+  if (coords.length < 2 || !token) {
+    return (
+      <TouchableOpacity
+        style={[g.mapaBtn, { borderColor: color }]}
+        onPress={() => router.push(`/(public)/mapa?etapa=${slug}` as any)}
+        activeOpacity={0.85}
+      >
+        <Text style={[g.mapaBtnIcon, { color }]}>🗺️</Text>
+        <Text style={[g.mapaBtnText, { color }]}>Ver etapa en el mapa</Text>
+      </TouchableOpacity>
+    );
+  }
+
+  const encoded = encodeURIComponent(encodePolyline(coords));
+  const colorHex = color.replace("#", "");
+  const url =
+    `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/static/` +
+    `path-4+${colorHex}-0.9(${encoded})/auto/640x320@2x` +
+    `?padding=30&access_token=${token}`;
+
+  return (
+    <TouchableOpacity
+      onPress={() => router.push(`/(public)/mapa?etapa=${slug}` as any)}
+      activeOpacity={0.85}
+      style={mm.wrapper}
+    >
+      <Image source={{ uri: url }} style={mm.image} resizeMode="cover" />
+      <View style={mm.overlay} pointerEvents="none">
+        <View style={[mm.badge, { backgroundColor: color }]}>
+          <Text style={mm.badgeIcon}>🗺️</Text>
+          <Text style={mm.badgeText}>Ver etapa en el mapa</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+const mm = StyleSheet.create({
+  wrapper: {
+    height: 200,
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "#F5F0E8",
+  },
+  image: { width: "100%", height: "100%" },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "flex-end",
+    padding: 10,
+  },
+  badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    alignSelf: "flex-start",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  badgeIcon: { fontSize: 14 },
+  badgeText: { fontSize: 13, fontWeight: "700", color: "white" },
+});
 
 const m = StyleSheet.create({
   dayBtn: {

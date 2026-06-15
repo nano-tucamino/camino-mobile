@@ -320,6 +320,22 @@ export default function MapaScreen() {
     [recorrido, filtros, etapasConMarcadores, tiposActivos],
   );
 
+  const manejarCambioRegion = useCallback(
+    async (feature: any) => {
+      const zoom = feature?.properties?.zoomLevel ?? feature?.properties?.zoom;
+      const bounds =
+        feature?.properties?.visibleBounds ?? feature?.properties?.bounds;
+      if (!bounds) return;
+
+      const ne = Array.isArray(bounds) ? bounds[0] : bounds.ne;
+      const sw = Array.isArray(bounds) ? bounds[1] : bounds.sw;
+      if (!ne || !sw) return;
+
+      await cargarMarcadoresPorZoom(zoom, { ne, sw });
+    },
+    [cargarMarcadoresPorZoom],
+  );
+
   const cerrarPanel = useCallback(() => {
     Animated.spring(panelAnim, {
       toValue: 0,
@@ -439,17 +455,10 @@ export default function MapaScreen() {
         logoEnabled={false}
         attributionEnabled={false}
         compassEnabled
-        compassPosition={{ top: 100, right: 16 }}
+        compassPosition={{ top: 100, left: 16 }}
         onPress={cerrarPanel}
-        onRegionDidChange={async (feature) => {
-          const zoom = feature.properties.zoomLevel;
-          const bounds = feature.properties.visibleBounds;
-          if (!bounds) return;
-          await cargarMarcadoresPorZoom(zoom, {
-            ne: bounds[0] as number[],
-            sw: bounds[1] as number[],
-          });
-        }}
+        onMapIdle={manejarCambioRegion}
+        onRegionDidChange={manejarCambioRegion}
       >
         <Camera
           ref={cameraRef}

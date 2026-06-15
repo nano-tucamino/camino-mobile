@@ -223,7 +223,7 @@ const FALLBACK_HERO =
 export default function DashboardScreen() {
   const router = useRouter();
   const { i18n } = useTranslation();
-  const { session } = useAuth();
+  const { session, perfil } = useAuth();
   const lang = i18n.language?.split("-")[0] ?? "es";
 
   const [etapa, setEtapa] = useState<EtapaResumen | null>(null);
@@ -265,10 +265,22 @@ export default function DashboardScreen() {
 
       // Fallback: etapa aleatoria
       if (!data) {
-        const res = await fetch(`${API_BASE}/etapas/aleatoria`);
-        data = await res.json();
-        setEnCamino(false);
-        setDistanciaMetros(null);
+        if (session && perfil?.etapa_actual_slug) {
+          const res = await fetch(
+            `${API_BASE}/etapas/${perfil.etapa_actual_slug}/resumen`,
+          );
+          data = await res.json();
+          setEnCamino(false);
+          setDistanciaMetros(null);
+        } else if (session && !perfil?.etapa_actual_slug) {
+          router.replace("/(auth)/seleccionar-sector" as any);
+          return;
+        } else {
+          const res = await fetch(`${API_BASE}/etapas/aleatoria`);
+          data = await res.json();
+          setEnCamino(false);
+          setDistanciaMetros(null);
+        }
       }
 
       if (!data.etapa) throw new Error("Sin etapa");
@@ -287,7 +299,7 @@ export default function DashboardScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [session]);
+  }, [session, perfil]);
 
   useEffect(() => {
     cargar();

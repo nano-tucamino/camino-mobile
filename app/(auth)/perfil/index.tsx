@@ -244,7 +244,7 @@ export default function PerfilScreen() {
   const [modalidad, setModalidad] = useState("");
   const [modoCamino, setModoCamino] = useState("");
   const [numeroCaminos, setNumeroCaminos] = useState(1);
-  const [idioma, setIdioma] = useState("es");
+  const [idioma, setIdioma] = useState(i18n.language ?? "en");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   const TABS: { key: TabKey; label: string }[] = [

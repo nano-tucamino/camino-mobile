@@ -1397,6 +1397,7 @@ export type Database = {
         Row: {
           albergue_id: string | null;
           avatar_url: string | null;
+          banned: boolean;
           bio: string | null;
           created_at: string;
           fecha_fin_prevista: string | null;
@@ -1420,6 +1421,7 @@ export type Database = {
         Insert: {
           albergue_id?: string | null;
           avatar_url?: string | null;
+          banned?: boolean;
           bio?: string | null;
           created_at?: string;
           fecha_fin_prevista?: string | null;
@@ -1443,6 +1445,7 @@ export type Database = {
         Update: {
           albergue_id?: string | null;
           avatar_url?: string | null;
+          banned?: boolean;
           bio?: string | null;
           created_at?: string;
           fecha_fin_prevista?: string | null;
@@ -1861,6 +1864,57 @@ export type Database = {
       };
     };
     Functions: {
+      albergue_coords: {
+        Args: { p_slug: string };
+        Returns: {
+          lat: number;
+          lng: number;
+        }[];
+      };
+      albergues_con_coords: {
+        Args: { p_etapa_id: string };
+        Returns: {
+          id: string;
+          lat: number;
+          lng: number;
+          localidad: string;
+          nombre: string;
+          ocupacion: string;
+          plan: string;
+          precio_cama: string;
+          registrado: boolean;
+          slug: string;
+          tipo: string;
+        }[];
+      };
+      etapa_mas_cercana: {
+        Args: { p_lat: number; p_lng: number };
+        Returns: {
+          distancia_metros: number;
+          etapa_id: string;
+        }[];
+      };
+      extraer_coords_albergue: {
+        Args: { p_id: string };
+        Returns: {
+          lat: number;
+          lng: number;
+        }[];
+      };
+      negocios_cerca_etapa: {
+        Args: { p_etapa_id: string; p_radio_metros?: number };
+        Returns: {
+          categoria: string;
+          foto_url: string;
+          id: string;
+          lat: number;
+          lng: number;
+          nombre: string;
+          slug: string;
+          telefono: string;
+          web: string;
+        }[];
+      };
       puede_ver_pista: {
         Args: { p_reto_id: string; p_user_pos: unknown };
         Returns: boolean;
