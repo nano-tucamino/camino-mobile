@@ -221,12 +221,10 @@ export default function BottomNav() {
   };
 
   const handleGestion = () => {
-    if (rol === "albergue" && perfil?.albergue_id) {
-      router.push(`/(private)/gestion/albergue`);
-    } else if (rol === "negocio" && perfil?.negocio_id) {
-      router.push(`/(private)/gestion/negocio`);
-    } else {
-      router.push(`/(private)/gestion`);
+    if (rol === "albergue") {
+      router.push("/(auth)/mi-albergue");
+    } else if (rol === "negocio") {
+      router.push("/(auth)/mi-negocio");
     }
   };
 
