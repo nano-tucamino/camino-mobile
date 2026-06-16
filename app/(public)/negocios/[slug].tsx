@@ -12,10 +12,14 @@ import {
   Dimensions,
   Modal,
   FlatList,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { apiGet } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import CanalChat from "@/components/chat/CanalChat";
 
 const { width: SW } = Dimensions.get("window");
 
@@ -65,12 +69,10 @@ const CATEGORIA_LABEL: Record<string, string> = {
   otros: "Otros",
 };
 
-// Grupos de servicios con icono y etiqueta
 const SERVICIOS_INFO: Record<
   string,
   { icon: string; label: string; grupo: string }
 > = {
-  // Comer y beber
   menu_del_dia: { icon: "🍽️", label: "Menú del día", grupo: "comer" },
   desayunos: { icon: "🥐", label: "Desayunos", grupo: "comer" },
   bocadillos: { icon: "🥖", label: "Bocadillos", grupo: "comer" },
@@ -79,14 +81,12 @@ const SERVICIOS_INFO: Record<
   vegano: { icon: "🌱", label: "Opción vegana", grupo: "comer" },
   sin_gluten: { icon: "🌾", label: "Sin gluten", grupo: "comer" },
   carta_en_ingles: { icon: "🇬🇧", label: "Carta en inglés", grupo: "comer" },
-  // Cuerpo y salud
   masajes: { icon: "💆", label: "Masajes", grupo: "salud" },
   podologia: { icon: "🦶", label: "Podología", grupo: "salud" },
   fisioterapia: { icon: "🏥", label: "Fisioterapia", grupo: "salud" },
   botiquin: { icon: "🩹", label: "Botiquín", grupo: "salud" },
   lavanderia: { icon: "👕", label: "Lavandería", grupo: "salud" },
   ducha: { icon: "🚿", label: "Duchas", grupo: "salud" },
-  // Practicidades
   wifi: { icon: "📶", label: "WiFi", grupo: "practico" },
   carga_movil: { icon: "🔋", label: "Carga móvil", grupo: "practico" },
   parking: { icon: "🅿️", label: "Parking", grupo: "practico" },
@@ -98,13 +98,11 @@ const SERVICIOS_INFO: Record<
     label: "Abierto domingos",
     grupo: "practico",
   },
-  // Cultura y ocio
   visita_guiada: { icon: "🗺️", label: "Visita guiada", grupo: "cultura" },
   museo: { icon: "🏛️", label: "Museo", grupo: "cultura" },
   tienda_souvenirs: { icon: "🛍️", label: "Souvenirs", grupo: "cultura" },
   sello_credencial: { icon: "⭐", label: "Sello credencial", grupo: "cultura" },
   conciertos: { icon: "🎵", label: "Conciertos", grupo: "cultura" },
-  // Idiomas
   ingles: { icon: "🇬🇧", label: "English", grupo: "idiomas" },
   aleman: { icon: "🇩🇪", label: "Deutsch", grupo: "idiomas" },
   frances: { icon: "🇫🇷", label: "Français", grupo: "idiomas" },
@@ -145,6 +143,7 @@ export default function NegocioScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { i18n } = useTranslation();
   const lang = i18n.language;
+  const { session } = useAuth();
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -152,12 +151,43 @@ export default function NegocioScreen() {
   const [galeriaVisible, setGaleriaVisible] = useState(false);
   const [horariosAbiertos, setHorariosAbiertos] = useState(false);
 
+  // Chat
+  const [chatAbierto, setChatAbierto] = useState<"canal" | "dm" | null>(null);
+  const [conversacionId, setConversacionId] = useState<string | null>(null);
+
   useEffect(() => {
     apiGet<any>(`/api/negocios/${slug}`)
       .then(setData)
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [slug]);
+
+  const abrirChat = async (tipo: "canal" | "dm") => {
+    if (!data?.negocio) return;
+
+    if (tipo === "dm" && !session) {
+      Alert.alert(
+        "Inicia sesión",
+        "Necesitas una cuenta para enviar mensajes privados.",
+      );
+      return;
+    }
+
+    try {
+      const endpoint =
+        tipo === "canal"
+          ? `/api/negocios/${data.negocio.id}/canal`
+          : `/api/negocios/${data.negocio.id}/dm`;
+
+      const res = await apiGet<{ id: string }>(endpoint);
+      if (res.id) {
+        setConversacionId(res.id);
+        setChatAbierto(tipo);
+      }
+    } catch (e) {
+      Alert.alert("Error", "No se pudo abrir el chat.");
+    }
+  };
 
   if (loading)
     return (
@@ -183,7 +213,6 @@ export default function NegocioScreen() {
   const descripcion = getDesc(negocio, lang);
   const horarioHoy = getHorarioHoy(horarios);
 
-  // Agrupar servicios
   const serviciosActivos: string[] = negocio.servicios ?? [];
   const serviciosPorGrupo = serviciosActivos.reduce<Record<string, string[]>>(
     (acc, s) => {
@@ -211,7 +240,6 @@ export default function NegocioScreen() {
                 style={s.heroImg}
                 resizeMode="cover"
               />
-              {/* Overlay oscuro */}
               <View style={s.heroOverlay} />
             </TouchableOpacity>
           ) : (
@@ -220,19 +248,16 @@ export default function NegocioScreen() {
             </View>
           )}
 
-          {/* Botón volver */}
           <TouchableOpacity onPress={() => router.back()} style={s.backBtn}>
             <Text style={s.backText}>‹</Text>
           </TouchableOpacity>
 
-          {/* Badge plan */}
           {esDestacado && (
             <View style={s.badgeDestacado}>
               <Text style={s.badgeDestacadoText}>★ Destacado</Text>
             </View>
           )}
 
-          {/* Miniaturas */}
           {fotosOrdenadas.length > 1 && (
             <ScrollView
               horizontal
@@ -418,6 +443,31 @@ export default function NegocioScreen() {
             </View>
           )}
 
+          {/* ── CHAT ── */}
+          <View style={s.card}>
+            <Text style={s.secTitle}>Chat</Text>
+            <View style={s.contactoGrid}>
+              <TouchableOpacity
+                onPress={() => abrirChat("canal")}
+                style={s.contactoBtn}
+              >
+                <Text style={s.contactoBtnIcon}>💬</Text>
+                <Text style={s.contactoBtnLabel}>Canal público</Text>
+              </TouchableOpacity>
+              {session && (
+                <TouchableOpacity
+                  onPress={() => abrirChat("dm")}
+                  style={[s.contactoBtn, s.contactoBtnDM]}
+                >
+                  <Text style={s.contactoBtnIcon}>🔒</Text>
+                  <Text style={[s.contactoBtnLabel, { color: "#8B6914" }]}>
+                    Mensaje privado
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+
           {/* ── ETAPAS VINCULADAS ── */}
           {etapas.length > 0 && (
             <View style={s.card}>
@@ -450,6 +500,29 @@ export default function NegocioScreen() {
         </View>
       </ScrollView>
 
+      {/* ── CANAL CHAT ── */}
+      {chatAbierto && conversacionId && (
+        <CanalChat conversacionId={conversacionId} modo="inline" />
+      )}
+
+      {/* ── CANAL CHAT DRAWER ── */}
+      {chatAbierto && conversacionId && (
+        <CanalChat
+          conversacionId={conversacionId}
+          modo="fab"
+          open={true}
+          onClose={() => {
+            setChatAbierto(null);
+            setConversacionId(null);
+          }}
+          color={chatAbierto === "dm" ? "#C8922A" : "#C8622A"}
+          etapaNombre={
+            chatAbierto === "canal"
+              ? `Canal · ${negocio.nombre}`
+              : `Mensaje privado · ${negocio.nombre}`
+          }
+        />
+      )}
       {/* ── MODAL GALERÍA FULLSCREEN ── */}
       <Modal visible={galeriaVisible} animationType="fade" statusBarTranslucent>
         <View style={sg.root}>
@@ -462,7 +535,6 @@ export default function NegocioScreen() {
           <Text style={sg.counter}>
             {fotoActiva + 1} / {fotosOrdenadas.length}
           </Text>
-
           <FlatList
             data={fotosOrdenadas}
             horizontal
@@ -490,8 +562,6 @@ export default function NegocioScreen() {
               </View>
             )}
           />
-
-          {/* Dots */}
           {fotosOrdenadas.length > 1 && (
             <View style={sg.dots}>
               {fotosOrdenadas.map((_, i) => (
@@ -519,7 +589,6 @@ const s = StyleSheet.create({
   },
   errorText: { fontSize: 14, color: "#8B7355" },
 
-  // Hero
   heroContainer: { backgroundColor: "#2C1F0E" },
   heroImg: { width: "100%", height: 280 },
   heroPlaceholder: {
@@ -571,7 +640,6 @@ const s = StyleSheet.create({
   thumbActive: { borderColor: "#C8622A" },
   thumbImg: { width: "100%", height: "100%" },
 
-  // Content
   content: { padding: 16 },
   header: { marginBottom: 12 },
   catRow: {
@@ -604,7 +672,6 @@ const s = StyleSheet.create({
   },
   direccion: { fontSize: 13, color: "#8B7355" },
 
-  // Card
   card: {
     backgroundColor: "white",
     borderRadius: 14,
@@ -622,7 +689,6 @@ const s = StyleSheet.create({
     marginBottom: 12,
   },
 
-  // Horario
   horarioRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   horarioIcon: { fontSize: 16 },
   horarioHoy: { fontSize: 14, color: "#2C1F0E" },
@@ -641,10 +707,8 @@ const s = StyleSheet.create({
   horarioDiaHora: { fontSize: 13, color: "#8B7355" },
   horarioDiaHoy: { color: "#2C1F0E", fontWeight: "700" },
 
-  // Descripción
   descripcion: { fontSize: 14, color: "#4A3728", lineHeight: 22 },
 
-  // Servicios
   grupoContainer: { marginBottom: 12 },
   grupoHeader: {
     flexDirection: "row",
@@ -675,7 +739,6 @@ const s = StyleSheet.create({
   servicioPillIcon: { fontSize: 13 },
   servicioPillLabel: { fontSize: 12, color: "#2C1F0E", fontWeight: "500" },
 
-  // Contacto
   contactoGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   contactoBtn: {
     flexDirection: "row",
@@ -692,10 +755,13 @@ const s = StyleSheet.create({
     borderColor: "#25D366",
     backgroundColor: "rgba(37,211,102,0.06)",
   },
+  contactoBtnDM: {
+    borderColor: "#C8922A",
+    backgroundColor: "rgba(200,146,42,0.08)",
+  },
   contactoBtnIcon: { fontSize: 16 },
   contactoBtnLabel: { fontSize: 13, color: "#2C1F0E", fontWeight: "500" },
 
-  // Etapas
   etapaRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -708,9 +774,20 @@ const s = StyleSheet.create({
   etapaNombre: { flex: 1, fontSize: 13, color: "#2C1F0E", fontWeight: "500" },
   etapaKm: { fontSize: 12, color: "#8B7355" },
   etapaArrow: { fontSize: 16, color: "#C4A882" },
+
+  cerrarChat: {
+    position: "absolute",
+    top: 52,
+    right: 16,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    zIndex: 100,
+  },
+  cerrarChatText: { color: "white", fontSize: 13, fontWeight: "600" },
 });
 
-// Galería fullscreen
 const sg = StyleSheet.create({
   root: { flex: 1, backgroundColor: "black", justifyContent: "center" },
   closeBtn: {
@@ -754,4 +831,3 @@ const sg = StyleSheet.create({
   },
   dotActive: { backgroundColor: "white", width: 18 },
 });
-

@@ -18,6 +18,9 @@ interface Perfil {
   nombre_display: string | null;
   idioma_preferido: string | null;
   etapa_actual_slug: string | null;
+  rol: "peregrino" | "albergue" | "negocio" | "admin";
+  albergue_id: string | null;
+  negocio_id: string | null;
   [key: string]: any;
 }
 

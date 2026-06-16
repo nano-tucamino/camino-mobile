@@ -17,9 +17,10 @@ const BANDERAS: Record<string, string> = {
 interface Props {
   conv: ConversacionConPreview;
   onPress: () => void;
+  destacado?: boolean;
 }
 
-export function ConversationItem({ conv, onPress }: Props) {
+export function ConversationItem({ conv, onPress, destacado = false }: Props) {
   const hora = conv.ultimoMensaje
     ? new Date(conv.ultimoMensaje.created_at).toLocaleTimeString([], {
         hour: "2-digit",
@@ -33,12 +34,14 @@ export function ConversationItem({ conv, onPress }: Props) {
     }
     if (conv.tipo === "canal_etapa") return conv.nombre ?? "Canal de etapa";
     if (conv.tipo === "albergue") return conv.nombre ?? "Albergue";
+    if (conv.tipo === "negocio") return conv.nombre ?? "Negocio";
     return "Conversación";
   })();
 
   const icono = (() => {
     if (conv.tipo === "canal_etapa") return "🏔️";
     if (conv.tipo === "albergue") return "🏠";
+    if (conv.tipo === "negocio") return "🏪";
     return null;
   })();
 
@@ -147,6 +150,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 5,
+  },
+  containerDestacado: {
+    backgroundColor: "#FDF5E6",
+    borderLeftWidth: 3,
+    borderLeftColor: "#C8A96E",
   },
   badgeText: { fontSize: 11, color: "#fff", fontWeight: "700" },
 });

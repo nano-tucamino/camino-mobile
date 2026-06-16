@@ -1,4 +1,5 @@
-// 📄 components/BottomNav.tsx
+//C:\Users\ferna\Documents\tucamino\camino-mobile\components\BottomNav.tsx
+
 import {
   View,
   Text,
@@ -11,7 +12,6 @@ import { useTranslation } from "react-i18next";
 import Svg, { Path } from "react-native-svg";
 import { useNavigation } from "@/contexts/NavigationContext";
 import { useAuth } from "@/contexts/AuthContext";
-
 import { useUnread } from "@/contexts/UnreadContext";
 
 const GOLD = "#D4AF72";
@@ -145,6 +145,44 @@ function IconMensajes({ active, badge }: { active: boolean; badge: number }) {
   );
 }
 
+// Icono Gestión (building / store)
+function IconGestion({ active }: { active: boolean }) {
+  return (
+    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
+      {active ? (
+        <Path
+          fill={GOLD}
+          d="M3 9h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1V9zM3 9l2-5h14l2 5M9 21v-6h6v6"
+        />
+      ) : (
+        <>
+          <Path
+            stroke={SOFT}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 9h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1V9z"
+          />
+          <Path
+            stroke={SOFT}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 9l2-5h14l2 5"
+          />
+          <Path
+            stroke={SOFT}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 21v-6h6v6"
+          />
+        </>
+      )}
+    </Svg>
+  );
+}
+
 const badgeStyles = StyleSheet.create({
   dot: {
     position: "absolute",
@@ -160,12 +198,7 @@ const badgeStyles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "#FAFAF8",
   },
-  text: {
-    color: "#fff",
-    fontSize: 9,
-    fontWeight: "700",
-    lineHeight: 11,
-  },
+  text: { color: "#fff", fontSize: 9, fontWeight: "700", lineHeight: 11 },
 });
 
 export default function BottomNav() {
@@ -173,10 +206,11 @@ export default function BottomNav() {
   const router = useRouter();
   const segments = useSegments();
   const { navAnim, showNav } = useNavigation();
-  const { session } = useAuth();
+  const { session, perfil } = useAuth();
   const { count: unreadCount } = useUnread();
 
   const currentTab = (segments as string[])[1] ?? "index";
+  const rol = perfil?.rol ?? null;
 
   const handlePerfil = () => {
     if (session) {
@@ -185,6 +219,57 @@ export default function BottomNav() {
       router.push("/(auth)/login");
     }
   };
+
+  const handleGestion = () => {
+    if (rol === "albergue" && perfil?.albergue_id) {
+      router.push(`/(private)/gestion/albergue`);
+    } else if (rol === "negocio" && perfil?.negocio_id) {
+      router.push(`/(private)/gestion/negocio`);
+    } else {
+      router.push(`/(private)/gestion`);
+    }
+  };
+
+  // Tab de mensajes — visible para peregrino, albergue y negocio
+  const mensajesTab =
+    session && rol !== "admin"
+      ? [
+          {
+            key: "mensajes",
+            label: t("nav.mensajes"),
+            Icon: ({ active }: { active: boolean }) => (
+              <IconMensajes active={active} badge={unreadCount} />
+            ),
+            onPress: () => router.push("/(private)/mensajes"),
+          },
+        ]
+      : [];
+
+  // Tab de gestión — solo albergue y negocio
+  const gestionTab =
+    session && (rol === "albergue" || rol === "negocio")
+      ? [
+          {
+            key: "gestion",
+            label: t("nav.gestion"),
+            Icon: IconGestion,
+            onPress: handleGestion,
+          },
+        ]
+      : [];
+
+  // Tab de perfil — peregrino y no autenticado; albergue/negocio no lo necesitan (tienen Gestión)
+  const perfilTab =
+    !session || rol === "peregrino"
+      ? [
+          {
+            key: "perfil",
+            label: session ? t("nav.perfil") : t("nav.entrar"),
+            Icon: IconPerfil,
+            onPress: handlePerfil,
+          },
+        ]
+      : [];
 
   const tabs = [
     {
@@ -205,24 +290,9 @@ export default function BottomNav() {
       Icon: IconAlbergues,
       onPress: () => router.push("/(public)/albergues"),
     },
-    ...(session
-      ? [
-          {
-            key: "mensajes",
-            label: t("nav.mensajes"),
-            Icon: ({ active }: { active: boolean }) => (
-              <IconMensajes active={active} badge={unreadCount} />
-            ),
-            onPress: () => router.push("/(private)/mensajes"),
-          },
-        ]
-      : []),
-    {
-      key: "perfil",
-      label: t("nav.perfil"),
-      Icon: IconPerfil,
-      onPress: handlePerfil,
-    },
+    ...mensajesTab,
+    ...gestionTab,
+    ...perfilTab,
   ];
 
   const translateY = navAnim.interpolate({

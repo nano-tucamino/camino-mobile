@@ -26,7 +26,8 @@ export interface Mensaje {
 
 export interface Conversacion {
   id: string;
-  tipo: "canal_etapa" | "directo" | "albergue";
+  tipo: "directo" | "canal_etapa" | "albergue" | "negocio";
+  negocio_id?: string | null;
   etapa_id: string | null;
   albergue_id: string | null;
   nombre: string | null;
