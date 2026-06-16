@@ -374,6 +374,7 @@ export type Database = {
           estado: string | null;
           fecha_visita: string | null;
           id: string;
+          idioma_origen: string;
           likes_count: number | null;
           medio_transporte: string | null;
           parent_id: string | null;
@@ -381,6 +382,7 @@ export type Database = {
           texto: string;
           texto_de: string | null;
           texto_en: string | null;
+          texto_es: string | null;
           texto_fr: string | null;
           texto_it: string | null;
           texto_ko: string | null;
@@ -399,6 +401,7 @@ export type Database = {
           estado?: string | null;
           fecha_visita?: string | null;
           id?: string;
+          idioma_origen?: string;
           likes_count?: number | null;
           medio_transporte?: string | null;
           parent_id?: string | null;
@@ -406,6 +409,7 @@ export type Database = {
           texto: string;
           texto_de?: string | null;
           texto_en?: string | null;
+          texto_es?: string | null;
           texto_fr?: string | null;
           texto_it?: string | null;
           texto_ko?: string | null;
@@ -424,6 +428,7 @@ export type Database = {
           estado?: string | null;
           fecha_visita?: string | null;
           id?: string;
+          idioma_origen?: string;
           likes_count?: number | null;
           medio_transporte?: string | null;
           parent_id?: string | null;
@@ -431,6 +436,7 @@ export type Database = {
           texto?: string;
           texto_de?: string | null;
           texto_en?: string | null;
+          texto_es?: string | null;
           texto_fr?: string | null;
           texto_it?: string | null;
           texto_ko?: string | null;
@@ -554,6 +560,7 @@ export type Database = {
           created_at: string;
           etapa_id: string | null;
           id: string;
+          negocio_id: string | null;
           nombre: string | null;
           tipo: Database["public"]["Enums"]["tipo_conversacion"];
         };
@@ -562,6 +569,7 @@ export type Database = {
           created_at?: string;
           etapa_id?: string | null;
           id?: string;
+          negocio_id?: string | null;
           nombre?: string | null;
           tipo: Database["public"]["Enums"]["tipo_conversacion"];
         };
@@ -570,6 +578,7 @@ export type Database = {
           created_at?: string;
           etapa_id?: string | null;
           id?: string;
+          negocio_id?: string | null;
           nombre?: string | null;
           tipo?: Database["public"]["Enums"]["tipo_conversacion"];
         };
@@ -586,6 +595,20 @@ export type Database = {
             columns: ["etapa_id"];
             isOneToOne: false;
             referencedRelation: "etapas";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "conversaciones_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_camino";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "conversaciones_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_en_etapa";
             referencedColumns: ["id"];
           },
         ];
@@ -1400,6 +1423,7 @@ export type Database = {
           banned: boolean;
           bio: string | null;
           created_at: string;
+          etapa_actual_slug: string | null;
           fecha_fin_prevista: string | null;
           fecha_inicio_prevista: string | null;
           id: string;
@@ -1424,6 +1448,7 @@ export type Database = {
           banned?: boolean;
           bio?: string | null;
           created_at?: string;
+          etapa_actual_slug?: string | null;
           fecha_fin_prevista?: string | null;
           fecha_inicio_prevista?: string | null;
           id: string;
@@ -1448,6 +1473,7 @@ export type Database = {
           banned?: boolean;
           bio?: string | null;
           created_at?: string;
+          etapa_actual_slug?: string | null;
           fecha_fin_prevista?: string | null;
           fecha_inicio_prevista?: string | null;
           id?: string;
