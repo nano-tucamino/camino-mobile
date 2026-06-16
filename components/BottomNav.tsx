@@ -12,6 +12,8 @@ import Svg, { Path } from "react-native-svg";
 import { useNavigation } from "@/contexts/NavigationContext";
 import { useAuth } from "@/contexts/AuthContext";
 
+import { useUnread } from "@/contexts/UnreadContext";
+
 const GOLD = "#D4AF72";
 const SOFT = "#999";
 const BG = "#FAFAF8";
@@ -115,26 +117,56 @@ function IconPerfil({ active }: { active: boolean }) {
   );
 }
 
-function IconMensajes({ active }: { active: boolean }) {
+function IconMensajes({ active, badge }: { active: boolean; badge: number }) {
   return (
-    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
-      {active ? (
-        <Path
-          fill={GOLD}
-          d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z"
-        />
-      ) : (
-        <Path
-          stroke={SOFT}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z"
-        />
+    <View style={{ position: "relative" }}>
+      <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
+        {active ? (
+          <Path
+            fill={GOLD}
+            d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z"
+          />
+        ) : (
+          <Path
+            stroke={SOFT}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z"
+          />
+        )}
+      </Svg>
+      {badge > 0 && (
+        <View style={badgeStyles.dot}>
+          <Text style={badgeStyles.text}>{badge > 99 ? "99+" : badge}</Text>
+        </View>
       )}
-    </Svg>
+    </View>
   );
 }
+
+const badgeStyles = StyleSheet.create({
+  dot: {
+    position: "absolute",
+    top: -4,
+    right: -6,
+    backgroundColor: "#E53E3E",
+    borderRadius: 8,
+    minWidth: 16,
+    height: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 3,
+    borderWidth: 1.5,
+    borderColor: "#FAFAF8",
+  },
+  text: {
+    color: "#fff",
+    fontSize: 9,
+    fontWeight: "700",
+    lineHeight: 11,
+  },
+});
 
 export default function BottomNav() {
   const { t } = useTranslation();
@@ -142,6 +174,7 @@ export default function BottomNav() {
   const segments = useSegments();
   const { navAnim, showNav } = useNavigation();
   const { session } = useAuth();
+  const { count: unreadCount } = useUnread();
 
   const currentTab = (segments as string[])[1] ?? "index";
 
@@ -177,7 +210,9 @@ export default function BottomNav() {
           {
             key: "mensajes",
             label: t("nav.mensajes"),
-            Icon: IconMensajes,
+            Icon: ({ active }: { active: boolean }) => (
+              <IconMensajes active={active} badge={unreadCount} />
+            ),
             onPress: () => router.push("/(private)/mensajes"),
           },
         ]

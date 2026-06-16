@@ -1,9 +1,11 @@
 // 📄 app/(private)/mensajes/[id].tsx
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
+
 import CanalChat from "@/components/chat/CanalChat";
 import { supabase } from "@/lib/supabase";
+import { useUnread } from "@/contexts/UnreadContext";
 
 interface ConvInfo {
   tipo: string;
@@ -12,14 +14,36 @@ interface ConvInfo {
   albergue_id: string | null;
 }
 
+async function marcarLeido(conversacionId: string) {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const userId = sessionData.session?.user?.id;
+  if (!userId) return;
+
+  await supabase
+    .from("conversacion_participantes")
+    .update({ ultimo_leido_at: new Date().toISOString() })
+    .eq("conversacion_id", conversacionId)
+    .eq("perfil_id", userId);
+}
+
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [info, setInfo] = useState<ConvInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const { refresh } = useUnread();
 
+  useFocusEffect(
+    React.useCallback(() => {
+      if (id) marcarLeido(id);
+      return () => {
+        refresh();
+      };
+    }, [id, refresh]),
+  );
   useEffect(() => {
     if (!id) return;
+
     supabase
       .from("conversaciones")
       .select("tipo, nombre, etapa_id, albergue_id")
@@ -29,6 +53,8 @@ export default function ChatScreen() {
         setInfo(data as ConvInfo);
         setLoading(false);
       });
+
+    marcarLeido(id);
   }, [id]);
 
   const titulo = (() => {

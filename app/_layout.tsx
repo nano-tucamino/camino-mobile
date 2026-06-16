@@ -10,6 +10,7 @@ import { NavigationProvider } from "@/contexts/NavigationContext";
 import { supabase } from "../lib/supabase";
 import BottomNav from "@/components/BottomNav";
 import * as Sentry from "@sentry/react-native";
+import { UnreadProvider } from "@/contexts/UnreadContext";
 
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
@@ -123,11 +124,13 @@ function AppNavigator() {
 
   return (
     <NavigationProvider>
-      <View style={{ flex: 1 }}>
-        <Stack screenOptions={{ headerShown: false }} />
-        {showNav && <BottomNav />}
-        <StatusBar style="auto" />
-      </View>
+      <UnreadProvider userId={session?.user?.id ?? null}>
+        <View style={{ flex: 1 }}>
+          <Stack screenOptions={{ headerShown: false }} />
+          {showNav && <BottomNav />}
+          <StatusBar style="auto" />
+        </View>
+      </UnreadProvider>
     </NavigationProvider>
   );
 }

@@ -676,7 +676,7 @@ export default function AlbergueSlugScreen() {
       .finally(() => setLoading(false));
   }, [slug]);
 
-  const interactions = useInteractions("albergue", albergue?.id ?? "", userId);
+  const interactions = useInteractions("albergue", albergue?.id ?? "");
 
   const [textoComentario, setTextoComentario] = useState("");
   const [valoracionForm, setValoracionForm] = useState<number | null>(null);
