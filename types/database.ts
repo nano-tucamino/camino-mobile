@@ -39,6 +39,35 @@ export type Database = {
   };
   public: {
     Tables: {
+      albergue_gestores: {
+        Row: {
+          albergue_id: string;
+          created_at: string | null;
+          perfil_id: string;
+          rol_gestor: string;
+        };
+        Insert: {
+          albergue_id: string;
+          created_at?: string | null;
+          perfil_id: string;
+          rol_gestor?: string;
+        };
+        Update: {
+          albergue_id?: string;
+          created_at?: string | null;
+          perfil_id?: string;
+          rol_gestor?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "albergue_gestores_albergue_id_fkey";
+            columns: ["albergue_id"];
+            isOneToOne: false;
+            referencedRelation: "albergues";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       albergues: {
         Row: {
           capacidad_total: number | null;
@@ -75,6 +104,10 @@ export type Database = {
           precio_habitacion: string | null;
           servicios: Json;
           slug: string | null;
+          stripe_customer_id: string | null;
+          stripe_plan: string | null;
+          stripe_subscription_id: string | null;
+          suscripcion_activa: boolean;
           telefono: string | null;
           tiene_booking: boolean | null;
           tipo: Database["public"]["Enums"]["tipo_albergue"];
@@ -126,6 +159,10 @@ export type Database = {
           precio_habitacion?: string | null;
           servicios?: Json;
           slug?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_plan?: string | null;
+          stripe_subscription_id?: string | null;
+          suscripcion_activa?: boolean;
           telefono?: string | null;
           tiene_booking?: boolean | null;
           tipo: Database["public"]["Enums"]["tipo_albergue"];
@@ -177,6 +214,10 @@ export type Database = {
           precio_habitacion?: string | null;
           servicios?: Json;
           slug?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_plan?: string | null;
+          stripe_subscription_id?: string | null;
+          suscripcion_activa?: boolean;
           telefono?: string | null;
           tiene_booking?: boolean | null;
           tipo?: Database["public"]["Enums"]["tipo_albergue"];
@@ -612,6 +653,33 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      conversaciones_contador: {
+        Row: {
+          entidad_id: string;
+          entidad_tipo: string;
+          id: string;
+          mes: string;
+          total: number;
+          updated_at: string;
+        };
+        Insert: {
+          entidad_id: string;
+          entidad_tipo: string;
+          id?: string;
+          mes: string;
+          total?: number;
+          updated_at?: string;
+        };
+        Update: {
+          entidad_id?: string;
+          entidad_tipo?: string;
+          id?: string;
+          mes?: string;
+          total?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       datos_interes: {
         Row: {
@@ -1133,6 +1201,72 @@ export type Database = {
           },
         ];
       };
+      mensajes_contador: {
+        Row: {
+          created_at: string;
+          entidad_id: string;
+          entidad_tipo: string;
+          id: string;
+          mes: string;
+          total: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          entidad_id: string;
+          entidad_tipo: string;
+          id?: string;
+          mes: string;
+          total?: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          entidad_id?: string;
+          entidad_tipo?: string;
+          id?: string;
+          mes?: string;
+          total?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      negocio_gestores: {
+        Row: {
+          created_at: string | null;
+          negocio_id: string;
+          perfil_id: string;
+          rol_gestor: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          negocio_id: string;
+          perfil_id: string;
+          rol_gestor?: string;
+        };
+        Update: {
+          created_at?: string | null;
+          negocio_id?: string;
+          perfil_id?: string;
+          rol_gestor?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "negocio_gestores_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_camino";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "negocio_gestores_negocio_id_fkey";
+            columns: ["negocio_id"];
+            isOneToOne: false;
+            referencedRelation: "negocios_en_etapa";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       negocios_camino: {
         Row: {
           activo: boolean;
@@ -1159,6 +1293,10 @@ export type Database = {
           plan_hasta: string | null;
           servicios: string[] | null;
           slug: string;
+          stripe_customer_id: string | null;
+          stripe_plan: string | null;
+          stripe_subscription_id: string | null;
+          suscripcion_activa: boolean;
           telefono: string | null;
           updated_at: string;
           verificado: boolean;
@@ -1192,6 +1330,10 @@ export type Database = {
           plan_hasta?: string | null;
           servicios?: string[] | null;
           slug: string;
+          stripe_customer_id?: string | null;
+          stripe_plan?: string | null;
+          stripe_subscription_id?: string | null;
+          suscripcion_activa?: boolean;
           telefono?: string | null;
           updated_at?: string;
           verificado?: boolean;
@@ -1225,6 +1367,10 @@ export type Database = {
           plan_hasta?: string | null;
           servicios?: string[] | null;
           slug?: string;
+          stripe_customer_id?: string | null;
+          stripe_plan?: string | null;
+          stripe_subscription_id?: string | null;
+          suscripcion_activa?: boolean;
           telefono?: string | null;
           updated_at?: string;
           verificado?: boolean;
@@ -1418,7 +1564,6 @@ export type Database = {
       };
       perfiles: {
         Row: {
-          albergue_id: string | null;
           avatar_url: string | null;
           banned: boolean;
           bio: string | null;
@@ -1443,7 +1588,6 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          albergue_id?: string | null;
           avatar_url?: string | null;
           banned?: boolean;
           bio?: string | null;
@@ -1468,7 +1612,6 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          albergue_id?: string | null;
           avatar_url?: string | null;
           banned?: boolean;
           bio?: string | null;
@@ -1492,15 +1635,7 @@ export type Database = {
           rol?: Database["public"]["Enums"]["rol_usuario"];
           updated_at?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "perfiles_albergue_id_fkey";
-            columns: ["albergue_id"];
-            isOneToOne: false;
-            referencedRelation: "albergues";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: [];
       };
       poi_fotos: {
         Row: {
@@ -1926,6 +2061,10 @@ export type Database = {
           lat: number;
           lng: number;
         }[];
+      };
+      incrementar_contador_conversaciones: {
+        Args: { p_entidad_id: string; p_entidad_tipo: string; p_mes: string };
+        Returns: undefined;
       };
       negocios_cerca_etapa: {
         Args: { p_etapa_id: string; p_radio_metros?: number };

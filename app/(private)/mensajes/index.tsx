@@ -47,10 +47,8 @@ export default function MensajesScreen() {
   // — Separar canal propio del resto —
   const canalPropio = esNegocio
     ? conversaciones.filter((c) => {
-        if (rol === "albergue")
-          return c.tipo === "albergue" && c.albergue_id === perfil?.albergue_id;
-        if (rol === "negocio")
-          return c.tipo === "negocio" && c.negocio_id === perfil?.negocio_id;
+        if (rol === "albergue") return c.tipo === "albergue";
+        if (rol === "negocio") return c.tipo === "negocio";
         return false;
       })
     : [];

@@ -12,6 +12,7 @@ interface ConvInfo {
   nombre: string | null;
   etapa_id: string | null;
   albergue_id: string | null;
+  negocio_id?: string | null;
 }
 
 async function marcarLeido(conversacionId: string) {
@@ -44,16 +45,43 @@ export default function ChatScreen() {
   useEffect(() => {
     if (!id) return;
 
-    supabase
-      .from("conversaciones")
-      .select("tipo, nombre, etapa_id, albergue_id")
-      .eq("id", id)
-      .single()
-      .then(({ data }) => {
-        setInfo(data as ConvInfo);
-        setLoading(false);
-      });
+    const cargar = async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData.session?.user?.id;
 
+      const { data } = await supabase
+        .from("conversaciones")
+        .select("tipo, nombre, etapa_id, albergue_id, negocio_id")
+        .eq("id", id)
+        .single();
+
+      if (!data) {
+        setLoading(false);
+        return;
+      }
+
+      // Para DMs, cargar nombre del otro participante
+      if (data.tipo === "directo" && userId) {
+        const { data: participantes } = await supabase
+          .from("conversacion_participantes")
+          .select(
+            "perfil_id, perfil:perfiles!perfil_id(nombre_display, avatar_url)",
+          )
+          .eq("conversacion_id", id);
+
+        const otro = (participantes ?? []).find(
+          (p: any) => p.perfil_id !== userId,
+        );
+        const nombreOtro = (otro?.perfil as any)?.[0]?.nombre_display ?? null;
+
+        setInfo({ ...data, nombre: nombreOtro } as ConvInfo);
+      } else {
+        setInfo(data as ConvInfo);
+      }
+      setLoading(false);
+    };
+
+    cargar();
     marcarLeido(id);
   }, [id]);
 

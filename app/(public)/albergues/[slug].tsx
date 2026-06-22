@@ -666,8 +666,21 @@ export default function AlbergueSlugScreen() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
 
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const userId = user?.id;
+
+  const [puedeContactar, setPuedeContactar] = useState(true);
+
+  useEffect(() => {
+    if (!albergue?.id) return;
+    fetch(
+      `${process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com"}/api/dm-entidad/albergue/${albergue.id}/estado`,
+    )
+      .then((r) => r.json())
+      .then((data) => setPuedeContactar(data.puede_contactar ?? true))
+      .catch(() => setPuedeContactar(true)); // en caso de error, mostrar el botón
+  }, [albergue?.id]);
+
   useEffect(() => {
     if (!slug) return;
     apiGet<{ albergue: AlbergueDetalle }>(`/api/albergues/${slug}`)
@@ -905,43 +918,63 @@ export default function AlbergueSlugScreen() {
               <Text style={s.contactoArrow}>›</Text>
             </TouchableOpacity>
 
-            {/* Mensaje privado */}
-            <TouchableOpacity
-              style={[s.contactoItem, s.contactoItemDark]}
-              activeOpacity={0.7}
-              onPress={async () => {
-                if (!user) {
-                  router.push("/(auth)/login" as any);
-                  return;
-                }
-                const { id } = await getDmAlbergue(albergue.id);
-                router.push(`/(private)/mensajes/${id}` as any);
-              }}
-            >
-              <View
-                style={[
-                  s.contactoIcon,
-                  { backgroundColor: "rgba(255,255,255,0.2)" },
-                ]}
+            {/* Mensaje privado — solo si puede contactar */}
+            {puedeContactar && (
+              <TouchableOpacity
+                style={[s.contactoItem, s.contactoItemDark]}
+                activeOpacity={0.7}
+                onPress={async () => {
+                  if (!user) {
+                    router.push("/(auth)/login" as any);
+                    return;
+                  }
+                  try {
+                    const API_URL =
+                      process.env.EXPO_PUBLIC_API_URL ??
+                      "https://camino-api.onrender.com";
+                    const { token } = useAuth(); // ya tienes token en el scope
+                    const res = await fetch(
+                      `${API_URL}/api/dm-entidad/albergue/${albergue.id}`,
+                      {
+                        headers: { Authorization: `Bearer ${token}` },
+                      },
+                    );
+                    if (res.status === 403) {
+                      // No debería pasar (el botón no aparece) pero por seguridad
+                      return;
+                    }
+                    const data = await res.json();
+                    router.push(`/(private)/mensajes/${data.id}` as any);
+                  } catch (e: any) {
+                    Alert.alert("Error", String(e.message));
+                  }
+                }}
               >
-                <Text style={s.contactoEmoji}>🔒</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={[s.contactoTitulo, { color: C.blanco }]}>
-                  {t("albergues.mensajePrivado")}
-                </Text>
-                <Text
-                  style={[s.contactoSub, { color: "rgba(255,255,255,0.7)" }]}
+                <View
+                  style={[
+                    s.contactoIcon,
+                    { backgroundColor: "rgba(255,255,255,0.2)" },
+                  ]}
                 >
-                  {t("albergues.mensajePrivadoDesc")}
+                  <Text style={s.contactoEmoji}>🔒</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={[s.contactoTitulo, { color: C.blanco }]}>
+                    {t("albergues.mensajePrivado")}
+                  </Text>
+                  <Text
+                    style={[s.contactoSub, { color: "rgba(255,255,255,0.7)" }]}
+                  >
+                    {t("albergues.mensajePrivadoDesc")}
+                  </Text>
+                </View>
+                <Text
+                  style={[s.contactoArrow, { color: "rgba(255,255,255,0.6)" }]}
+                >
+                  ›
                 </Text>
-              </View>
-              <Text
-                style={[s.contactoArrow, { color: "rgba(255,255,255,0.6)" }]}
-              >
-                ›
-              </Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            )}
 
             {/* Cómo llegar */}
             {albergue.coords_lat && albergue.coords_lng && (

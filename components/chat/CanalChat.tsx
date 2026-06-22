@@ -19,6 +19,7 @@ import { router } from "expo-router";
 import { MessageBubble } from "./MessageBubble";
 import { Mensaje } from "@/lib/chat";
 import { Keyboard, KeyboardEvent } from "react-native";
+import { getDmPeregrino } from "@/lib/chat";
 
 const { height: SH } = Dimensions.get("window");
 const DRAWER_HEIGHT = SH * 0.85;
@@ -33,6 +34,7 @@ interface Props {
   onOpen?: () => void;
   open?: boolean;
   onClose?: () => void;
+  onDmPress?: (conversacionId: string) => void;
 }
 
 export default function CanalChat({
@@ -57,6 +59,8 @@ export default function CanalChat({
   const inputRef = useRef<TextInput>(null);
 
   const keyboardHeight = useRef(new Animated.Value(0)).current;
+
+  const [iniciandoDM, setIniciandoDM] = useState<string | null>(null); // autorId en curso
 
   useEffect(() => {
     const show = Keyboard.addListener("keyboardDidShow", (e: KeyboardEvent) => {
@@ -122,6 +126,22 @@ export default function CanalChat({
     await enviar(t, replyTo?.id);
   };
 
+  const handleAvatarPress = async (autorId: string) => {
+    if (!user || iniciandoDM) return;
+    setIniciandoDM(autorId);
+    try {
+      const { id } = await getDmPeregrino(autorId);
+      router.push(`/mensajes/${id}`);
+    } catch (e: any) {
+      // 403 = no acepta DMs
+      if (e?.status === 403 || e?.message?.includes("403")) {
+        alert("Este peregrino no acepta mensajes directos.");
+      }
+    } finally {
+      setIniciandoDM(null);
+    }
+  };
+
   const ChatContent = (
     <Animated.View
       style={{
@@ -153,6 +173,7 @@ export default function CanalChat({
               mensaje={item}
               esMio={item.autor_id === user?.id}
               onReply={setReplyTo}
+              onAvatarPress={user ? handleAvatarPress : undefined}
             />
           )}
           ListHeaderComponent={

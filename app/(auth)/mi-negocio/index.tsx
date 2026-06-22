@@ -50,7 +50,13 @@ const SERVICIOS_CONFIG = [
   { key: "frances", label: "Français", emoji: "🇫🇷" },
 ];
 
-type TabKey = "info" | "descripcion" | "horarios" | "servicios" | "fotos";
+type TabKey =
+  | "info"
+  | "descripcion"
+  | "horarios"
+  | "servicios"
+  | "fotos"
+  | "perfil";
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "info", label: "Info" },
@@ -58,6 +64,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "horarios", label: "Horarios" },
   { key: "servicios", label: "Servicios" },
   { key: "fotos", label: "Fotos" },
+  { key: "perfil", label: "Mi Perfil" },
 ];
 
 type Horario = { dia_semana: number; apertura: string; cierre: string };
@@ -647,6 +654,27 @@ export default function MiNegocioScreen() {
               )}
             </View>
             <Text style={s.fotosCount}>{fotos.length}/10 fotos</Text>
+          </View>
+        )}
+
+        {activeTab === "perfil" && (
+          <View style={{ gap: 16 }}>
+            <TouchableOpacity
+              style={s.btnPrimary}
+              onPress={() => router.push("/(auth)/perfil")}
+            >
+              <Text style={s.btnPrimaryText}>Ver mi perfil</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[s.btnPrimary, { backgroundColor: "#A33020" }]}
+              onPress={async () => {
+                const { supabase } = await import("@/lib/supabase");
+                await supabase.auth.signOut();
+                router.replace("/(public)/mapa");
+              }}
+            >
+              <Text style={s.btnPrimaryText}>Cerrar sesión</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>

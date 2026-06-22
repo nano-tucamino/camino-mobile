@@ -19,9 +19,15 @@ interface Props {
   mensaje: Mensaje;
   esMio: boolean;
   onReply?: (mensaje: Mensaje) => void;
+  onAvatarPress?: (autorId: string) => void; // ← nuevo
 }
 
-export function MessageBubble({ mensaje, esMio, onReply }: Props) {
+export function MessageBubble({
+  mensaje,
+  esMio,
+  onReply,
+  onAvatarPress,
+}: Props) {
   const locale = i18n.language ?? "en";
   const [mostrarOriginal, setMostrarOriginal] = useState(false);
   const autor = normalizeAutor(mensaje.autor);
@@ -47,7 +53,12 @@ export function MessageBubble({ mensaje, esMio, onReply }: Props) {
       style={[styles.wrapper, esMio ? styles.wrapperMio : styles.wrapperOtro]}
     >
       {!esMio && (
-        <View style={styles.avatarContainer}>
+        <TouchableOpacity
+          style={styles.avatarContainer}
+          onPress={() => onAvatarPress?.(mensaje.autor_id)}
+          disabled={!onAvatarPress}
+          activeOpacity={0.7}
+        >
           {autor?.avatar_url ? (
             <Image source={{ uri: autor.avatar_url }} style={styles.avatar} />
           ) : (
@@ -57,7 +68,7 @@ export function MessageBubble({ mensaje, esMio, onReply }: Props) {
               </Text>
             </View>
           )}
-        </View>
+        </TouchableOpacity>
       )}
 
       <View
