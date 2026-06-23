@@ -360,7 +360,7 @@ export default function MiAlbergueScreen() {
           style={bannerStyles.btn}
           onPress={() =>
             Linking.openURL(
-              `https://caminosantiago.app/planes-premium?token=${token}`,
+              `https://caminosantiago.app/planes-premium?token=${encodeURIComponent(token)}`,
             )
           }
         >

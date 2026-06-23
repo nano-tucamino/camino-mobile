@@ -11,6 +11,7 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  Linking,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -51,6 +52,7 @@ const SERVICIOS_CONFIG = [
 ];
 
 type TabKey =
+  | "estado"
   | "info"
   | "descripcion"
   | "horarios"
@@ -59,6 +61,7 @@ type TabKey =
   | "perfil";
 
 const TABS: { key: TabKey; label: string }[] = [
+  { key: "estado", label: "Estado" },
   { key: "info", label: "Info" },
   { key: "descripcion", label: "Descripción" },
   { key: "horarios", label: "Horarios" },
@@ -66,7 +69,6 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "fotos", label: "Fotos" },
   { key: "perfil", label: "Mi Perfil" },
 ];
-
 type Horario = { dia_semana: number; apertura: string; cierre: string };
 type Foto = {
   id: string;
@@ -83,7 +85,7 @@ export default function MiNegocioScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState("");
-  const [activeTab, setActiveTab] = useState<TabKey>("info");
+  const [activeTab, setActiveTab] = useState<TabKey>("estado");
 
   // Info
   const [nombre, setNombre] = useState("");
@@ -328,6 +330,70 @@ export default function MiNegocioScreen() {
       </View>
     );
   }
+  function LimiteBanner({
+    negocioId,
+    token,
+  }: {
+    negocioId: string;
+    token: string;
+  }) {
+    const [estado, setEstado] = useState<{
+      total: number;
+      limite: number;
+      puede_contactar: boolean;
+    } | null>(null);
+
+    useEffect(() => {
+      fetch(`${API_URL}/api/dm-entidad/negocio/${negocioId}/estado`)
+        .then((r) => r.json())
+        .then(setEstado)
+        .catch(() => {});
+    }, [negocioId]);
+
+    if (!estado || estado.puede_contactar) return null;
+
+    return (
+      <View style={bannerStyles.container}>
+        <Text style={bannerStyles.titulo}>Límite mensual alcanzado</Text>
+        <Text style={bannerStyles.sub}>
+          Has recibido {estado.total} conversaciones este mes. Activa Premium
+          para seguir recibiendo peregrinos.
+        </Text>
+        <TouchableOpacity
+          style={bannerStyles.btn}
+          onPress={() =>
+            Linking.openURL(
+              `https://caminosantiago.app/planes-premium?token=${encodeURIComponent(token)}`,
+            )
+          }
+        >
+          <Text style={bannerStyles.btnText}>Ver planes →</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const bannerStyles = StyleSheet.create({
+    container: {
+      marginTop: 16,
+      backgroundColor: "#FEF3DC",
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: "#B8860B",
+      padding: 16,
+      gap: 8,
+    },
+    titulo: { fontSize: 15, fontWeight: "700", color: "#8B6300" },
+    sub: { fontSize: 13, color: "#8B6300", lineHeight: 20 },
+    btn: {
+      backgroundColor: "#C8622A",
+      borderRadius: 10,
+      paddingVertical: 12,
+      alignItems: "center",
+      marginTop: 4,
+    },
+    btnText: { color: "white", fontSize: 14, fontWeight: "600" },
+  });
 
   return (
     <View style={[s.container, { paddingTop: insets.top }]}>
@@ -396,6 +462,15 @@ export default function MiNegocioScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        {activeTab === "estado" && (
+          <View>
+            <Text style={s.tabDesc}>
+              Gestiona tu presencia en el Camino y mantén tu información
+              actualizada.
+            </Text>
+            <LimiteBanner negocioId={negocio.id} token={token ?? ""} />
+          </View>
+        )}
         {/* ─ INFO ─ */}
         {activeTab === "info" && (
           <View>
