@@ -17,13 +17,6 @@
     "mensajes": "メッセージ"
   },
   "hero": {
-    "titulo": "あなたのカミーノ、あなたの言語で",
-    "subtitulo": "サンティアゴ・デ・コンポステーラの道を計画し、探索し、体験してください",
-    "cta": "カミーノを探索する",
-    "vive_el": "カミーノを体験",
-    "camino": "しよう。",
-    "explorar_etapas": "ステージを探索",
-    "ver_albergues": "宿泊施設を見る",
     "slides": {
       "santiago_frase": "すべての道の目的地",
       "roncesvalles_frase": "すべての道の最初の一歩",
@@ -37,11 +30,17 @@
       "etapas_label": "ステージ",
       "albergues_label": "宿泊施設",
       "km_label": "Camino Francés"
-    }
+    },
+    "titulo": "あなたのCamino、あなたの言語で",
+    "subtitulo": "Camino de Santiagoを計画し、探索し、体験しましょう",
+    "cta": "Caminoを探索する",
+    "vive_el": "Caminoを体験する",
+    "camino": "Camino。",
+    "explorar_etapas": "ステージを探索",
+    "ver_albergues": "ホステルを表示"
   },
   "etapas": {
     "titulo": "34ステージ",
-    "completado": "カミーノ完了！",
     "casi": "もうすぐです！",
     "ultima_etapa": "最後のステージです！",
     "variante": "バリエーション",
@@ -53,7 +52,13 @@
       "alta": "難しい",
       "muy_alta": "非常に難しい"
     },
-    "subtitulo": "Camino Francés · 825 km"
+    "subtitulo": "Camino Francés · 825 km",
+    "completado": "Caminoが完了しました！",
+    "cargando": "ステージを読み込み中...",
+    "error_carga": "ステージを読み込むことができませんでした",
+    "stat_etapas": "ステージ",
+    "stat_km": "合計km",
+    "stat_estimado": "推定"
   },
   "albergues": {
     "titulo": "宿泊施設",
@@ -169,7 +174,10 @@
         "bar": "バー"
       }
     },
-    "subtitulo": "Camino Francés · 34 etapas"
+    "subtitulo": "Camino Francés · 34 etapas",
+    "llamar": "電話する",
+    "ver_ficha": "詳細を表示",
+    "albergue_plus": "Albergue Plus"
   },
   "auth": {
     "registro": "登録",
@@ -182,7 +190,6 @@
     "login": {
       "titulo_email": "ログインまたは登録して続行",
       "titulo_password": "パスワードを入力してください",
-      "subtitulo_email": "あなたのカミーノ、ステージ、巡礼者コミュニティにアクセスしてください。",
       "label_email": "メールアドレス",
       "placeholder_email": "yourmail@email.com",
       "comprobando": "確認中…",
@@ -197,15 +204,14 @@
       "olvidaste": "パスワードをお忘れですか？",
       "entrando": "ログイン中…",
       "entrar": "ログイン",
-      "volver": "← 戻る"
+      "volver": "← 戻る",
+      "subtitulo_email": "あなたのCamino、ステージ、巡礼者コミュニティにアクセスしてください。"
     },
     "registro_page": {
       "paso": "ステップ",
       "de": "の",
       "saltar": "スキップ",
-      "titulo_paso1": "あなたのカミーノを始めましょう",
       "subtitulo_paso1": "巡礼者アカウントを作成してコミュニティに参加してください。",
-      "bienvenido": "ようこそ！あなたはTu Caminoの新規ユーザーのようです🐚",
       "google": "Googleで登録",
       "o_email": "またはメールで登録",
       "label_nombre": "あなたの名前",
@@ -216,19 +222,21 @@
       "siguiente": "次へ",
       "ya_tienes": "すでにアカウントをお持ちですか？",
       "inicia_sesion": "ログイン",
-      "titulo_paso2": "カミーノをどのように進みますか？",
-      "subtitulo_paso2": "これにより、あなたに最も関連する宿泊施設とステージを表示できます。",
       "de_donde": "どこから来ていますか？",
       "creando": "アカウントを作成中…",
-      "comenzar": "🐚 カミーノを開始",
       "volver": "← 戻る",
-      "error_password": "パスワードは最小8文字である必要があります。"
+      "error_password": "パスワードは最小8文字である必要があります。",
+      "titulo_paso1": "あなたのCaminoを始める",
+      "bienvenido": "ようこそ！Tu Caminoが初めてのようです🐚",
+      "comenzar": "🐚 Caminoを始める",
+      "titulo_paso2": "Caminoをどのように行いますか？",
+      "subtitulo_paso2": "こうすることで、あなたに最も関連性の高いホステルとステージを表示できます。"
     },
     "confirmar": {
       "titulo": "メールをご確認ください",
-      "descripcion": "確認リンクをメールで送信しました。クリックしてアカウントを有効化し、カミーノを開始してください。",
       "spam": "メールが見つかりませんか？スパムまたは迷惑メールフォルダを確認してください。",
-      "volver": "ログイン画面に戻る"
+      "volver": "ログイン画面に戻る",
+      "descripcion": "確認リンクを送信しました。クリックしてアカウントを有効化し、Caminoを始めてください。"
     }
   },
   "perfil": {
@@ -238,12 +246,7 @@
     "nombre": "名前",
     "nacionalidad": "国籍",
     "pais_residencia": "居住国",
-    "bio_placeholder": "あなたとあなたのカミーノについて教えてください…",
     "nombre_placeholder": "あなたの巡礼者の名前",
-    "como_haces": "カミーノをどのように進みますか？",
-    "con_quien": "誰と一緒に行きますか？",
-    "como_organizas": "カミーノをどのように計画していますか？",
-    "cuantas_veces": "カミーノを何回しましたか？",
     "primera_vez": "初めて",
     "progreso": "進捗",
     "completado": "完了",
@@ -254,17 +257,15 @@
     "sesion": "セッション",
     "cerrar_sesion": "ログアウト",
     "guardar_idioma": "保存",
-    "empty_camino": "ステージを完了すると、ここに表示されます。",
     "empty_resenas": "宿泊施設とステージのレビューがここに表示されます。",
     "empty_fotos": "ステージと宿泊施設にアップロードした写真がここに表示されます。",
     "tabs": {
       "perfil": "プロフィール",
-      "camino": "カミーノ",
       "resenas": "レビュー",
       "fotos": "写真",
-      "config": "設定"
+      "config": "設定",
+      "camino": "Camino"
     },
-    "camino_label": "カミーノ",
     "peregrino": "巡礼者",
     "foto_actualizada": "写真が更新されました",
     "cerrar_sesion_confirm": "ログアウトしてもよろしいですか？",
@@ -288,7 +289,14 @@
       "etapas_fds_sub": "個別の日の区間",
       "etapas_sueltas": "個別の区間",
       "etapas_sueltas_sub": "順序や継続性なし"
-    }
+    },
+    "bio_placeholder": "あなたとあなたのCaminoについて教えてください...",
+    "como_haces": "Caminoをどのように行いますか？",
+    "con_quien": "誰と行きますか？",
+    "como_organizas": "Caminoをどのように計画していますか？",
+    "cuantas_veces": "Caminoを何回行いましたか？",
+    "camino_label": "Camino",
+    "empty_camino": "ステージを完了すると、ここに表示されます。"
   },
   "general": {
     "cargando": "読み込み中…",
@@ -301,13 +309,13 @@
       "subtitulo_seccion": "必要なすべてのものを",
       "subtitulo_acento": "1つの場所で",
       "idiomas_titulo": "7言語",
-      "albergues_titulo": "カミーノのすべての宿泊施設",
-      "albergues_desc": "利用可能なベッド数、価格、サービス、最新の連絡先情報を備えた完全な宿泊施設ディレクトリ。",
       "pois_titulo": "観光地と標高",
       "pois_desc": "標高プロフィール、水飲み場、宿泊施設、教会、レストラン、および各ステージに沿った他の観光地を含む詳細な地図。",
       "meteo_titulo": "天気情報",
       "meteo_desc": "気温、降水量、風のデータを含む各ステージの天気予報。最新情報であなたの移動を計画してください。",
-      "idiomas_desc": "スペイン語、英語、ドイツ語、フランス語、イタリア語、ポルトガル語、韓国語で利用可能です。世界中の巡礼者向けのCamino de Santiagoガイド。"
+      "idiomas_desc": "スペイン語、英語、ドイツ語、フランス語、イタリア語、ポルトガル語、韓国語で利用可能。世界中の巡礼者向けのCamino de Santiago ガイド。",
+      "albergues_titulo": "Caminoのすべてのホステル",
+      "albergues_desc": "利用可能なベッド、料金、設備、最新の連絡先情報を含む完全なホステルディレクトリ。"
     },
     "mapa": {
       "explorar": "探索",
@@ -317,13 +325,11 @@
       "tu_posicion": "あなたの位置",
       "etapa": "ステージ",
       "aqui": "ここ",
-      "cargando": "カミーノを読み込み中...",
       "error_carga": "マップを読み込めませんでした",
       "reintentar": "再試行",
       "filtros": "フィルター",
       "alojamiento": "宿泊施設",
       "albergues": "アルベルゲ",
-      "negocios": "カミーノの事業",
       "puntos_interes": "興味深い場所",
       "infraestructura": "インフラストラクチャ",
       "descanso": "休憩",
@@ -335,25 +341,27 @@
       "variante": "バリアント",
       "titulo": "El Camino Francés",
       "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
-      "sectores": "Camino Francés · Sectores"
+      "sectores": "Camino Francés · Sectores",
+      "cargando": "Caminoを読み込み中...",
+      "negocios": "Caminoのビジネス"
     },
     "cta_final": {
-      "eyebrow": "あなたのカミーノを開始",
-      "titulo": "あなたのカミーノ、",
       "titulo_acento": "あなたの物語。",
-      "descripcion": "ステージを計画し、宿泊施設を確認し、サンティアゴ・デ・コンポステーラの道を歩むために必要なすべての情報にアクセスしてください。",
       "boton": "無料で開始",
-      "nota": "クレジットカード不要・巡礼者向けいつも無料"
+      "eyebrow": "あなたのCaminoを始める",
+      "titulo": "あなたのCamino、",
+      "descripcion": "ステージを計画し、ホステルを確認し、Camino de Santiagoを歩くために必要なすべての情報にアクセスしてください。",
+      "nota": "クレジットカード不要・巡礼者には常に無料"
     }
   },
   "landing": {
-    "siente_el": "カミーノを感じて",
-    "camino": "ください。",
-    "descubre": "カミーノを発見",
-    "chat_titulo": "el Caminoと話す",
     "chat_acento": "あなたの言語で",
-    "chat_desc": "到着前にhospitaleroに質問したり、他の巡礼者にステージの状態を相談したり、el Caminoのビジネスと通信したりできます。すべてがあなたの言語に自動的にリアルタイムで翻訳されます。",
-    "subtitulo": "Camino de Santiagoを計画し、探索し、体験しましょう"
+    "siente_el": "Caminoを感じる",
+    "camino": "Camino。",
+    "subtitulo": "Camino de Santiago を計画し、探索し、体験しましょう",
+    "chat_titulo": "Camino と話す",
+    "chat_desc": "到着前に hospitalero に質問し、他の peregrinos に etapas の状態を相談し、Camino のビジネスと連絡を取ってください。すべてリアルタイムであなたの言語に自動翻訳されます。",
+    "descubre": "Camino を発見"
   },
   "etapa": {
     "mapa": "ステージマップ",
@@ -379,7 +387,9 @@
       "cota_max": "最高高度",
       "cota_min": "最低高度",
       "desnivel_pos": "上昇高度 +",
-      "desnivel_neg": "下降高度 −"
+      "desnivel_neg": "下降高度 −",
+      "sube": "上昇",
+      "baja": "下降"
     },
     "pois": {
       "todos": "すべて",
@@ -457,8 +467,16 @@
         "moderada": "中程度",
         "intensa": "強い"
       },
-      "fuente": "Open-Meteo · previsión hasta 16 días"
-    }
+      "fuente": "Open-Meteo · previsión hasta 16 días",
+      "error_tiempo": "天気情報を読み込むことができませんでした",
+      "min_label": "最小"
+    },
+    "cargando": "ステージを読み込み中...",
+    "no_encontrada": "ステージが見つかりません",
+    "canal_etapa": "ステージチャネル",
+    "mensajes": "メッセージ",
+    "ver_en_mapa": "地図でステージを表示",
+    "navegacion_etapa": "ステージ"
   },
   "interactions": {
     "comentarios": {
@@ -486,9 +504,9 @@
       "tu_valoracion": "あなたの評価",
       "valora_etapa": "このステージを評価",
       "como_describirias": "このステージをどのように説明しますか？",
-      "banner_texto": "巡礼者コミュニティに参加して、ステージを評価し、コメントを残し、カミーノの経験を共有してください。",
       "iniciar_sesion": "ログイン",
-      "crear_cuenta": "アカウント作成"
+      "crear_cuenta": "アカウント作成",
+      "banner_texto": "etapas を評価し、コメントを残し、Camino の体験をシェアするために peregrinos のコミュニティに参加しましょう。"
     },
     "rating": {
       "malo": "悪い",
@@ -513,13 +531,11 @@
     "tu_posicion": "あなたの位置",
     "etapa": "ステージ",
     "aqui": "ここ",
-    "cargando": "道を読み込み中...",
     "error_carga": "地図を読み込めませんでした",
     "reintentar": "再試行",
     "filtros": "フィルター",
     "alojamiento": "宿泊施設",
     "albergues": "巡礼宿",
-    "negocios": "道沿いの店舗",
     "puntos_interes": "見どころ",
     "infraestructura": "インフラ",
     "descanso": "休憩所",
@@ -529,6 +545,8 @@
     "bajada": "下り坂",
     "ver_ficha": "詳細情報を表示",
     "variante": "別ルート",
-    "sectores": "Camino Francés · Sectores"
+    "sectores": "Camino Francés · Sectores",
+    "cargando": "Camino を読み込み中...",
+    "negocios": "Camino のビジネス"
   }
 }

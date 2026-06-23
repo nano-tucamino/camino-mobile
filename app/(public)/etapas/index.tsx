@@ -33,7 +33,6 @@ const API_BASE = "https://camino-api.onrender.com/api";
 const LOGO_URL =
   "https://res.cloudinary.com/dazuwnm1k/image/upload/v1776719543/logo-1_u5yiqq.png";
 
-// ─── Colores ──────────────────────────────────────────────────────────────────
 const CREMA = "#F5F0E8";
 const GOLD = "#C49A3C";
 const TINTA = "#2C2416";
@@ -42,7 +41,6 @@ const PIEDRA = "#E8E0D0";
 const BLANCO = "#FFFFFF";
 const VERDE = "#6B8F5E";
 
-// ─── Tipos ────────────────────────────────────────────────────────────────────
 interface Etapa {
   id: string;
   numero: number;
@@ -63,29 +61,11 @@ interface Etapa {
   es_variante: boolean;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 const DIFICULTAD_COLOR: Record<string, string> = {
   baja: "#6B8F5E",
   media: "#C49A3C",
   alta: "#C4703C",
   muy_alta: "#A63C3C",
-};
-
-const DIFICULTAD_LABEL: Record<string, Record<string, string>> = {
-  es: { baja: "Baja", media: "Media", alta: "Alta", muy_alta: "Muy alta" },
-  en: { baja: "Low", media: "Moderate", alta: "High", muy_alta: "Very high" },
-  de: { baja: "Niedrig", media: "Mittel", alta: "Hoch", muy_alta: "Sehr hoch" },
-  fr: {
-    baja: "Faible",
-    media: "Modéré",
-    alta: "Élevé",
-    muy_alta: "Très élevé",
-  },
-  it: { baja: "Bassa", media: "Media", alta: "Alta", muy_alta: "Molto alta" },
-  pt: { baja: "Baixa", media: "Média", alta: "Alta", muy_alta: "Muito alta" },
-  ko: { baja: "낮음", media: "보통", alta: "높음", muy_alta: "매우 높음" },
-  ja: { baja: "低い", media: "普通", alta: "高い", muy_alta: "とても高い" },
 };
 
 const COMPLETADA_LABEL: Record<string, string> = {
@@ -119,13 +99,6 @@ function getNombre(etapa: Etapa, lang: string): string {
   };
   return map[lang] || etapa.nombre;
 }
-
-function getDificultadLabel(dificultad: string, lang: string): string {
-  const map = DIFICULTAD_LABEL[lang] ?? DIFICULTAD_LABEL["en"];
-  return map[dificultad] ?? dificultad;
-}
-
-// ─── Sello SVG ────────────────────────────────────────────────────────────────
 
 function SelloCamino({ lang }: { lang: string }) {
   const texto = COMPLETADA_LABEL[lang] ?? "COMPLETED";
@@ -198,8 +171,6 @@ function SelloCamino({ lang }: { lang: string }) {
   );
 }
 
-// ─── Tarjeta de etapa ─────────────────────────────────────────────────────────
-
 function EtapaCard({
   etapa,
   lang,
@@ -215,9 +186,10 @@ function EtapaCard({
   onPress: () => void;
   onToggleCompletada: () => void;
 }) {
+  const { t } = useTranslation();
   const nombre = getNombre(etapa, lang);
   const dificultadColor = DIFICULTAD_COLOR[etapa.dificultad] ?? GOLD;
-  const dificultadLabel = getDificultadLabel(etapa.dificultad, lang);
+  const dificultadLabel = t(`etapas.dificultad.${etapa.dificultad}`);
 
   return (
     <TouchableOpacity
@@ -226,7 +198,6 @@ function EtapaCard({
       activeOpacity={0.85}
     >
       <View style={styles.cardInner}>
-        {/* Número */}
         <View
           style={[
             styles.numeroContainer,
@@ -246,8 +217,6 @@ function EtapaCard({
                 : String(etapa.numero).padStart(2, "0")}
           </Text>
         </View>
-
-        {/* Contenido */}
         <View style={styles.cardContent}>
           <Text style={styles.nombreText} numberOfLines={2}>
             {nombre}
@@ -281,8 +250,6 @@ function EtapaCard({
             </View>
           </View>
         </View>
-
-        {/* Check o chevron */}
         <View style={styles.cardRight}>
           {logueado && !etapa.es_variante ? (
             <TouchableOpacity
@@ -304,8 +271,6 @@ function EtapaCard({
           )}
         </View>
       </View>
-
-      {/* Sello overlay */}
       {completada && (
         <View style={styles.selloContainer} pointerEvents="none">
           <View style={styles.selloWrapper}>
@@ -317,8 +282,6 @@ function EtapaCard({
   );
 }
 
-// ─── Separador de sector ──────────────────────────────────────────────────────
-
 function SectorSeparator({ sector }: { sector: string }) {
   return (
     <View style={styles.sectorContainer}>
@@ -329,17 +292,13 @@ function SectorSeparator({ sector }: { sector: string }) {
   );
 }
 
-// ─── Tipos de lista ───────────────────────────────────────────────────────────
-
 type ListItem =
   | { type: "sector"; sector: string; key: string }
   | { type: "etapa"; etapa: Etapa; key: string };
 
-// ─── Pantalla principal ───────────────────────────────────────────────────────
-
 export default function EtapasScreen() {
   const router = useRouter();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const lang = i18n.language?.split("-")[0] ?? "es";
   const { session } = useAuth();
   const logueado = !!session;
@@ -355,10 +314,7 @@ export default function EtapasScreen() {
   const cargar = useCallback(async () => {
     try {
       setError(false);
-
       const etapasPromise = fetch(`${API_BASE}/etapas`).then((r) => r.json());
-
-      // Si hay sesión, cargamos etapas completadas
       const completadasPromise =
         logueado && session
           ? fetch(`${API_BASE}/peregrino/perfil/etapas`, {
@@ -370,7 +326,6 @@ export default function EtapasScreen() {
         etapasPromise,
         completadasPromise,
       ]);
-
       const etapas: Etapa[] = etapasData.etapas ?? [];
       const km = etapas
         .filter((e) => !e.es_variante)
@@ -378,10 +333,11 @@ export default function EtapasScreen() {
       setTotalKm(Math.round(km));
 
       if (completadasData?.etapasCompletadas) {
-        const ids = new Set<string>(
-          completadasData.etapasCompletadas.map((e: any) => e.etapa_id),
+        setCompletadas(
+          new Set<string>(
+            completadasData.etapasCompletadas.map((e: any) => e.etapa_id),
+          ),
         );
-        setCompletadas(ids);
       }
 
       const lista: ListItem[] = [];
@@ -413,26 +369,21 @@ export default function EtapasScreen() {
   const toggleCompletada = async (etapa: Etapa) => {
     if (!session) return;
     const yaCompletada = completadas.has(etapa.id);
-
-    // Optimistic update
     setCompletadas((prev) => {
       const next = new Set(prev);
       yaCompletada ? next.delete(etapa.id) : next.add(etapa.id);
       return next;
     });
-
     try {
-      const method = yaCompletada ? "DELETE" : "POST";
       const res = await fetch(
         `${API_BASE}/peregrino/perfil/etapas/${etapa.id}`,
         {
-          method,
+          method: yaCompletada ? "DELETE" : "POST",
           headers: { Authorization: `Bearer ${session.access_token}` },
         },
       );
       if (!res.ok) throw new Error("Error");
     } catch {
-      // Revertir si falla
       setCompletadas((prev) => {
         const next = new Set(prev);
         yaCompletada ? next.add(etapa.id) : next.delete(etapa.id);
@@ -454,10 +405,10 @@ export default function EtapasScreen() {
     return (
       <View style={styles.centered}>
         <StatusBar barStyle="dark-content" />
-        <Text style={styles.errorText}>No se pudieron cargar las etapas</Text>
+        <Text style={styles.errorText}>{t("etapas.error_carga")}</Text>
         <TouchableOpacity style={styles.retryBtn} onPress={cargar}>
           <RefreshCw size={16} color={BLANCO} />
-          <Text style={styles.retryText}>Reintentar</Text>
+          <Text style={styles.retryText}>{t("etapas.dificultad.baja")}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -486,8 +437,8 @@ export default function EtapasScreen() {
         }
         ListHeaderComponent={
           <View style={styles.headerHero}>
-            <Text style={styles.headerTitle}>Etapas</Text>
-            <Text style={styles.headerSubtitle}>Camino Francés</Text>
+            <Text style={styles.headerTitle}>{t("etapas.titulo")}</Text>
+            <Text style={styles.headerSubtitle}>{t("etapas.subtitulo")}</Text>
             {logueado && completadas.size > 0 && (
               <View style={styles.progresoRow}>
                 <View style={styles.progresoBar}>
@@ -504,17 +455,23 @@ export default function EtapasScreen() {
             <View style={styles.headerStats}>
               <View style={styles.headerStat}>
                 <Text style={styles.headerStatValue}>34</Text>
-                <Text style={styles.headerStatLabel}>etapas</Text>
+                <Text style={styles.headerStatLabel}>
+                  {t("etapas.stat_etapas")}
+                </Text>
               </View>
               <View style={styles.headerStatDivider} />
               <View style={styles.headerStat}>
                 <Text style={styles.headerStatValue}>{totalKm}</Text>
-                <Text style={styles.headerStatLabel}>km totales</Text>
+                <Text style={styles.headerStatLabel}>
+                  {t("etapas.stat_km")}
+                </Text>
               </View>
               <View style={styles.headerStatDivider} />
               <View style={styles.headerStat}>
                 <Text style={styles.headerStatValue}>~30d</Text>
-                <Text style={styles.headerStatLabel}>estimado</Text>
+                <Text style={styles.headerStatLabel}>
+                  {t("etapas.stat_estimado")}
+                </Text>
               </View>
             </View>
           </View>
@@ -539,8 +496,6 @@ export default function EtapasScreen() {
   );
 }
 
-// ─── Estilos ──────────────────────────────────────────────────────────────────
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: CREMA },
   centered: {
@@ -561,8 +516,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   retryText: { color: BLANCO, fontSize: 14, fontWeight: "600" },
-
-  // Header
   headerHero: {
     backgroundColor: TINTA,
     paddingTop: 60,
@@ -620,10 +573,7 @@ const styles = StyleSheet.create({
     height: 28,
     backgroundColor: "rgba(255,255,255,0.15)",
   },
-
   listContent: { paddingBottom: 20 },
-
-  // Sector
   sectorContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -639,8 +589,6 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 1.2,
   },
-
-  // Card
   card: {
     backgroundColor: BLANCO,
     marginHorizontal: 16,
@@ -707,8 +655,6 @@ const styles = StyleSheet.create({
   dificultadText: { fontSize: 11, fontWeight: "600" },
   cardRight: { flexShrink: 0 },
   checkBtn: { padding: 2 },
-
-  // Sello
   selloContainer: {
     position: "absolute",
     top: 0,

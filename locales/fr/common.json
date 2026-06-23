@@ -17,13 +17,6 @@
     "mensajes": "Messages"
   },
   "hero": {
-    "titulo": "Ton Chemin, dans ta langue",
-    "subtitulo": "Planifie, explore et vis le Chemin de Santiago",
-    "cta": "Explorer le Chemin",
-    "vive_el": "Vis le",
-    "camino": "Chemin.",
-    "explorar_etapas": "Explorer les étapes",
-    "ver_albergues": "Voir les gîtes",
     "slides": {
       "santiago_frase": "La destination de tous les chemins",
       "roncesvalles_frase": "Le premier pas de tous les chemins",
@@ -37,11 +30,17 @@
       "etapas_label": "Étapes",
       "albergues_label": "Gîtes",
       "km_label": "Camino Francés"
-    }
+    },
+    "titulo": "Ton Camino, dans ta langue",
+    "subtitulo": "Planifie, explore et vis le Camino de Santiago",
+    "cta": "Explorer le Camino",
+    "vive_el": "Vis le",
+    "camino": "Camino.",
+    "explorar_etapas": "Explorer les étapes",
+    "ver_albergues": "Voir les auberges"
   },
   "etapas": {
     "titulo": "Les 34 étapes",
-    "completado": "Chemin terminé !",
     "casi": "presque !",
     "ultima_etapa": "dernière étape !",
     "variante": "variante",
@@ -53,7 +52,13 @@
       "alta": "Difficile",
       "muy_alta": "Très difficile"
     },
-    "subtitulo": "Camino Francés · 825 km"
+    "subtitulo": "Camino Francés · 825 km",
+    "completado": "Camino complété !",
+    "cargando": "Chargement des étapes...",
+    "error_carga": "Impossible de charger les étapes",
+    "stat_etapas": "étapes",
+    "stat_km": "km totaux",
+    "stat_estimado": "estimé"
   },
   "albergues": {
     "titulo": "Gîtes",
@@ -169,7 +174,10 @@
         "bar": "Bar"
       }
     },
-    "subtitulo": "Camino Francés · 34 etapas"
+    "subtitulo": "Camino Francés · 34 etapas",
+    "llamar": "Appeler",
+    "ver_ficha": "Voir la fiche complète",
+    "albergue_plus": "Albergue Plus"
   },
   "auth": {
     "registro": "Inscription",
@@ -182,7 +190,6 @@
     "login": {
       "titulo_email": "Connecte-toi ou inscris-toi pour continuer",
       "titulo_password": "Saisis ton mot de passe",
-      "subtitulo_email": "Accède à ton Chemin, tes étapes et ta communauté de pèlerins.",
       "label_email": "Adresse email",
       "placeholder_email": "tonemail@email.com",
       "comprobando": "Vérification...",
@@ -197,15 +204,14 @@
       "olvidaste": "Tu as oublié ton mot de passe ?",
       "entrando": "Connexion...",
       "entrar": "Connexion",
-      "volver": "← Retour"
+      "volver": "← Retour",
+      "subtitulo_email": "Accède à ton Camino, tes étapes et ta communauté de pèlerins."
     },
     "registro_page": {
       "paso": "Étape",
       "de": "sur",
       "saltar": "Passer",
-      "titulo_paso1": "Commence ton Chemin",
       "subtitulo_paso1": "Crée ton compte de pèlerin et rejoins la communauté.",
-      "bienvenido": "Bienvenue ! Il semble que tu sois nouveau sur Mon Chemin 🐚",
       "google": "S'inscrire avec Google",
       "o_email": "ou avec l'email",
       "label_nombre": "Ton nom",
@@ -216,19 +222,21 @@
       "siguiente": "Suivant",
       "ya_tienes": "Tu as déjà un compte ?",
       "inicia_sesion": "Connecte-toi",
-      "titulo_paso2": "Comment feras-tu le Chemin ?",
-      "subtitulo_paso2": "Ainsi, nous pouvons te montrer les gîtes et étapes les plus pertinents pour toi.",
       "de_donde": "D'où viens-tu ?",
       "creando": "Création du compte...",
-      "comenzar": "🐚 Commence le Chemin",
       "volver": "← Retour",
-      "error_password": "Le mot de passe doit avoir au moins 8 caractères."
+      "error_password": "Le mot de passe doit avoir au moins 8 caractères.",
+      "titulo_paso1": "Commence ton Camino",
+      "bienvenido": "Bienvenue ! Tu sembles être nouveau sur Tu Camino 🐚",
+      "comenzar": "🐚 Commencer le Camino",
+      "titulo_paso2": "Comment feras-tu le Camino ?",
+      "subtitulo_paso2": "Ainsi, nous pouvons te montrer les auberges et étapes les plus pertinentes pour toi."
     },
     "confirmar": {
       "titulo": "Vérifie ton email",
-      "descripcion": "Nous t'avons envoyé un lien de confirmation. Clique dessus pour activer ton compte et commencer le Chemin.",
       "spam": "Tu ne vois pas l'email ? Vérifie le dossier spam ou courrier indésirable.",
-      "volver": "Retour à la connexion"
+      "volver": "Retour à la connexion",
+      "descripcion": "Nous t'avons envoyé un lien de confirmation. Clique dessus pour activer ton compte et commencer le Camino."
     }
   },
   "perfil": {
@@ -238,12 +246,7 @@
     "nombre": "Nom",
     "nacionalidad": "Nationalité",
     "pais_residencia": "Pays de résidence",
-    "bio_placeholder": "Parle-nous de toi et de ton Chemin...",
     "nombre_placeholder": "Ton nom de pèlerin",
-    "como_haces": "Comment fais-tu le Chemin ?",
-    "con_quien": "Avec qui vas-tu ?",
-    "como_organizas": "Comment organises-tu le Chemin ?",
-    "cuantas_veces": "Combien de fois as-tu fait le Chemin ?",
     "primera_vez": "Première fois",
     "progreso": "Progression",
     "completado": "terminé",
@@ -254,17 +257,15 @@
     "sesion": "Session",
     "cerrar_sesion": "Déconnexion",
     "guardar_idioma": "Enregistrer",
-    "empty_camino": "Quand tu complèteras une étape, cela apparaîtra ici.",
     "empty_resenas": "Tes évaluations des gîtes et étapes apparaîtront ici.",
     "empty_fotos": "Les photos que tu publies dans les étapes et gîtes apparaîtront ici.",
     "tabs": {
       "perfil": "Profil",
-      "camino": "Chemin",
       "resenas": "Avis",
       "fotos": "Photos",
-      "config": "Paramètres"
+      "config": "Paramètres",
+      "camino": "Camino"
     },
-    "camino_label": "Chemin",
     "peregrino": "Pèlerin",
     "foto_actualizada": "Photo mise à jour",
     "cerrar_sesion_confirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
@@ -288,7 +289,14 @@
       "etapas_fds_sub": "Étapes sur des jours isolés",
       "etapas_sueltas": "Étapes isolées",
       "etapas_sueltas_sub": "Sans ordre ni continuité"
-    }
+    },
+    "bio_placeholder": "Raconte-nous quelque chose sur toi et ton Camino...",
+    "como_haces": "Comment fais-tu le Camino ?",
+    "con_quien": "Avec qui vas-tu ?",
+    "como_organizas": "Comment organises-tu le Camino ?",
+    "cuantas_veces": "Combien de fois as-tu fait le Camino ?",
+    "camino_label": "Camino",
+    "empty_camino": "Quand tu complèteras une étape, elle apparaîtra ici."
   },
   "general": {
     "cargando": "Chargement...",
@@ -301,13 +309,13 @@
       "subtitulo_seccion": "Tout ce dont tu as besoin,",
       "subtitulo_acento": "en un seul endroit",
       "idiomas_titulo": "7 langues",
-      "albergues_titulo": "Tous les gîtes du Chemin",
-      "albergues_desc": "Répertoire complet des gîtes avec places disponibles, tarifs, services et informations de contact à jour.",
       "pois_titulo": "Points d'intérêt et altitude",
       "pois_desc": "Cartes détaillées avec profil d'altitude, sources, gîtes, églises, restaurants et autres points d'intérêt le long de chaque étape.",
       "meteo_titulo": "Informations météorologiques",
       "meteo_desc": "Prévisions météorologiques pour chaque étape avec données de température, précipitations et vent. Planifie ta journée avec des informations à jour.",
-      "idiomas_desc": "Disponible en español, inglés, alemán, francés, italiano, portugués y coreano. La guía del Camino de Santiago para peregrinos de todo el mundo."
+      "idiomas_desc": "Disponible en espagnol, anglais, allemand, français, italien, portugais et coréen. Le guide du Camino de Santiago pour les pèlerins du monde entier.",
+      "albergues_titulo": "Toutes les auberges du Camino",
+      "albergues_desc": "Répertoire complet des auberges avec places disponibles, prix, services et informations de contact actualisées."
     },
     "mapa": {
       "explorar": "Explorer",
@@ -317,13 +325,11 @@
       "tu_posicion": "Votre position",
       "etapa": "Étape",
       "aqui": "ici",
-      "cargando": "Chargement du Chemin...",
       "error_carga": "Impossible de charger la carte",
       "reintentar": "Réessayer",
       "filtros": "Filtres",
       "alojamiento": "Hébergement",
       "albergues": "Auberges",
-      "negocios": "Commerces du Chemin",
       "puntos_interes": "Points d'intérêt",
       "infraestructura": "Infrastructure",
       "descanso": "Repos",
@@ -335,25 +341,27 @@
       "variante": "Variante",
       "titulo": "Le Camino Francés",
       "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
-      "sectores": "Camino Francés · Sectores"
+      "sectores": "Camino Francés · Sectores",
+      "cargando": "Chargement du Camino...",
+      "negocios": "Commerces du Camino"
     },
     "cta_final": {
-      "eyebrow": "Commence ton Chemin",
-      "titulo": "Ton Chemin,",
       "titulo_acento": "ton histoire.",
-      "descripcion": "Planifie tes étapes, consulte les gîtes et accède à toutes les informations dont tu as besoin pour parcourir le Chemin de Santiago.",
       "boton": "Commencer gratuitement",
+      "eyebrow": "Commence ton Camino",
+      "titulo": "Ton Camino,",
+      "descripcion": "Planifie tes étapes, consulte les auberges et accède à toutes les informations dont tu as besoin pour parcourir le Camino de Santiago.",
       "nota": "Sans carte de crédit · Toujours gratuit pour les pèlerins"
     }
   },
   "landing": {
-    "siente_el": "Ressens le",
-    "camino": "Chemin.",
-    "descubre": "Découvrir le Chemin",
-    "chat_titulo": "Parlez avec le Camino",
     "chat_acento": "dans ta langue",
-    "chat_desc": "Posez des questions à l'hospitalero avant votre arrivée, consultez d'autres pèlerins sur l'état des étapes et communiquez avec les commerces du Camino. Tout traduit automatiquement dans ta langue, en temps réel.",
-    "subtitulo": "Planifiez, explorez et vivez le Camino de Santiago"
+    "siente_el": "Ressens le",
+    "camino": "Camino.",
+    "subtitulo": "Planifiez, explorez et vivez le Camino de Santiago",
+    "chat_titulo": "Parlez avec le Camino",
+    "chat_desc": "Posez des questions à l'hospitalero avant votre arrivée, consultez d'autres pèlerins sur l'état des étapes et communiquez avec les entreprises du Camino. Tout traduit automatiquement dans votre langue, en temps réel.",
+    "descubre": "Découvrir le Camino"
   },
   "etapa": {
     "mapa": "Carte de l'étape",
@@ -379,7 +387,9 @@
       "cota_max": "Altitude max.",
       "cota_min": "Altitude min.",
       "desnivel_pos": "Dénivelé +",
-      "desnivel_neg": "Dénivelé −"
+      "desnivel_neg": "Dénivelé −",
+      "sube": "Montée",
+      "baja": "Descente"
     },
     "pois": {
       "todos": "Tous",
@@ -457,8 +467,16 @@
         "moderada": "Modérée",
         "intensa": "Intense"
       },
-      "fuente": "Open-Meteo · previsión hasta 16 días"
-    }
+      "fuente": "Open-Meteo · previsión hasta 16 días",
+      "error_tiempo": "Impossible de charger la météo",
+      "min_label": "min"
+    },
+    "cargando": "Chargement de l'étape...",
+    "no_encontrada": "Étape non trouvée",
+    "canal_etapa": "Canal de l'étape",
+    "mensajes": "messages",
+    "ver_en_mapa": "Voir l'étape sur la carte",
+    "navegacion_etapa": "Étape"
   },
   "interactions": {
     "comentarios": {
@@ -486,9 +504,9 @@
       "tu_valoracion": "Ton évaluation",
       "valora_etapa": "Évalue cette étape",
       "como_describirias": "Comment décririais-tu cette étape ?",
-      "banner_texto": "Rejoins la communauté des pèlerins pour évaluer les étapes, laisser des commentaires et partager ton expérience du Chemin.",
       "iniciar_sesion": "Connecte-toi",
-      "crear_cuenta": "Créer un compte"
+      "crear_cuenta": "Créer un compte",
+      "banner_texto": "Rejoignez la communauté des pèlerins pour évaluer les étapes, laisser des commentaires et partager votre expérience du Camino."
     },
     "rating": {
       "malo": "Mauvais",
@@ -513,13 +531,11 @@
     "tu_posicion": "Ta position",
     "etapa": "Étape",
     "aqui": "ici",
-    "cargando": "Chargement du Chemin...",
     "error_carga": "Impossible de charger la carte",
     "reintentar": "Réessayer",
     "filtros": "Filtres",
     "alojamiento": "Hébergement",
     "albergues": "Auberges",
-    "negocios": "Commerces du Chemin",
     "puntos_interes": "Points d'intérêt",
     "infraestructura": "Infrastructure",
     "descanso": "Repos",
@@ -529,6 +545,8 @@
     "bajada": "Descente",
     "ver_ficha": "Voir la fiche complète",
     "variante": "Variante",
-    "sectores": "Camino Francés · Sectores"
+    "sectores": "Camino Francés · Sectores",
+    "cargando": "Chargement du Camino...",
+    "negocios": "Entreprises du Camino"
   }
 }

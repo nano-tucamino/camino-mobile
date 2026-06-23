@@ -17,13 +17,6 @@
     "mensajes": "Mensagens"
   },
   "hero": {
-    "titulo": "Seu Caminho, no seu idioma",
-    "subtitulo": "Planeje, explore e viva o Caminho de Santiago",
-    "cta": "Explorar o Caminho",
-    "vive_el": "Viva o",
-    "camino": "Caminho.",
-    "explorar_etapas": "Explorar etapas",
-    "ver_albergues": "Ver albergues",
     "slides": {
       "santiago_frase": "O destino de todos os caminhos",
       "roncesvalles_frase": "O primeiro passo de todos os caminhos",
@@ -37,11 +30,17 @@
       "etapas_label": "Etapas",
       "albergues_label": "Albergues",
       "km_label": "Camino Francés"
-    }
+    },
+    "titulo": "Seu Camino, no seu idioma",
+    "subtitulo": "Planeje, explore e viva o Camino de Santiago",
+    "cta": "Explorar o Camino",
+    "vive_el": "Viva o",
+    "camino": "Camino.",
+    "explorar_etapas": "Explorar etapas",
+    "ver_albergues": "Ver albergues"
   },
   "etapas": {
     "titulo": "As 34 etapas",
-    "completado": "¡Caminho completado!",
     "casi": "¡quase!",
     "ultima_etapa": "¡última etapa!",
     "variante": "variante",
@@ -53,7 +52,13 @@
       "alta": "Difícil",
       "muy_alta": "Muito difícil"
     },
-    "subtitulo": "Camino Francés · 825 km"
+    "subtitulo": "Camino Francés · 825 km",
+    "completado": "Camino concluído!",
+    "cargando": "Carregando etapas...",
+    "error_carga": "Não foi possível carregar as etapas",
+    "stat_etapas": "etapas",
+    "stat_km": "km totais",
+    "stat_estimado": "estimado"
   },
   "albergues": {
     "titulo": "Albergues",
@@ -169,7 +174,10 @@
         "bar": "Bar"
       }
     },
-    "subtitulo": "Camino Francés · 34 etapas"
+    "subtitulo": "Camino Francés · 34 etapas",
+    "llamar": "Ligar",
+    "ver_ficha": "Ver ficha completa",
+    "albergue_plus": "Albergue Plus"
   },
   "auth": {
     "registro": "Registro",
@@ -182,7 +190,6 @@
     "login": {
       "titulo_email": "Entre ou registre-se para continuar",
       "titulo_password": "Digite sua senha",
-      "subtitulo_email": "Acesse seu Caminho, suas etapas e sua comunidade de peregrinos.",
       "label_email": "Endereço de correio eletrônico",
       "placeholder_email": "seuemail@email.com",
       "comprobando": "Verificando...",
@@ -197,15 +204,14 @@
       "olvidaste": "Esqueceu sua senha?",
       "entrando": "Entrando...",
       "entrar": "Entrar",
-      "volver": "← Voltar"
+      "volver": "← Voltar",
+      "subtitulo_email": "Acesse seu Camino, suas etapas e sua comunidade de peregrinos."
     },
     "registro_page": {
       "paso": "Passo",
       "de": "de",
       "saltar": "Pular",
-      "titulo_paso1": "Comece seu Caminho",
       "subtitulo_paso1": "Crie sua conta de peregrino e junte-se à comunidade.",
-      "bienvenido": "¡Bem-vindo! Parece que você é novo no Seu Caminho 🐚",
       "google": "Registre-se com Google",
       "o_email": "ou com e-mail",
       "label_nombre": "Seu nome",
@@ -216,19 +222,21 @@
       "siguiente": "Próximo",
       "ya_tienes": "Já tem conta?",
       "inicia_sesion": "Entre",
-      "titulo_paso2": "Como você fará o Caminho?",
-      "subtitulo_paso2": "Assim podemos mostrar os albergues e etapas mais relevantes para você.",
       "de_donde": "De onde você vem?",
       "creando": "Criando conta...",
-      "comenzar": "🐚 Comece o Caminho",
       "volver": "← Voltar",
-      "error_password": "A senha deve ter pelo menos 8 caracteres."
+      "error_password": "A senha deve ter pelo menos 8 caracteres.",
+      "titulo_paso1": "Comece seu Camino",
+      "bienvenido": "Bem-vindo! Parece que você é novo no Tu Camino 🐚",
+      "comenzar": "🐚 Começar o Camino",
+      "titulo_paso2": "Como você fará o Camino?",
+      "subtitulo_paso2": "Assim podemos mostrar a você os albergues e etapas mais relevantes para você."
     },
     "confirmar": {
       "titulo": "Verifique seu e-mail",
-      "descripcion": "Enviamos um link de confirmação para você. Clique nele para ativar sua conta e começar o Caminho.",
       "spam": "Não vê o e-mail? Verifique a pasta de spam ou lixo eletrônico.",
-      "volver": "Voltar para entrar"
+      "volver": "Voltar para entrar",
+      "descripcion": "Enviamos um link de confirmação. Clique nele para ativar sua conta e começar o Camino."
     }
   },
   "perfil": {
@@ -238,12 +246,7 @@
     "nombre": "Nome",
     "nacionalidad": "Nacionalidade",
     "pais_residencia": "País de residência",
-    "bio_placeholder": "Conte-nos algo sobre você e seu Caminho...",
     "nombre_placeholder": "Seu nome de peregrino",
-    "como_haces": "Como você faz o Caminho?",
-    "con_quien": "Com quem você vai?",
-    "como_organizas": "Como você organiza o Caminho?",
-    "cuantas_veces": "Quantas vezes você fez o Caminho?",
     "primera_vez": "Primeira vez",
     "progreso": "Progresso",
     "completado": "completado",
@@ -254,17 +257,15 @@
     "sesion": "Sessão",
     "cerrar_sesion": "Sair da conta",
     "guardar_idioma": "Salvar",
-    "empty_camino": "Quando você completar uma etapa, ela aparecerá aqui.",
     "empty_resenas": "Suas avaliações de albergues e etapas aparecerão aqui.",
     "empty_fotos": "As fotos que você enviar em etapas e albergues aparecerão aqui.",
     "tabs": {
       "perfil": "Perfil",
-      "camino": "Caminho",
       "resenas": "Avaliações",
       "fotos": "Fotos",
-      "config": "Config"
+      "config": "Config",
+      "camino": "Camino"
     },
-    "camino_label": "Caminho",
     "peregrino": "Peregrino",
     "foto_actualizada": "Foto atualizada",
     "cerrar_sesion_confirm": "Tem certeza de que deseja fazer logout?",
@@ -288,7 +289,14 @@
       "etapas_fds_sub": "Etapas em dias alternados",
       "etapas_sueltas": "Etapas isoladas",
       "etapas_sueltas_sub": "Sem ordem nem continuidade"
-    }
+    },
+    "bio_placeholder": "Conte-nos algo sobre você e seu Camino...",
+    "como_haces": "Como você faz o Camino?",
+    "con_quien": "Com quem você vai?",
+    "como_organizas": "Como você organiza o Camino?",
+    "cuantas_veces": "Quantas vezes você fez o Camino?",
+    "camino_label": "Camino",
+    "empty_camino": "Quando você completar uma etapa, aparecerá aqui."
   },
   "general": {
     "cargando": "Carregando...",
@@ -301,13 +309,13 @@
       "subtitulo_seccion": "Tudo que você precisa,",
       "subtitulo_acento": "em um só lugar",
       "idiomas_titulo": "7 idiomas",
-      "albergues_titulo": "Todos os albergues do Caminho",
-      "albergues_desc": "Diretório completo de albergues com vagas disponíveis, preços, serviços e informações de contato atualizadas.",
       "pois_titulo": "Pontos de interesse e altitude",
       "pois_desc": "Mapas detalhados com perfil de altitude, fontes, albergues, igrejas, restaurantes e outros pontos de interesse ao longo de cada etapa.",
       "meteo_titulo": "Informações meteorológicas",
       "meteo_desc": "Previsão do tempo para cada etapa com dados de temperatura, precipitação e vento. Planeje seu dia com informações atualizadas.",
-      "idiomas_desc": "Disponível em espanhol, inglês, alemão, francês, italiano, português e coreano. O guia do Camino de Santiago para peregrinos de todo o mundo."
+      "idiomas_desc": "Disponível em espanhol, inglês, alemão, francês, italiano, português e coreano. O guia do Camino de Santiago para peregrinos de todo o mundo.",
+      "albergues_titulo": "Todos os albergues do Camino",
+      "albergues_desc": "Diretório completo de albergues com vagas disponíveis, preços, serviços e informações de contato atualizadas."
     },
     "mapa": {
       "explorar": "Explorar",
@@ -317,13 +325,11 @@
       "tu_posicion": "Sua posição",
       "etapa": "Etapa",
       "aqui": "aqui",
-      "cargando": "Carregando o Caminho...",
       "error_carga": "Não foi possível carregar o mapa",
       "reintentar": "Tentar novamente",
       "filtros": "Filtros",
       "alojamiento": "Acomodação",
       "albergues": "Albergues",
-      "negocios": "Negócios do Caminho",
       "puntos_interes": "Pontos de interesse",
       "infraestructura": "Infraestrutura",
       "descanso": "Descanso",
@@ -335,25 +341,27 @@
       "variante": "Variante",
       "titulo": "O Camino Francés",
       "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
-      "sectores": "Camino Francés · Sectores"
+      "sectores": "Camino Francés · Sectores",
+      "cargando": "Carregando o Camino...",
+      "negocios": "Negócios do Camino"
     },
     "cta_final": {
-      "eyebrow": "Comece seu Caminho",
-      "titulo": "Seu Caminho,",
       "titulo_acento": "sua história.",
-      "descripcion": "Planeje suas etapas, consulte albergues e acesse todas as informações que você precisa para percorrer o Caminho de Santiago.",
       "boton": "Começar gratuitamente",
+      "eyebrow": "Comece seu Camino",
+      "titulo": "Seu Camino,",
+      "descripcion": "Planeje suas etapas, consulte albergues e acesse todas as informações que você precisa para percorrer o Camino de Santiago.",
       "nota": "Sem cartão de crédito · Sempre gratuito para peregrinos"
     }
   },
   "landing": {
-    "siente_el": "Sinta o",
-    "camino": "Caminho.",
-    "descubre": "Descobrir o Caminho",
-    "chat_titulo": "Fale com o Camino",
     "chat_acento": "no seu idioma",
-    "chat_desc": "Pergunte ao hospitalero antes de chegar, consulte outros peregrinos sobre o estado dos estágios e comunique-se com negócios do Camino. Tudo traduzido automaticamente para o seu idioma, em tempo real.",
-    "subtitulo": "Planeje, explore e viva o Camino de Santiago"
+    "siente_el": "Sinta o",
+    "camino": "Camino.",
+    "subtitulo": "Planeie, explore e viva o Camino de Santiago",
+    "chat_titulo": "Converse com o Camino",
+    "chat_desc": "Pergunte ao hospitalero antes de chegar, consulte com outros peregrinos sobre o estado das etapas e comunique-se com negócios do Camino. Tudo traduzido automaticamente para seu idioma, em tempo real.",
+    "descubre": "Descobrir o Camino"
   },
   "etapa": {
     "mapa": "Mapa da etapa",
@@ -379,7 +387,9 @@
       "cota_max": "Cota máx.",
       "cota_min": "Cota mín.",
       "desnivel_pos": "Desnível +",
-      "desnivel_neg": "Desnível −"
+      "desnivel_neg": "Desnível −",
+      "sube": "Sobe",
+      "baja": "Desce"
     },
     "pois": {
       "todos": "Todos",
@@ -457,8 +467,16 @@
         "moderada": "Moderada",
         "intensa": "Intensa"
       },
-      "fuente": "Open-Meteo · previsión hasta 16 días"
-    }
+      "fuente": "Open-Meteo · previsión hasta 16 días",
+      "error_tiempo": "Não foi possível carregar o tempo",
+      "min_label": "mín"
+    },
+    "cargando": "Carregando etapa...",
+    "no_encontrada": "Etapa não encontrada",
+    "canal_etapa": "Canal da etapa",
+    "mensajes": "mensagens",
+    "ver_en_mapa": "Ver etapa no mapa",
+    "navegacion_etapa": "Etapa"
   },
   "interactions": {
     "comentarios": {
@@ -486,9 +504,9 @@
       "tu_valoracion": "Sua avaliação",
       "valora_etapa": "Avalie esta etapa",
       "como_describirias": "Como você descreveria esta etapa?",
-      "banner_texto": "Junte-se à comunidade de peregrinos para avaliar etapas, deixar comentários e compartilhar sua experiência do Caminho.",
       "iniciar_sesion": "Entrar",
-      "crear_cuenta": "Criar conta"
+      "crear_cuenta": "Criar conta",
+      "banner_texto": "Junte-se à comunidade de peregrinos para avaliar etapas, deixar comentários e compartilhar sua experiência do Camino."
     },
     "rating": {
       "malo": "Ruim",
@@ -513,13 +531,11 @@
     "tu_posicion": "Sua posição",
     "etapa": "Etapa",
     "aqui": "aqui",
-    "cargando": "Carregando o Caminho...",
     "error_carga": "Não foi possível carregar o mapa",
     "reintentar": "Tentar novamente",
     "filtros": "Filtros",
     "alojamiento": "Alojamento",
     "albergues": "Albergues",
-    "negocios": "Negócios do Caminho",
     "puntos_interes": "Pontos de interesse",
     "infraestructura": "Infraestrutura",
     "descanso": "Descanso",
@@ -529,6 +545,8 @@
     "bajada": "Descida",
     "ver_ficha": "Ver ficha completa",
     "variante": "Variante",
-    "sectores": "Camino Francés · Sectores"
+    "sectores": "Camino Francés · Sectores",
+    "cargando": "Carregando o Camino...",
+    "negocios": "Negócios do Camino"
   }
 }

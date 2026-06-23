@@ -17,13 +17,6 @@
     "mensajes": "메시지"
   },
   "hero": {
-    "titulo": "당신의 길, 당신의 언어로",
-    "subtitulo": "산티아고 순례길을 계획하고, 탐험하고, 경험하세요",
-    "cta": "순례길 탐험하기",
-    "vive_el": "경험하세요",
-    "camino": "순례길을",
-    "explorar_etapas": "구간 탐험하기",
-    "ver_albergues": "숙소 보기",
     "slides": {
       "santiago_frase": "모든 길의 목적지",
       "roncesvalles_frase": "모든 길의 첫 걸음",
@@ -37,11 +30,17 @@
       "etapas_label": "구간",
       "albergues_label": "숙소",
       "km_label": "Camino Francés"
-    }
+    },
+    "titulo": "당신의 Camino, 당신의 언어로",
+    "subtitulo": "Camino de Santiago를 계획하고 탐험하며 경험하세요",
+    "cta": "Camino 탐험하기",
+    "vive_el": "Camino를 경험하세요",
+    "camino": "Camino.",
+    "explorar_etapas": "스테이지 탐험하기",
+    "ver_albergues": "호스텔 보기"
   },
   "etapas": {
     "titulo": "34개 구간",
-    "completado": "순례길 완주!",
     "casi": "거의 다 왔어요!",
     "ultima_etapa": "마지막 구간!",
     "variante": "변형",
@@ -53,7 +52,13 @@
       "alta": "어려움",
       "muy_alta": "매우 어려움"
     },
-    "subtitulo": "Camino Francés · 825 km"
+    "subtitulo": "Camino Francés · 825 km",
+    "completado": "Camino 완료되었습니다!",
+    "cargando": "스테이지 로딩 중...",
+    "error_carga": "스테이지를 로드할 수 없습니다",
+    "stat_etapas": "스테이지",
+    "stat_km": "총 km",
+    "stat_estimado": "예상"
   },
   "albergues": {
     "titulo": "숙소",
@@ -169,7 +174,10 @@
         "bar": "바"
       }
     },
-    "subtitulo": "Camino Francés · 34 etapas"
+    "subtitulo": "Camino Francés · 34 etapas",
+    "llamar": "전화",
+    "ver_ficha": "전체 정보 보기",
+    "albergue_plus": "Albergue Plus"
   },
   "auth": {
     "registro": "회원가입",
@@ -182,7 +190,6 @@
     "login": {
       "titulo_email": "계속하려면 로그인하거나 가입하세요",
       "titulo_password": "비밀번호를 입력하세요",
-      "subtitulo_email": "당신의 길, 구간, 그리고 순례자 커뮤니티에 접근하세요.",
       "label_email": "이메일 주소",
       "placeholder_email": "yourmail@email.com",
       "comprobando": "확인 중...",
@@ -197,15 +204,14 @@
       "olvidaste": "비밀번호를 잊으셨나요?",
       "entrando": "로그인 중...",
       "entrar": "로그인",
-      "volver": "← 돌아가기"
+      "volver": "← 돌아가기",
+      "subtitulo_email": "당신의 Camino, 당신의 스테이지, 그리고 순례자 커뮤니티에 접근하세요."
     },
     "registro_page": {
       "paso": "단계",
       "de": "의",
       "saltar": "건너뛰기",
-      "titulo_paso1": "당신의 길을 시작하세요",
       "subtitulo_paso1": "순례자 계정을 만들고 커뮤니티에 참여하세요.",
-      "bienvenido": "환영합니다! 당신은 나의 길에 처음 오신 것 같네요 🐚",
       "google": "Google로 가입",
       "o_email": "또는 이메일로",
       "label_nombre": "당신의 이름",
@@ -216,19 +222,21 @@
       "siguiente": "다음",
       "ya_tienes": "이미 계정이 있으신가요?",
       "inicia_sesion": "로그인",
-      "titulo_paso2": "어떻게 길을 걸으실 건가요?",
-      "subtitulo_paso2": "당신에게 맞는 숙소와 구간을 보여드리기 위함입니다.",
       "de_donde": "어디서 시작하시나요?",
       "creando": "계정 생성 중...",
-      "comenzar": "🐚 순례길 시작하기",
       "volver": "← 돌아가기",
-      "error_password": "비밀번호는 최소 8자 이상이어야 합니다."
+      "error_password": "비밀번호는 최소 8자 이상이어야 합니다.",
+      "titulo_paso1": "당신의 Camino 시작하기",
+      "bienvenido": "환영합니다! Tu Camino에 처음이신 것 같네요 🐚",
+      "comenzar": "🐚 Camino 시작하기",
+      "titulo_paso2": "Camino를 어떻게 진행할 건가요?",
+      "subtitulo_paso2": "이를 통해 당신에게 가장 적합한 호스텔과 스테이지를 보여드릴 수 있습니다."
     },
     "confirmar": {
       "titulo": "이메일을 확인하세요",
-      "descripcion": "확인 링크를 이메일로 보냈습니다. 링크를 클릭하여 계정을 활성화하고 순례길을 시작하세요.",
       "spam": "이메일이 보이지 않나요? 스팸 또는 정크메일 폴더를 확인하세요.",
-      "volver": "로그인으로 돌아가기"
+      "volver": "로그인으로 돌아가기",
+      "descripcion": "확인 링크를 보냈습니다. 클릭하여 계정을 활성화하고 Camino를 시작하세요."
     }
   },
   "perfil": {
@@ -238,12 +246,7 @@
     "nombre": "이름",
     "nacionalidad": "국적",
     "pais_residencia": "거주 국가",
-    "bio_placeholder": "당신과 당신의 순례길에 대해 말씀해 주세요...",
     "nombre_placeholder": "당신의 순례자 이름",
-    "como_haces": "어떻게 길을 걸으시나요?",
-    "con_quien": "누구와 가시나요?",
-    "como_organizas": "순례길을 어떻게 계획하시나요?",
-    "cuantas_veces": "몇 번 순례길을 걸으셨나요?",
     "primera_vez": "첫 번째",
     "progreso": "진행 상황",
     "completado": "완료됨",
@@ -254,17 +257,15 @@
     "sesion": "세션",
     "cerrar_sesion": "로그아웃",
     "guardar_idioma": "저장",
-    "empty_camino": "구간을 완료하면 여기에 나타납니다.",
     "empty_resenas": "숙소와 구간에 대한 평가가 여기에 나타납니다.",
     "empty_fotos": "구간과 숙소에서 업로드한 사진이 여기에 나타납니다.",
     "tabs": {
       "perfil": "프로필",
-      "camino": "순례길",
       "resenas": "평가",
       "fotos": "사진",
-      "config": "설정"
+      "config": "설정",
+      "camino": "Camino"
     },
-    "camino_label": "카미노",
     "peregrino": "순례자",
     "foto_actualizada": "사진이 업데이트되었습니다",
     "cerrar_sesion_confirm": "로그아웃하시겠습니까?",
@@ -288,7 +289,14 @@
       "etapas_fds_sub": "개별 날짜의 구간",
       "etapas_sueltas": "개별 구간",
       "etapas_sueltas_sub": "순서 없이 연속성 없음"
-    }
+    },
+    "bio_placeholder": "당신과 당신의 Camino에 대해 알려주세요...",
+    "como_haces": "Camino를 어떻게 진행하고 있나요?",
+    "con_quien": "누구와 함께 가나요?",
+    "como_organizas": "Camino를 어떻게 준비하나요?",
+    "cuantas_veces": "Camino를 몇 번 했나요?",
+    "camino_label": "Camino",
+    "empty_camino": "스테이지를 완료하면 여기에 표시됩니다."
   },
   "general": {
     "cargando": "로딩 중...",
@@ -301,13 +309,13 @@
       "subtitulo_seccion": "필요한 모든 것이",
       "subtitulo_acento": "한 곳에 있습니다",
       "idiomas_titulo": "7개 언어",
-      "albergues_titulo": "모든 숙소",
-      "albergues_desc": "이용 가능한 침대, 가격, 서비스, 최신 연락처 정보가 포함된 완전한 숙소 디렉토리입니다.",
       "pois_titulo": "관심 장소 및 고도",
       "pois_desc": "고도 프로필, 물 공급처, 숙소, 교회, 레스토랑 및 각 구간 전체의 다른 관심 장소를 포함한 상세 지도입니다.",
       "meteo_titulo": "날씨 정보",
       "meteo_desc": "각 구간의 날씨 예보와 기온, 강수량, 바람 데이터입니다. 최신 정보로 당신의 하루를 계획하세요.",
-      "idiomas_desc": "스페인어, 영어, 독일어, 프랑스어, 이탈리아어, 포르투갈어, 한국어로 제공됩니다. 세계의 순례자들을 위한 Camino de Santiago 가이드입니다."
+      "idiomas_desc": "스페인어, 영어, 독일어, 프랑스어, 이탈리아어, 포르투갈어, 한국어로 제공됩니다. 전 세계 순례자를 위한 Camino de Santiago 가이드입니다.",
+      "albergues_titulo": "Camino의 모든 호스텔",
+      "albergues_desc": "이용 가능한 객실, 가격, 시설 및 최신 연락처 정보가 포함된 완전한 호스텔 디렉토리입니다."
     },
     "mapa": {
       "explorar": "탐험하기",
@@ -317,13 +325,11 @@
       "tu_posicion": "현재 위치",
       "etapa": "구간",
       "aqui": "여기",
-      "cargando": "길 로드 중...",
       "error_carga": "지도를 로드할 수 없습니다",
       "reintentar": "다시 시도",
       "filtros": "필터",
       "alojamiento": "숙박",
       "albergues": "순례자 숙소",
-      "negocios": "길 위의 가게",
       "puntos_interes": "관심 지점",
       "infraestructura": "기반시설",
       "descanso": "휴식처",
@@ -333,27 +339,29 @@
       "bajada": "하향",
       "ver_ficha": "전체 정보 보기",
       "variante": "변형 경로",
-      "titulo": "El Camino Francés",
+      "titulo": "Camino Francés",
       "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
-      "sectores": "Camino Francés · Sectores"
+      "sectores": "Camino Francés · Sectores",
+      "cargando": "Camino 로드 중...",
+      "negocios": "Camino 관련 사업"
     },
     "cta_final": {
-      "eyebrow": "당신의 순례길을 시작하세요",
-      "titulo": "당신의 길,",
       "titulo_acento": "당신의 이야기.",
-      "descripcion": "구간을 계획하고, 숙소를 찾으며, 산티아고 순례길을 걷는 데 필요한 모든 정보에 접근하세요.",
       "boton": "무료로 시작하기",
+      "eyebrow": "당신의 Camino 시작하기",
+      "titulo": "당신의 Camino,",
+      "descripcion": "스테이지를 계획하고, 호스텔을 확인하며, Camino de Santiago를 완주하는 데 필요한 모든 정보에 접근하세요.",
       "nota": "신용카드 불필요 · 순례자를 위해 항상 무료"
     }
   },
   "landing": {
-    "siente_el": "경험하세요",
-    "camino": "순례길을",
-    "descubre": "순례길 발견하기",
-    "chat_titulo": "Camino와 대화하기",
     "chat_acento": "당신의 언어로",
-    "chat_desc": "도착하기 전에 hospitalero에게 물어보고, 다른 순례자들에게 스테이지 상태를 상담하며, Camino의 비즈니스와 소통하세요. 모든 것이 실시간으로 당신의 언어로 자동 번역됩니다.",
-    "subtitulo": "Camino de Santiago를 계획하고, 탐험하고, 경험하세요"
+    "siente_el": "Camino를 느껴보세요",
+    "camino": "Camino.",
+    "subtitulo": "Camino de Santiago를 계획하고, 탐험하고, 경험하세요",
+    "chat_titulo": "Camino와 대화하기",
+    "chat_desc": "도착하기 전에 hospitalero에게 물어보고, 다른 순례자들로부터 etapa 상태에 대해 문의하고, Camino의 비즈니스와 소통하세요. 모든 것이 실시간으로 당신의 언어로 자동 번역됩니다.",
+    "descubre": "Camino 발견하기"
   },
   "etapa": {
     "mapa": "구간 지도",
@@ -379,7 +387,9 @@
       "cota_max": "최고 고도",
       "cota_min": "최저 고도",
       "desnivel_pos": "상승 고도차",
-      "desnivel_neg": "하강 고도차"
+      "desnivel_neg": "하강 고도차",
+      "sube": "올라감",
+      "baja": "내려감"
     },
     "pois": {
       "todos": "모두",
@@ -457,8 +467,16 @@
         "moderada": "중간",
         "intensa": "강함"
       },
-      "fuente": "Open-Meteo · previsión hasta 16 días"
-    }
+      "fuente": "Open-Meteo · previsión hasta 16 días",
+      "error_tiempo": "날씨를 로드할 수 없습니다",
+      "min_label": "최저"
+    },
+    "cargando": "스테이지 로딩 중...",
+    "no_encontrada": "스테이지를 찾을 수 없습니다",
+    "canal_etapa": "스테이지 채널",
+    "mensajes": "메시지",
+    "ver_en_mapa": "지도에서 스테이지 보기",
+    "navegacion_etapa": "스테이지"
   },
   "interactions": {
     "comentarios": {
@@ -486,9 +504,9 @@
       "tu_valoracion": "당신의 평가",
       "valora_etapa": "이 구간을 평가하세요",
       "como_describirias": "이 구간을 어떻게 설명하시겠습니까?",
-      "banner_texto": "순례자 커뮤니티에 참여하여 구간을 평가하고, 댓글을 남기며, 순례길의 경험을 공유하세요.",
       "iniciar_sesion": "로그인",
-      "crear_cuenta": "계정 만들기"
+      "crear_cuenta": "계정 만들기",
+      "banner_texto": "순례자 커뮤니티에 참여하여 etapa를 평가하고, 댓글을 남기고, Camino 경험을 공유하세요."
     },
     "rating": {
       "malo": "나쁨",
@@ -513,13 +531,11 @@
     "tu_posicion": "당신의 위치",
     "etapa": "구간",
     "aqui": "여기",
-    "cargando": "길을 로딩 중입니다...",
     "error_carga": "지도를 로드할 수 없습니다",
     "reintentar": "다시 시도",
     "filtros": "필터",
     "alojamiento": "숙박",
     "albergues": "pilgrim hostels",
-    "negocios": "길의 비즈니스",
     "puntos_interes": "관심지점",
     "infraestructura": "기반시설",
     "descanso": "휴식",
@@ -529,6 +545,8 @@
     "bajada": "내리막",
     "ver_ficha": "전체 정보 보기",
     "variante": "우회로",
-    "sectores": "Camino Francés · Sectores"
+    "sectores": "Camino Francés · Sectores",
+    "cargando": "Camino 로딩 중...",
+    "negocios": "Camino의 비즈니스"
   }
 }

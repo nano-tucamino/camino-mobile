@@ -20,47 +20,86 @@ const LANGUAGES = {
   ja: "Japanese",
 };
 
-// Claves que se tradujeron mal y hay que forzar retraducción
-// Son claves cuyo valor en español contiene términos protegidos
-// que los traductores convirtieron incorrectamente
+// Claves que contienen "Camino" o "Camino Francés" y fueron mal traducidas
+// Se fuerza retraducción en TODOS los idiomas incluyendo inglés
 const CLAVES_A_CORREGIR = [
+  "hero.titulo",
+  "hero.subtitulo",
+  "hero.cta",
+  "hero.vive_el",
+  "hero.camino",
+  "hero.explorar_etapas",
+  "hero.ver_albergues",
   "hero.stats.km_label",
   "etapas.subtitulo",
+  "etapas.completado",
   "albergues.subtitulo",
+  "auth.login.subtitulo_email",
+  "auth.registro_page.titulo_paso1",
+  "auth.registro_page.bienvenido",
+  "auth.registro_page.comenzar",
+  "auth.registro_page.titulo_paso2",
+  "auth.registro_page.subtitulo_paso2",
+  "auth.confirmar.descripcion",
+  "perfil.bio_placeholder",
+  "perfil.como_haces",
+  "perfil.con_quien",
+  "perfil.como_organizas",
+  "perfil.cuantas_veces",
+  "perfil.camino_label",
+  "perfil.empty_camino",
+  "perfil.tabs.camino",
   "home.features.idiomas_desc",
+  "home.features.albergues_titulo",
+  "home.features.albergues_desc",
   "home.mapa.titulo",
   "home.mapa.subtitulo",
   "home.mapa.sectores",
-  "mapa.sectores",
-  "etapa.meteo.fuente",
+  "home.mapa.cargando",
+  "home.mapa.negocios",
+  "home.cta_final.eyebrow",
+  "home.cta_final.titulo",
+  "home.cta_final.descripcion",
+  "home.cta_final.nota",
+  "landing.siente_el",
+  "landing.camino",
   "landing.subtitulo",
+  "landing.chat_titulo",
+  "landing.chat_desc",
+  "landing.descubre",
+  "mapa.sectores",
+  "mapa.cargando",
+  "mapa.negocios",
+  "etapa.meteo.fuente",
+  "interactions.panel.banner_texto",
 ];
 
 const GLOSSARY = `
 TRANSLATION RULES for this Camino de Santiago pilgrimage app:
 
-CRITICAL — NEVER translate or modify these terms, keep them EXACTLY as written in Spanish:
-- "Camino Francés" — proper name of the pilgrimage route, NEVER translate
-- "Camino de Santiago" — proper name, NEVER translate  
-- "Camino Francés · 825 km" — keep entire string as-is
-- "Camino Francés · 34 etapas" — keep entire string as-is
-- "Camino Francés · Sectores" — keep entire string as-is
-- "825 km · 34 etapas · Saint-Jean → Santiago" — keep entire string as-is
-- "hospitalero" / "hospitalera" — Camino-specific term, no real equivalent, keep in Spanish
-- "cruceiro" — Galician stone cross monument, proper noun, keep as-is
-- "Buen Camino" — traditional pilgrim greeting, keep as-is
+CRITICAL — These terms must NEVER be translated. Keep them EXACTLY as in Spanish:
+- "Camino" — always keep as "Camino", even in English. Do NOT translate to "Way", "Path", "Route" or any other word.
+- "Camino Francés" — always keep as "Camino Francés", never translate
+- "Camino de Santiago" — always keep as "Camino de Santiago", never translate  
+- "Camino Francés · 825 km" — keep entire string exactly as-is
+- "Camino Francés · 34 etapas" — keep entire string exactly as-is
+- "Camino Francés · Sectores" — keep entire string exactly as-is
+- "825 km · 34 etapas · Saint-Jean → Santiago" — keep exactly as-is
+- "Tu Camino" — keep as "Tu Camino", never translate
+- "Buen Camino" — keep as-is
+- "hospitalero" / "hospitalera" — keep in Spanish, no translation exists
+- "cruceiro" — keep as-is, Galician stone cross monument
 - "Open-Meteo · previsión hasta 16 días" — keep as-is
 - Brand names: "Booking", "WhatsApp", "Google", "Stripe", "Cloudinary", "Supabase", "Mapbox"
 - Email addresses and URLs: keep as-is
 
-"Camino" alone: keep as-is ONLY when referring to the Camino de Santiago pilgrimage.
-Translate normally when it means road/path/way in a generic sense.
+DO translate normally:
+- "albergue" → hostel, Herberge, auberge, albergue, ostello etc.
+- "etapa" → stage, Etappe, étape, tappa etc.
+- "peregrino" → pilgrim, Pilger, pèlerin etc.
+- All UI text, descriptions, instructions
 
-"albergue": translate normally (hostel, Herberge, auberge, albergue, ostello, 旅館 etc.)
-"etapa": translate normally (stage, Etappe, étape, tappa etc.)
-"peregrino": translate normally (pilgrim, Pilger, pèlerin etc.)
-
-IMPORTANT: Return ONLY valid JSON with the same keys, no markdown, no explanation.
+IMPORTANT: Return ONLY valid JSON, same keys, no markdown, no explanation.
 `;
 
 const source = JSON.parse(
@@ -91,8 +130,8 @@ function getNewKeys(source, target) {
   return newKeys;
 }
 
-function getValueByPath(obj, path) {
-  return path.split(".").reduce((cur, k) => cur?.[k], obj);
+function getValueByPath(obj, keyPath) {
+  return keyPath.split(".").reduce((cur, k) => cur?.[k], obj);
 }
 
 function setNestedKey(obj, keyPath, value) {
@@ -140,35 +179,22 @@ async function translate(langCode, langName) {
     ? JSON.parse(fs.readFileSync(targetPath, "utf8"))
     : {};
 
-  // ── PASO 1: Forzar retraducción de claves que se tradujeron mal ──
+  // ── PASO 1: Forzar retraducción de claves que contienen Camino/términos protegidos ──
   const clavesARetraducir = {};
+  let corregidas = 0;
   for (const clave of CLAVES_A_CORREGIR) {
     const valorEs = getValueByPath(source, clave);
     if (valorEs !== undefined) {
       deleteNestedKey(target, clave);
       clavesARetraducir[clave] = valorEs;
+      corregidas++;
     }
   }
 
-  if (Object.keys(clavesARetraducir).length > 0) {
-    console.log(`   🔧 Corrigiendo ${Object.keys(clavesARetraducir).length} claves mal traducidas...`);
-    const corregidas = await traducirBloque(clavesARetraducir, langName);
-    for (const [key, value] of Object.entries(corregidas)) {
-      setNestedKey(target, key, value);
-    }
-  }
-
-  // ── PASO 2: Detectar y traducir claves nuevas ──
-  const newKeys = getNewKeys(source, target);
-
-  if (Object.keys(newKeys).length === 0) {
-    console.log(`   ✅ ${langName} — sin claves nuevas`);
-  } else {
-    console.log(`   Traduciendo ${Object.keys(newKeys).length} claves nuevas...`);
-
-    const BLOCK_SIZE = 50;
-    const entries = Object.entries(newKeys);
-
+  if (corregidas > 0) {
+    console.log(`   🔧 Retraducciendo ${corregidas} claves con el glosario correcto...`);
+    const BLOCK_SIZE = 40;
+    const entries = Object.entries(clavesARetraducir);
     for (let i = 0; i < entries.length; i += BLOCK_SIZE) {
       const bloque = Object.fromEntries(entries.slice(i, i + BLOCK_SIZE));
       const resultado = await traducirBloque(bloque, langName);
@@ -176,6 +202,24 @@ async function translate(langCode, langName) {
         setNestedKey(target, key, value);
       }
     }
+  }
+
+  // ── PASO 2: Detectar y traducir claves nuevas ──
+  const newKeys = getNewKeys(source, target);
+
+  if (Object.keys(newKeys).length > 0) {
+    console.log(`   📝 Traduciendo ${Object.keys(newKeys).length} claves nuevas...`);
+    const BLOCK_SIZE = 50;
+    const entries = Object.entries(newKeys);
+    for (let i = 0; i < entries.length; i += BLOCK_SIZE) {
+      const bloque = Object.fromEntries(entries.slice(i, i + BLOCK_SIZE));
+      const resultado = await traducirBloque(bloque, langName);
+      for (const [key, value] of Object.entries(resultado)) {
+        setNestedKey(target, key, value);
+      }
+    }
+  } else {
+    console.log(`   ✅ Sin claves nuevas`);
   }
 
   fs.writeFileSync(targetPath, JSON.stringify(target, null, 2), "utf8");

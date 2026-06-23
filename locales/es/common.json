@@ -48,6 +48,11 @@
     "variante": "variante",
     "km": "km",
     "desnivel": "desnivel",
+    "cargando": "Cargando etapas...",
+    "error_carga": "No se pudieron cargar las etapas",
+    "stat_etapas": "etapas",
+    "stat_km": "km totales",
+    "stat_estimado": "estimado",
     "dificultad": {
       "baja": "Fácil",
       "media": "Moderada",
@@ -83,6 +88,9 @@
     "llamarWhatsapp": "Llamar o WhatsApp",
     "webOficial": "Web oficial",
     "comentarioPlaceholder": "Comparte tu experiencia en este albergue…",
+    "llamar": "Llamar",
+    "ver_ficha": "Ver ficha completa",
+    "albergue_plus": "Albergue Plus",
     "browser": {
       "buscar_placeholder": "Buscar por nombre o localidad…",
       "todas_etapas": "Todas las etapas",
@@ -362,9 +370,15 @@
     "recorrido": "Recorrido",
     "albergues": "Albergues",
     "a_lo_largo": "A lo largo de la etapa",
-    "consejos": "Consejos del camino",
-    "experiencias": "Experiencias del camino",
+    "consejos": "Consejos del Camino",
+    "experiencias": "Experiencias del Camino",
     "comentarios": "Comentarios",
+    "cargando": "Cargando etapa...",
+    "no_encontrada": "Etapa no encontrada",
+    "canal_etapa": "Canal de la etapa",
+    "mensajes": "mensajes",
+    "ver_en_mapa": "Ver etapa en el mapa",
+    "navegacion_etapa": "Etapa",
     "check": {
       "completada": "Etapa completada",
       "marcar": "Marcar como completada",
@@ -379,7 +393,9 @@
       "cota_max": "Cota máx.",
       "cota_min": "Cota mín.",
       "desnivel_pos": "Desnivel +",
-      "desnivel_neg": "Desnivel −"
+      "desnivel_neg": "Desnivel −",
+      "sube": "Sube",
+      "baja": "Baja"
     },
     "pois": {
       "todos": "Todos",
@@ -413,7 +429,9 @@
       "prob": "Prob.",
       "fuente": "Open-Meteo · previsión hasta 16 días",
       "error": "No se pudo cargar la previsión meteorológica",
+      "error_tiempo": "No se pudo cargar el tiempo",
       "cargando": "Cargando previsión…",
+      "min_label": "mín",
       "dias": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
       "wmo": {
         "0": "Despejado",

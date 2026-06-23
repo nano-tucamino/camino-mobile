@@ -18,21 +18,19 @@ import Svg, {
   Path,
   Circle,
   Line,
-  Rect,
   Text as SvgText,
   Defs,
   LinearGradient,
   Stop,
 } from "react-native-svg";
 import { apiGet } from "@/lib/api";
-import type { Tables, Enums } from "@/types/database";
+import type { Tables } from "@/types/database";
 import RecorridoTimeline from "@/components/etapa/RecorridoTimeline";
 import ExperienciasPanel from "@/components/etapa/ExperienciasPanel";
 import EtapaCheckButton from "@/components/etapa/EtapaCheckButton";
 import CanalChat from "@/components/chat/CanalChat";
 import { useNavigation } from "@/contexts/NavigationContext";
 import { Linking } from "react-native";
-
 import { getCanalEtapa } from "@/lib/chat";
 
 function encodePolyline(coords: [number, number][], precision = 5): string {
@@ -101,25 +99,6 @@ function getL(obj: any, field: string, lang: string): string {
   return obj[`${field}_${l}`] || obj[`${field}_es`] || obj[field] || "";
 }
 
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-  return `${Math.floor(hrs / 24)}d`;
-}
-
-const FLAG: Record<string, string> = {
-  es: "🇪🇸",
-  en: "🇬🇧",
-  de: "🇩🇪",
-  fr: "🇫🇷",
-  it: "🇮🇹",
-  pt: "🇵🇹",
-  ko: "🇰🇷",
-  ja: "🇯🇵",
-};
 const TIPO_ALB_COLOR: Record<string, string> = {
   municipal: "#2A9D8F",
   parroquial: "#457B9D",
@@ -145,7 +124,7 @@ type TabId = (typeof TABS)[number];
 
 export default function EtapaScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
   const [data, setData] = useState<any>(null);
@@ -227,27 +206,25 @@ export default function EtapaScreen() {
     return (
       <View style={g.center}>
         <ActivityIndicator size="large" color="#BA7517" />
-        <Text style={g.loadingText}>Cargando etapa...</Text>
+        <Text style={g.loadingText}>{t("etapa.cargando")}</Text>
       </View>
     );
   if (!data?.etapa)
     return (
       <View style={g.center}>
-        <Text style={g.loadingText}>Etapa no encontrada</Text>
+        <Text style={g.loadingText}>{t("etapa.no_encontrada")}</Text>
       </View>
     );
 
   const {
     etapa,
     fotos = [] as EtapaFoto[],
-    valoraciones = { total: 0, media: 0 },
     navegacion = {} as {
       anterior?: NavEtapa;
       siguiente?: NavEtapa;
       variantes_siguiente?: NavEtapa[];
       variantes_anterior?: NavEtapa[];
     },
-
     waypoints = [] as Waypoint[],
     consejos = [] as Consejo[],
     albergues = [] as Albergue[],
@@ -281,7 +258,6 @@ export default function EtapaScreen() {
 
   return (
     <View style={g.root}>
-      {/* Header sticky */}
       <Animated.View style={[g.stickyHeader, { opacity: headerOpacity }]}>
         <TouchableOpacity onPress={() => router.back()} style={g.backBtn}>
           <Text style={g.backIcon}>‹</Text>
@@ -311,7 +287,6 @@ export default function EtapaScreen() {
           />
         }
       >
-        {/* HERO */}
         <HeroGaleria
           fotos={
             (fotos as EtapaFoto[]).length
@@ -344,7 +319,9 @@ export default function EtapaScreen() {
                   activeTab === tab && { color, fontWeight: "700" },
                 ]}
               >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {t(
+                  `etapa.${tab === "canal" ? "canal_etapa" : tab === "mapa" ? "mapa" : tab === "info" ? "recorrido" : "albergues"}`,
+                )}
               </Text>
               {activeTab === tab && (
                 <View style={[g.tabLine, { backgroundColor: color }]} />
@@ -353,7 +330,6 @@ export default function EtapaScreen() {
           ))}
         </View>
 
-        {/* Navegación */}
         <NavEtapas
           anterior={navegacion.anterior}
           siguiente={navegacion.siguiente}
@@ -363,20 +339,19 @@ export default function EtapaScreen() {
           color={color}
         />
 
-        {/* Descripción */}
         {!!descripcion && (
           <View style={g.section}>
             <Text style={g.descripcion}>{descripcion}</Text>
           </View>
         )}
 
-        {/* ── MAPA ── */}
+        {/* MAPA */}
         <View
           ref={(r) => {
             sectionRefs.current.mapa = r;
           }}
         >
-          <ColapsableSection color={color} title="Mapa de la etapa" defaultOpen>
+          <ColapsableSection color={color} title={t("etapa.mapa")} defaultOpen>
             <MapaMiniatura
               waypoints={waypoints as Waypoint[]}
               color={color}
@@ -387,7 +362,7 @@ export default function EtapaScreen() {
           {waypoints.some((w: Waypoint) => w.elevacion != null) && (
             <ColapsableSection
               color={color}
-              title="Perfil de elevación"
+              title={t("etapa.perfil")}
               defaultOpen
             >
               <PerfilElevacionRN
@@ -397,12 +372,16 @@ export default function EtapaScreen() {
             </ColapsableSection>
           )}
 
-          <ColapsableSection color={color} title="Tiempo en ruta" defaultOpen>
+          <ColapsableSection
+            color={color}
+            title={t("etapa.tiempo_ruta")}
+            defaultOpen
+          >
             <MeteoWidget lugarNombre={etapa.inicio_nombre} color={color} />
           </ColapsableSection>
         </View>
 
-        {/* ── INFO ── */}
+        {/* INFO */}
         <View
           ref={(r) => {
             sectionRefs.current.info = r;
@@ -411,7 +390,7 @@ export default function EtapaScreen() {
           {(waypoints as Waypoint[]).length > 0 && (
             <ColapsableSection
               color={color}
-              title="Recorrido"
+              title={t("etapa.recorrido")}
               extra={`${(waypoints as Waypoint[]).length} pts`}
               defaultOpen
             >
@@ -427,7 +406,7 @@ export default function EtapaScreen() {
             </ColapsableSection>
           )}
 
-          {/* ── ALBERGUES ── */}
+          {/* ALBERGUES */}
           <View
             ref={(r) => {
               sectionRefs.current.albergues = r;
@@ -435,7 +414,7 @@ export default function EtapaScreen() {
           >
             <ColapsableSection
               color={color}
-              title="Albergues"
+              title={t("etapa.albergues")}
               extra={`${localidades.length} pob · ${(albergues as Albergue[]).length}`}
             >
               <AlberguesPorLocalidad
@@ -447,7 +426,7 @@ export default function EtapaScreen() {
             </ColapsableSection>
           </View>
 
-          {/* ── CANAL ── */}
+          {/* CANAL */}
           <View
             ref={(r) => {
               sectionRefs.current.canal = r;
@@ -463,9 +442,11 @@ export default function EtapaScreen() {
             >
               <View style={cs.header}>
                 <View style={[cs.bar, { backgroundColor: color }]} />
-                <Text style={cs.title}>Canal de la etapa</Text>
+                <Text style={cs.title}>{t("etapa.canal_etapa")}</Text>
                 {mensajes.length > 0 && (
-                  <Text style={cs.extra}>{mensajes.length} mensajes</Text>
+                  <Text style={cs.extra}>
+                    {mensajes.length} {t("etapa.mensajes")}
+                  </Text>
                 )}
                 <Text style={cs.chevron}>›</Text>
               </View>
@@ -476,7 +457,7 @@ export default function EtapaScreen() {
           {(consejos as Consejo[]).length > 0 && (
             <ColapsableSection
               color={color}
-              title="Consejos"
+              title={t("etapa.consejos")}
               extra={`${(consejos as Consejo[]).length}`}
             >
               {Object.entries(consejosByCat).map(([cat, items]) => (
@@ -512,7 +493,6 @@ export default function EtapaScreen() {
             </ColapsableSection>
           )}
 
-          {/* EXPERIENCIAS */}
           <ExperienciasPanel entityId={etapa.id} color={color} lang={lang} />
         </View>
 
@@ -522,7 +502,6 @@ export default function EtapaScreen() {
           color={color}
           lang={lang}
         />
-
         <NavEtapas
           anterior={navegacion.anterior}
           siguiente={navegacion.siguiente}
@@ -548,9 +527,7 @@ export default function EtapaScreen() {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-// HERO GALERÍA — sin cambios
-// ═══════════════════════════════════════════════════════════════
+// ── HERO GALERÍA ──
 function HeroGaleria({
   fotos,
   nombre,
@@ -576,25 +553,12 @@ function HeroGaleria({
   lang: string;
   onBack: () => void;
 }) {
+  const { t } = useTranslation();
   const [idx, setIdx] = useState(0);
   const horas = Math.floor(distancia / 4);
   const mins = Math.round((distancia / 4 - horas) * 60);
   const tiempo = `${horas}h${mins > 0 ? ` ${mins}min` : ""}`;
-  const DIFLAB: Record<string, Record<string, string>> = {
-    es: {
-      baja: "Fácil",
-      media: "Moderada",
-      alta: "Difícil",
-      muy_alta: "Muy difícil",
-    },
-    en: {
-      baja: "Easy",
-      media: "Moderate",
-      alta: "Hard",
-      muy_alta: "Very hard",
-    },
-  };
-  const difLabel = dificultad ? (DIFLAB[lang] ?? DIFLAB.es)[dificultad] : null;
+  const difLabel = dificultad ? t(`etapas.dificultad.${dificultad}`) : null;
 
   return (
     <View style={{ position: "relative" }}>
@@ -754,9 +718,7 @@ const h = StyleSheet.create({
   thumb: { flex: 1, overflow: "hidden", position: "relative" },
 });
 
-// ═══════════════════════════════════════════════════════════════
-// COLAPSABLE SECTION — sin cambios
-// ═══════════════════════════════════════════════════════════════
+// ── COLAPSABLE SECTION ──
 function ColapsableSection({
   color,
   title,
@@ -776,7 +738,6 @@ function ColapsableSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const rot = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
-
   const toggle = () => {
     if (!open && onOpen) onOpen();
     Animated.timing(rot, {
@@ -786,12 +747,10 @@ function ColapsableSection({
     }).start();
     setOpen((v) => !v);
   };
-
   const rotate = rot.interpolate({
     inputRange: [0, 1],
     outputRange: ["0deg", "90deg"],
   });
-
   return (
     <View style={cs.wrapper}>
       <TouchableOpacity onPress={toggle} style={cs.header} activeOpacity={0.7}>
@@ -836,9 +795,7 @@ const cs = StyleSheet.create({
   body: { paddingHorizontal: 20, paddingBottom: 20 },
 });
 
-// ═══════════════════════════════════════════════════════════════
-// PERFIL ELEVACIÓN — sin cambios
-// ═══════════════════════════════════════════════════════════════
+// ── PERFIL ELEVACIÓN ──
 function PerfilElevacionRN({
   waypoints,
   color,
@@ -846,6 +803,7 @@ function PerfilElevacionRN({
   waypoints: Waypoint[];
   color: string;
 }) {
+  const { t } = useTranslation();
   const animVal = useRef(new Animated.Value(0)).current;
   const [prog, setProg] = useState(0);
 
@@ -872,7 +830,6 @@ function PerfilElevacionRN({
       loc: w.localidad,
     }))
     .sort((a, b) => a.km - b.km);
-
   if (puntos.length < 2) return null;
 
   const W = SW - 40,
@@ -889,10 +846,8 @@ function PerfilElevacionRN({
   const eMin = minE - rango * 0.08,
     eMax = maxE + rango * 0.12,
     eRango = eMax - eMin;
-
   const toX = (km: number) => PAD.left + ((km - minKm) / (maxKm - minKm)) * iW;
   const toY = (e: number) => PAD.top + (1 - (e - eMin) / eRango) * iH;
-
   const visible = puntos.slice(
     0,
     Math.max(2, Math.round(prog * puntos.length)),
@@ -909,7 +864,6 @@ function PerfilElevacionRN({
       ? linePath +
         ` L ${toX(last.km).toFixed(1)} ${(PAD.top + iH).toFixed(1)} L ${toX(visible[0].km).toFixed(1)} ${(PAD.top + iH).toFixed(1)} Z`
       : "";
-
   let desPos = 0,
     desNeg = 0;
   for (let i = 1; i < puntos.length; i++) {
@@ -923,25 +877,25 @@ function PerfilElevacionRN({
       <View style={{ flexDirection: "row", gap: 6, marginBottom: 12 }}>
         {[
           {
-            label: "Cota máx",
+            label: t("etapa.perfil_elevacion.cota_max"),
             val: `${Math.round(maxE)}m`,
             icon: "▲",
             c: color,
           },
           {
-            label: "Cota mín",
+            label: t("etapa.perfil_elevacion.cota_min"),
             val: `${Math.round(minE)}m`,
             icon: "▼",
             c: "#8B7355",
           },
           {
-            label: "Sube",
+            label: t("etapa.perfil_elevacion.sube"),
             val: `+${Math.round(desPos)}m`,
             icon: "↑",
             c: "#16a34a",
           },
           {
-            label: "Baja",
+            label: t("etapa.perfil_elevacion.baja"),
             val: `−${Math.round(desNeg)}m`,
             icon: "↓",
             c: "#dc2626",
@@ -1054,9 +1008,7 @@ const pe = StyleSheet.create({
   pillLabel: { fontSize: 9, color: "#8B7355", textAlign: "center" },
 });
 
-// ═══════════════════════════════════════════════════════════════
-// METEO WIDGET —
-// ═══════════════════════════════════════════════════════════════
+// ── METEO WIDGET ──
 function MeteoWidget({
   lugarNombre,
   color,
@@ -1064,6 +1016,8 @@ function MeteoWidget({
   lugarNombre: string;
   color: string;
 }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.split("-")[0] ?? "es";
   const [daily, setDaily] = useState<any>(null);
   const [elevation, setElev] = useState(0);
   const [selectedDay, setSel] = useState(0);
@@ -1102,7 +1056,9 @@ function MeteoWidget({
           : t <= 28
             ? "#EF9F27"
             : "#E24B4A";
-  const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
+  // Días localizados desde el JSON
+  const diasArray = t("etapa.meteo.dias", { returnObjects: true }) as string[];
 
   useEffect(() => {
     (async () => {
@@ -1144,7 +1100,7 @@ function MeteoWidget({
           paddingVertical: 12,
         }}
       >
-        No se pudo cargar el tiempo
+        {t("etapa.meteo.error_tiempo")}
       </Text>
     );
   if (!daily)
@@ -1176,7 +1132,7 @@ function MeteoWidget({
               style={[m.dayBtn, active && { backgroundColor: "#2C1F0E" }]}
             >
               <Text style={[m.dayName, active && { color: "#C4A882" }]}>
-                {i === 0 ? "Hoy" : DIAS[d.getDay()]}
+                {i === 0 ? t("etapa.meteo.hoy") : diasArray[d.getDay()]}
               </Text>
               <Text style={[m.dayNum, active && { color: "white" }]}>
                 {d.getDate()}
@@ -1197,10 +1153,10 @@ function MeteoWidget({
             <View style={{ flex: 1, marginLeft: 12 }}>
               <Text style={m.cardDate}>
                 {selectedDay === 0
-                  ? "Hoy"
+                  ? t("etapa.meteo.hoy")
                   : new Date(
                       daily.time[selectedDay] + "T12:00:00",
-                    ).toLocaleDateString("es-ES", {
+                    ).toLocaleDateString(lang === "es" ? "es-ES" : lang, {
                       weekday: "long",
                       day: "numeric",
                       month: "long",
@@ -1226,13 +1182,14 @@ function MeteoWidget({
                 {Math.round(daily.temperature_2m_max[selectedDay])}°
               </Text>
               <Text style={m.tmin}>
-                {Math.round(daily.temperature_2m_min[selectedDay])}° mín
+                {Math.round(daily.temperature_2m_min[selectedDay])}°{" "}
+                {t("etapa.meteo.min_label") ?? "mín"}
               </Text>
             </View>
           </View>
           <View style={m.row}>
             <Text style={m.rowIcon}>💧</Text>
-            <Text style={m.rowLabel}>Precipitación</Text>
+            <Text style={m.rowLabel}>{t("etapa.meteo.precipitacion")}</Text>
             <Text style={m.rowVal}>
               {Math.round(daily.precipitation_sum[selectedDay] * 10) / 10} mm ·{" "}
               {daily.precipitation_probability_max[selectedDay]}%
@@ -1240,7 +1197,7 @@ function MeteoWidget({
           </View>
           <View style={[m.row, { borderBottomWidth: 0 }]}>
             <Text style={m.rowIcon}>💨</Text>
-            <Text style={m.rowLabel}>Viento</Text>
+            <Text style={m.rowLabel}>{t("etapa.meteo.viento")}</Text>
             <Text style={m.rowVal}>
               {Math.round(daily.windspeed_10m_max[selectedDay])} km/h
             </Text>
@@ -1252,9 +1209,7 @@ function MeteoWidget({
   );
 }
 
-//==================================================================
-// MAPA MINIATURA
-//==================================================================
+// ── MAPA MINIATURA ──
 function MapaMiniatura({
   waypoints,
   color,
@@ -1264,6 +1219,7 @@ function MapaMiniatura({
   color: string;
   slug: string;
 }) {
+  const { t } = useTranslation();
   const coords = (waypoints as any[])
     .filter((w) => w.lat != null && w.lng != null)
     .sort(
@@ -1272,7 +1228,6 @@ function MapaMiniatura({
         (parseFloat(String(b.km_acumulado)) || 0),
     )
     .map((w) => [Number(w.lng), Number(w.lat)] as [number, number]);
-
   const token = process.env.EXPO_PUBLIC_MAPBOX_TOKEN;
 
   if (coords.length < 2 || !token) {
@@ -1283,17 +1238,14 @@ function MapaMiniatura({
         activeOpacity={0.85}
       >
         <Text style={[g.mapaBtnIcon, { color }]}>🗺️</Text>
-        <Text style={[g.mapaBtnText, { color }]}>Ver etapa en el mapa</Text>
+        <Text style={[g.mapaBtnText, { color }]}>{t("etapa.ver_en_mapa")}</Text>
       </TouchableOpacity>
     );
   }
 
   const encoded = encodeURIComponent(encodePolyline(coords));
   const colorHex = color.replace("#", "");
-  const url =
-    `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/static/` +
-    `path-4+${colorHex}-0.9(${encoded})/auto/640x320@2x` +
-    `?padding=30&access_token=${token}`;
+  const url = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/static/path-4+${colorHex}-0.9(${encoded})/auto/640x320@2x?padding=30&access_token=${token}`;
 
   return (
     <TouchableOpacity
@@ -1305,7 +1257,7 @@ function MapaMiniatura({
       <View style={mm.overlay} pointerEvents="none">
         <View style={[mm.badge, { backgroundColor: color }]}>
           <Text style={mm.badgeIcon}>🗺️</Text>
-          <Text style={mm.badgeText}>Ver etapa en el mapa</Text>
+          <Text style={mm.badgeText}>{t("etapa.ver_en_mapa")}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -1387,20 +1339,14 @@ const m = StyleSheet.create({
   cardElev: { fontSize: 11, color: "#B4A890", marginTop: 2 },
   tmax: { fontSize: 24, fontWeight: "700" },
   tmin: { fontSize: 12, color: "#8B7355" },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-  },
+  row: { flexDirection: "row", alignItems: "center", paddingVertical: 10 },
   rowIcon: { fontSize: 16, marginRight: 10 },
   rowLabel: { flex: 1, fontSize: 13, color: "#8B7355" },
   rowVal: { fontSize: 13, fontWeight: "700", color: "#2C1F0E" },
   fuente: { fontSize: 10, color: "#B4A890", textAlign: "right", marginTop: 4 },
 });
 
-// ═══════════════════════════════════════════════════════════════
-// ALBERGUES POR LOCALIDAD — sin cambios
-// ═══════════════════════════════════════════════════════════════
+// ── ALBERGUES POR LOCALIDAD ──
 const OCUP_COLOR_ETQ: Record<string, string> = {
   libre: "#16a34a",
   casi_lleno: "#ca8a04",
@@ -1416,10 +1362,11 @@ function AlbergueCardDestacada({
   color: string;
   lang: string;
 }) {
+  const { t } = useTranslation();
   const [abierto, setAbierto] = useState(false);
   const foto = albergue.foto_url ?? albergue.fotos_urls?.[0] ?? null;
-  const descKey = `descripcion_${lang}`;
-  const descripcion = albergue[descKey] || albergue.descripcion || "";
+  const descripcion =
+    albergue[`descripcion_${lang}`] || albergue.descripcion || "";
   const precio =
     albergue.precio_cama ??
     (albergue.precio_desde ? `${albergue.precio_desde}€` : null);
@@ -1464,7 +1411,9 @@ function AlbergueCardDestacada({
           }}
         >
           <View style={[abl.badgePlus, { backgroundColor: color }]}>
-            <Text style={abl.badgePlusText}>Plus</Text>
+            <Text style={abl.badgePlusText}>
+              {t("albergues.albergue_plus")}
+            </Text>
           </View>
           <Text
             style={[
@@ -1486,7 +1435,9 @@ function AlbergueCardDestacada({
                 resizeMode="cover"
               />
               <View style={[abl.fotoBadge, { backgroundColor: color }]}>
-                <Text style={abl.fotoBadgeText}>Albergue Plus</Text>
+                <Text style={abl.fotoBadgeText}>
+                  {t("albergues.albergue_plus")}
+                </Text>
               </View>
             </View>
           )}
@@ -1494,7 +1445,7 @@ function AlbergueCardDestacada({
             <Text style={abl.cardNombre}>{albergue.nombre}</Text>
             {precio && (
               <Text style={[abl.cardPrecioLabel, { color }]}>
-                {precio} por cama
+                {precio} {t("albergues.detalle.por_cama")}
               </Text>
             )}
             {!!descripcion && (
@@ -1515,7 +1466,9 @@ function AlbergueCardDestacada({
                   onPress={() => Linking.openURL(`tel:${albergue.telefono}`)}
                   style={abl.btnLlamar}
                 >
-                  <Text style={abl.btnLlamarText}>📞 Llamar</Text>
+                  <Text style={abl.btnLlamarText}>
+                    📞 {t("albergues.llamar")}
+                  </Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity
@@ -1524,7 +1477,9 @@ function AlbergueCardDestacada({
                 }
                 style={[abl.btnFicha, { backgroundColor: color }]}
               >
-                <Text style={abl.btnFichaText}>Ver ficha completa →</Text>
+                <Text style={abl.btnFichaText}>
+                  {t("albergues.ver_ficha")} →
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1564,7 +1519,6 @@ function AlberguesPorLocalidad({
           (a) => a.plan !== "plus" && a.plan !== "premium",
         );
         const abierta = abiertas.has(localidad);
-
         return (
           <View key={localidad} style={ab.group}>
             <TouchableOpacity
@@ -1775,9 +1729,7 @@ const ab = StyleSheet.create({
   arrow: { fontSize: 16, color: "#C4A882" },
 });
 
-// ═══════════════════════════════════════════════════════════════
-// NAVEGACIÓN ETAPAS — sin cambios
-// ═══════════════════════════════════════════════════════════════
+// ── NAVEGACIÓN ETAPAS ──
 function NavEtapas({
   anterior,
   siguiente,
@@ -1793,10 +1745,10 @@ function NavEtapas({
   variantesSiguiente?: NavEtapa[];
   variantesAnterior?: NavEtapa[];
 }) {
+  const { t } = useTranslation();
   return (
     <View style={nv.container}>
       <View style={nv.row}>
-        {/* IZQUIERDA */}
         {anterior ? (
           <TouchableOpacity
             style={nv.btn}
@@ -1806,7 +1758,9 @@ function NavEtapas({
           >
             <Text style={nv.arrow}>‹</Text>
             <View>
-              <Text style={nv.label}>Etapa {anterior.numero}</Text>
+              <Text style={nv.label}>
+                {t("etapa.navegacion_etapa")} {anterior.numero}
+              </Text>
               <Text style={nv.nombre} numberOfLines={1}>
                 {anterior.inicio_nombre} →
               </Text>
@@ -1815,15 +1769,11 @@ function NavEtapas({
         ) : (
           <View style={{ flex: 1 }} />
         )}
-
-        {/* BADGE */}
         <View style={[nv.badge, { backgroundColor: color }]}>
           <Text style={nv.badgeText}>
             {numero > 34 ? `F${numero - 100}` : numero}
           </Text>
         </View>
-
-        {/* DERECHA */}
         {siguiente ? (
           <TouchableOpacity
             style={[nv.btn, { justifyContent: "flex-end" }]}
@@ -1832,7 +1782,9 @@ function NavEtapas({
             }
           >
             <View style={{ alignItems: "flex-end" }}>
-              <Text style={nv.label}>Etapa {siguiente.numero}</Text>
+              <Text style={nv.label}>
+                {t("etapa.navegacion_etapa")} {siguiente.numero}
+              </Text>
               <Text style={nv.nombre} numberOfLines={1}>
                 → {siguiente.fin_nombre}
               </Text>
@@ -1843,8 +1795,6 @@ function NavEtapas({
           <View style={{ flex: 1 }} />
         )}
       </View>
-
-      {/* VARIANTES SIGUIENTE */}
       {variantesSiguiente.length > 0 && (
         <View style={nv.variantesRow}>
           {variantesSiguiente.map((v) => (
@@ -1856,7 +1806,7 @@ function NavEtapas({
               <Text style={nv.varianteIcon}>↳</Text>
               <View style={{ flex: 1 }}>
                 <Text style={nv.varianteLabel}>
-                  {v.nombre_variante ?? "Variante"}
+                  {v.nombre_variante ?? t("etapas.variante")}
                 </Text>
                 <Text style={nv.varianteNombre} numberOfLines={1}>
                   {v.inicio_nombre} → {v.fin_nombre}
@@ -1867,8 +1817,6 @@ function NavEtapas({
           ))}
         </View>
       )}
-
-      {/* VARIANTES ANTERIOR */}
       {variantesAnterior.length > 0 && (
         <View style={nv.variantesRow}>
           {variantesAnterior.map((v) => (
@@ -1880,7 +1828,7 @@ function NavEtapas({
               <Text style={nv.arrow}>‹</Text>
               <View style={{ flex: 1 }}>
                 <Text style={nv.varianteLabel}>
-                  {v.nombre_variante ?? "Variante"}
+                  {v.nombre_variante ?? t("etapas.variante")}
                 </Text>
                 <Text style={nv.varianteNombre} numberOfLines={1}>
                   {v.inicio_nombre} → {v.fin_nombre}
@@ -1896,6 +1844,11 @@ function NavEtapas({
 }
 
 const nv = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0EBE0",
+  },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -1924,12 +1877,6 @@ const nv = StyleSheet.create({
     marginHorizontal: 8,
   },
   badgeText: { color: "white", fontSize: 14, fontWeight: "700" },
-
-  container: {
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0EBE0",
-  },
   variantesRow: { paddingHorizontal: 16, paddingBottom: 10, gap: 6 },
   varianteBtn: {
     flexDirection: "row",
@@ -1956,9 +1903,7 @@ const nv = StyleSheet.create({
   },
 });
 
-// ═══════════════════════════════════════════════════════════════
-// ESTILOS GLOBALES — sin cambios
-// ═══════════════════════════════════════════════════════════════
+// ── ESTILOS GLOBALES ──
 const g = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#FAF7F2" },
   center: {
@@ -2017,16 +1962,6 @@ const g = StyleSheet.create({
     borderBottomColor: "#F0EBE0",
   },
   descripcion: { fontSize: 14, color: "#5C4A32", lineHeight: 22 },
-  mapaPlaceholder: {
-    height: 200,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderStyle: "dashed",
-    borderColor: "#D4C5A9",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F5F0E8",
-  },
   catRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -2056,9 +1991,6 @@ const g = StyleSheet.create({
     marginBottom: 4,
   },
   consejoContenido: { fontSize: 13, color: "#5C4A32", lineHeight: 19 },
-  valorRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-  valorText: { fontSize: 13, color: "#8B7355", marginLeft: 6 },
-  sinValor: { fontSize: 13, color: "#8B7355" },
   mapaBtn: {
     alignItems: "center",
     justifyContent: "center",
