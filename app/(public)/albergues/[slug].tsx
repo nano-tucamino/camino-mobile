@@ -932,7 +932,7 @@ export default function AlbergueSlugScreen() {
                     const API_URL =
                       process.env.EXPO_PUBLIC_API_URL ??
                       "https://camino-api.onrender.com";
-                    const { token } = useAuth(); // ya tienes token en el scope
+
                     const res = await fetch(
                       `${API_URL}/api/dm-entidad/albergue/${albergue.id}`,
                       {
@@ -940,7 +940,6 @@ export default function AlbergueSlugScreen() {
                       },
                     );
                     if (res.status === 403) {
-                      // No debería pasar (el botón no aparece) pero por seguridad
                       return;
                     }
                     const data = await res.json();
