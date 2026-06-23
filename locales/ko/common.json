@@ -34,14 +34,13 @@
       "ponferrada_frase": "비에르소의 성전기사 성"
     },
     "stats": {
-      "km_label": "프랑스 길",
       "etapas_label": "구간",
-      "albergues_label": "숙소"
+      "albergues_label": "숙소",
+      "km_label": "Camino Francés"
     }
   },
   "etapas": {
     "titulo": "34개 구간",
-    "subtitulo": "프랑스 길 · 825km",
     "completado": "순례길 완주!",
     "casi": "거의 다 왔어요!",
     "ultima_etapa": "마지막 구간!",
@@ -53,11 +52,11 @@
       "media": "중간",
       "alta": "어려움",
       "muy_alta": "매우 어려움"
-    }
+    },
+    "subtitulo": "Camino Francés · 825 km"
   },
   "albergues": {
     "titulo": "숙소",
-    "subtitulo": "프랑스 길 · 34개 구간",
     "buscarPlaceholder": "이름이나 지역명으로 검색…",
     "todasEtapas": "모든 구간",
     "resultados": "숙소",
@@ -113,7 +112,64 @@
       "libre": "침대 여유",
       "casi_lleno": "거의 가득 찬 상태",
       "completo": "가득 찼음"
-    }
+    },
+    "browser": {
+      "buscar_placeholder": "이름 또는 지역으로 검색…",
+      "todas_etapas": "모든 스테이지",
+      "resultados": "albergues",
+      "cargando": "albergues 로딩 중…",
+      "sin_resultados": "결과 없음",
+      "sin_resultados_desc": "다른 검색어를 시도하거나 필터를 제거하세요",
+      "error_carga": "albergues 로드 오류",
+      "reintentar": "다시 시도",
+      "seleccionar_etapa": "스테이지 선택",
+      "buscar_etapa": "스테이지 검색…",
+      "limpiar_filtro": "필터 제거",
+      "sin_albergues": "이 스테이지에는 albergues가 없습니다",
+      "albergue_singular": "1개 albergue",
+      "albergue_plural": "albergues",
+      "camas": "침대",
+      "llamar": "전화",
+      "reservar": "Booking에서 예약"
+    },
+    "detalle": {
+      "etapa_prefijo": "스테이지",
+      "sobre_albergue": "이 albergue에 대해",
+      "servicios": "서비스",
+      "contacto": "연락처",
+      "canal": "albergue 채널",
+      "canal_desc": "공개 질문과 답변",
+      "mensaje_privado": "개인 메시지",
+      "mensaje_privado_desc": "당신과 hospitalero만",
+      "llamar_whatsapp": "전화 또는 WhatsApp",
+      "web_oficial": "공식 웹사이트",
+      "por_cama": "침대당",
+      "plazas": "자리",
+      "habitacion_privada": "개인실",
+      "reservar_booking": "Booking에서 예약",
+      "editar": "수정",
+      "act": "업데이트",
+      "tipo": {
+        "municipal": "시립",
+        "privado": "개인",
+        "parroquial": "교구",
+        "asociacion": "협회"
+      },
+      "ocupacion": {
+        "libre": "여유 자리",
+        "lleno": "거의 만석",
+        "cerrado": "폐쇄됨"
+      },
+      "servicio": {
+        "wifi": "WiFi",
+        "cocina": "주방",
+        "lavanderia": "세탁소",
+        "parking": "주차장",
+        "desayuno": "조식",
+        "bar": "바"
+      }
+    },
+    "subtitulo": "Camino Francés · 34 etapas"
   },
   "auth": {
     "registro": "회원가입",
@@ -245,23 +301,20 @@
       "subtitulo_seccion": "필요한 모든 것이",
       "subtitulo_acento": "한 곳에 있습니다",
       "idiomas_titulo": "7개 언어",
-      "idiomas_desc": "스페인어, 영어, 독일어, 프랑스어, 이탈리아어, 포르투갈어, 한국어로 제공됩니다. 전 세계 순례자를 위한 산티아고 순례길 가이드입니다.",
       "albergues_titulo": "모든 숙소",
       "albergues_desc": "이용 가능한 침대, 가격, 서비스, 최신 연락처 정보가 포함된 완전한 숙소 디렉토리입니다.",
       "pois_titulo": "관심 장소 및 고도",
       "pois_desc": "고도 프로필, 물 공급처, 숙소, 교회, 레스토랑 및 각 구간 전체의 다른 관심 장소를 포함한 상세 지도입니다.",
       "meteo_titulo": "날씨 정보",
-      "meteo_desc": "각 구간의 날씨 예보와 기온, 강수량, 바람 데이터입니다. 최신 정보로 당신의 하루를 계획하세요."
+      "meteo_desc": "각 구간의 날씨 예보와 기온, 강수량, 바람 데이터입니다. 최신 정보로 당신의 하루를 계획하세요.",
+      "idiomas_desc": "스페인어, 영어, 독일어, 프랑스어, 이탈리아어, 포르투갈어, 한국어로 제공됩니다. 세계의 순례자들을 위한 Camino de Santiago 가이드입니다."
     },
     "mapa": {
       "explorar": "탐험하기",
-      "titulo": "프랑스 길",
-      "subtitulo": "825km · 34개 구간 · 생장폴 → 산티아고",
       "ver_etapas": "구간 보기 →",
       "toca_explorar": "탐색하려면 터치하세요",
       "cargando_etapas": "구간 로드 중...",
       "tu_posicion": "현재 위치",
-      "sectores": "프랑스 길 · 구간",
       "etapa": "구간",
       "aqui": "여기",
       "cargando": "길 로드 중...",
@@ -279,7 +332,10 @@
       "subida": "상향",
       "bajada": "하향",
       "ver_ficha": "전체 정보 보기",
-      "variante": "변형 경로"
+      "variante": "변형 경로",
+      "titulo": "El Camino Francés",
+      "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
+      "sectores": "Camino Francés · Sectores"
     },
     "cta_final": {
       "eyebrow": "당신의 순례길을 시작하세요",
@@ -293,8 +349,11 @@
   "landing": {
     "siente_el": "경험하세요",
     "camino": "순례길을",
-    "subtitulo": "산티아고 순례길을 계획하고, 탐험하고, 경험하세요",
-    "descubre": "순례길 발견하기"
+    "descubre": "순례길 발견하기",
+    "chat_titulo": "Camino와 대화하기",
+    "chat_acento": "당신의 언어로",
+    "chat_desc": "도착하기 전에 hospitalero에게 물어보고, 다른 순례자들에게 스테이지 상태를 상담하며, Camino의 비즈니스와 소통하세요. 모든 것이 실시간으로 당신의 언어로 자동 번역됩니다.",
+    "subtitulo": "Camino de Santiago를 계획하고, 탐험하고, 경험하세요"
   },
   "etapa": {
     "mapa": "구간 지도",
@@ -352,7 +411,6 @@
       "precipitacion": "강수량",
       "viento": "최대 바람",
       "prob": "확률",
-      "fuente": "Open-Meteo · 16일까지의 예보",
       "error": "날씨 예보를 로드할 수 없습니다",
       "cargando": "예보 로딩 중…",
       "dias": [
@@ -398,7 +456,8 @@
         "ligera": "약함",
         "moderada": "중간",
         "intensa": "강함"
-      }
+      },
+      "fuente": "Open-Meteo · previsión hasta 16 días"
     }
   },
   "interactions": {
@@ -452,7 +511,6 @@
     "toca_explorar": "눌러서 탐험",
     "cargando_etapas": "구간 로딩 중...",
     "tu_posicion": "당신의 위치",
-    "sectores": "프랑스 길 · 구간",
     "etapa": "구간",
     "aqui": "여기",
     "cargando": "길을 로딩 중입니다...",
@@ -470,6 +528,7 @@
     "subida": "오르막",
     "bajada": "내리막",
     "ver_ficha": "전체 정보 보기",
-    "variante": "우회로"
+    "variante": "우회로",
+    "sectores": "Camino Francés · Sectores"
   }
 }

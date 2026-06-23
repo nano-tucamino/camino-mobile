@@ -83,6 +83,62 @@
     "llamarWhatsapp": "Llamar o WhatsApp",
     "webOficial": "Web oficial",
     "comentarioPlaceholder": "Comparte tu experiencia en este albergue…",
+    "browser": {
+      "buscar_placeholder": "Buscar por nombre o localidad…",
+      "todas_etapas": "Todas las etapas",
+      "resultados": "albergues",
+      "cargando": "Cargando albergues…",
+      "sin_resultados": "Sin resultados",
+      "sin_resultados_desc": "Prueba con otro término o quita los filtros",
+      "error_carga": "Error al cargar los albergues",
+      "reintentar": "Reintentar",
+      "seleccionar_etapa": "Seleccionar etapa",
+      "buscar_etapa": "Buscar etapa…",
+      "limpiar_filtro": "Quitar filtro",
+      "sin_albergues": "No hay albergues en esta etapa",
+      "albergue_singular": "1 albergue",
+      "albergue_plural": "albergues",
+      "camas": "camas",
+      "llamar": "Llamar",
+      "reservar": "Reservar en Booking"
+    },
+    "detalle": {
+      "etapa_prefijo": "Etapa",
+      "sobre_albergue": "Sobre este albergue",
+      "servicios": "Servicios",
+      "contacto": "Contacto",
+      "canal": "Canal del albergue",
+      "canal_desc": "Preguntas y respuestas públicas",
+      "mensaje_privado": "Mensaje privado",
+      "mensaje_privado_desc": "Solo tú y el hospitalero",
+      "llamar_whatsapp": "Llamar o WhatsApp",
+      "web_oficial": "Web oficial",
+      "por_cama": "por cama",
+      "plazas": "plazas",
+      "habitacion_privada": "Habitación privada",
+      "reservar_booking": "Reservar en Booking",
+      "editar": "Editar",
+      "act": "Act.",
+      "tipo": {
+        "municipal": "Municipal",
+        "privado": "Privado",
+        "parroquial": "Parroquial",
+        "asociacion": "Asociación"
+      },
+      "ocupacion": {
+        "libre": "Plazas libres",
+        "lleno": "Casi lleno",
+        "cerrado": "Cerrado"
+      },
+      "servicio": {
+        "wifi": "WiFi",
+        "cocina": "Cocina",
+        "lavanderia": "Lavandería",
+        "parking": "Parking",
+        "desayuno": "Desayuno",
+        "bar": "Bar"
+      }
+    },
     "tipo": {
       "municipal": "Municipal",
       "privado": "Privado",
@@ -253,7 +309,6 @@
       "meteo_titulo": "Información meteorológica",
       "meteo_desc": "Previsión del tiempo para cada etapa con datos de temperatura, precipitación y viento. Planifica tu jornada con información actualizada."
     },
-
     "cta_final": {
       "eyebrow": "Comienza tu Camino",
       "titulo": "Tu Camino,",
@@ -261,15 +316,45 @@
       "descripcion": "Planifica tus etapas, consulta albergues y accede a toda la información que necesitas para recorrer el Camino de Santiago.",
       "boton": "Comenzar gratis",
       "nota": "Sin tarjeta de crédito · Siempre gratis para peregrinos"
+    },
+    "mapa": {
+      "explorar": "Explorar",
+      "titulo": "El Camino Francés",
+      "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
+      "ver_etapas": "Ver etapas →",
+      "toca_explorar": "Toca para explorar",
+      "cargando_etapas": "Cargando etapas...",
+      "tu_posicion": "Tu posición",
+      "sectores": "Camino Francés · Sectores",
+      "etapa": "Etapa",
+      "aqui": "aquí",
+      "cargando": "Cargando el Camino...",
+      "error_carga": "No se pudo cargar el mapa",
+      "reintentar": "Reintentar",
+      "filtros": "Filtros",
+      "alojamiento": "Alojamiento",
+      "albergues": "Albergues",
+      "negocios": "Negocios del Camino",
+      "puntos_interes": "Puntos de interés",
+      "infraestructura": "Infraestructura",
+      "descanso": "Descanso",
+      "patrimonio": "Patrimonio",
+      "distancia": "Distancia",
+      "subida": "Subida",
+      "bajada": "Bajada",
+      "ver_ficha": "Ver ficha completa",
+      "variante": "Variante"
     }
   },
   "landing": {
     "siente_el": "Siente el",
     "camino": "Camino.",
     "subtitulo": "Planifica, explora y vive el Camino de Santiago",
+    "chat_titulo": "Habla con el Camino",
+    "chat_acento": "en tu idioma",
+    "chat_desc": "Pregunta al hospitalero antes de llegar, consulta con otros peregrinos sobre el estado de las etapas y comunícate con negocios del Camino. Todo traducido automáticamente a tu idioma, en tiempo real.",
     "descubre": "Descubrir el Camino"
   },
-
   "etapa": {
     "mapa": "Mapa de la etapa",
     "perfil": "Perfil de la etapa",

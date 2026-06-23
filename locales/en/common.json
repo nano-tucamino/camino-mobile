@@ -34,14 +34,13 @@
       "ponferrada_frase": "The Templar castle of Bierzo"
     },
     "stats": {
-      "km_label": "French Way",
       "etapas_label": "Stages",
-      "albergues_label": "Hostels"
+      "albergues_label": "Hostels",
+      "km_label": "Camino Francés"
     }
   },
   "etapas": {
     "titulo": "The 34 stages",
-    "subtitulo": "French Way · 825 km",
     "completado": "Way completed!",
     "casi": "almost!",
     "ultima_etapa": "final stage!",
@@ -53,11 +52,11 @@
       "media": "Moderate",
       "alta": "Difficult",
       "muy_alta": "Very Difficult"
-    }
+    },
+    "subtitulo": "Camino Francés · 825 km"
   },
   "albergues": {
     "titulo": "Hostels",
-    "subtitulo": "French Way · 34 stages",
     "buscarPlaceholder": "Search by name or location…",
     "todasEtapas": "All stages",
     "resultados": "hostels",
@@ -113,7 +112,64 @@
       "libre": "Beds available",
       "casi_lleno": "Almost full",
       "completo": "Full"
-    }
+    },
+    "browser": {
+      "buscar_placeholder": "Search by name or location…",
+      "todas_etapas": "All stages",
+      "resultados": "albergues",
+      "cargando": "Loading albergues…",
+      "sin_resultados": "No results",
+      "sin_resultados_desc": "Try another term or remove filters",
+      "error_carga": "Error loading albergues",
+      "reintentar": "Retry",
+      "seleccionar_etapa": "Select stage",
+      "buscar_etapa": "Search stage…",
+      "limpiar_filtro": "Remove filter",
+      "sin_albergues": "No albergues on this stage",
+      "albergue_singular": "1 albergue",
+      "albergue_plural": "albergues",
+      "camas": "beds",
+      "llamar": "Call",
+      "reservar": "Book on Booking"
+    },
+    "detalle": {
+      "etapa_prefijo": "Stage",
+      "sobre_albergue": "About this albergue",
+      "servicios": "Services",
+      "contacto": "Contact",
+      "canal": "Albergue channel",
+      "canal_desc": "Public questions and answers",
+      "mensaje_privado": "Private message",
+      "mensaje_privado_desc": "Only you and the hospitalero",
+      "llamar_whatsapp": "Call or WhatsApp",
+      "web_oficial": "Official website",
+      "por_cama": "per bed",
+      "plazas": "spaces",
+      "habitacion_privada": "Private room",
+      "reservar_booking": "Book on Booking",
+      "editar": "Edit",
+      "act": "Updated",
+      "tipo": {
+        "municipal": "Municipal",
+        "privado": "Private",
+        "parroquial": "Parish",
+        "asociacion": "Association"
+      },
+      "ocupacion": {
+        "libre": "Spaces available",
+        "lleno": "Almost full",
+        "cerrado": "Closed"
+      },
+      "servicio": {
+        "wifi": "WiFi",
+        "cocina": "Kitchen",
+        "lavanderia": "Laundry",
+        "parking": "Parking",
+        "desayuno": "Breakfast",
+        "bar": "Bar"
+      }
+    },
+    "subtitulo": "Camino Francés · 34 etapas"
   },
   "auth": {
     "registro": "Sign Up",
@@ -245,23 +301,20 @@
       "subtitulo_seccion": "Everything you need,",
       "subtitulo_acento": "in one place",
       "idiomas_titulo": "7 languages",
-      "idiomas_desc": "Available in Spanish, English, German, French, Italian, Portuguese and Korean. The Camino de Santiago guide for pilgrims from all over the world.",
       "albergues_titulo": "All hostels on the Way",
       "albergues_desc": "Complete directory of hostels with available beds, prices, services and updated contact information.",
       "pois_titulo": "Points of interest and elevation",
       "pois_desc": "Detailed maps with elevation profile, water sources, hostels, churches, restaurants and other points of interest along each stage.",
       "meteo_titulo": "Weather information",
-      "meteo_desc": "Weather forecast for each stage with temperature, precipitation and wind data. Plan your day with up-to-date information."
+      "meteo_desc": "Weather forecast for each stage with temperature, precipitation and wind data. Plan your day with up-to-date information.",
+      "idiomas_desc": "Available in Spanish, English, German, French, Italian, Portuguese and Korean. The Camino de Santiago guide for pilgrims from all over the world."
     },
     "mapa": {
       "explorar": "Explore",
-      "titulo": "The French Way",
-      "subtitulo": "825 km · 34 stages · Saint-Jean → Santiago",
       "ver_etapas": "View stages →",
       "toca_explorar": "Tap to explore",
       "cargando_etapas": "Loading stages...",
       "tu_posicion": "Your position",
-      "sectores": "French Way · Sectors",
       "etapa": "Stage",
       "aqui": "here",
       "cargando": "Loading the Way...",
@@ -279,7 +332,10 @@
       "subida": "Climb",
       "bajada": "Descent",
       "ver_ficha": "View full details",
-      "variante": "Variant"
+      "variante": "Variant",
+      "titulo": "The Camino Francés",
+      "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
+      "sectores": "Camino Francés · Sectores"
     },
     "cta_final": {
       "eyebrow": "Start Your Way",
@@ -293,8 +349,11 @@
   "landing": {
     "siente_el": "Experience the",
     "camino": "Way.",
-    "subtitulo": "Plan, explore and live the Camino de Santiago",
-    "descubre": "Discover the Way"
+    "descubre": "Discover the Way",
+    "chat_titulo": "Talk to el Camino",
+    "chat_acento": "in your language",
+    "chat_desc": "Ask the hospitalero before you arrive, consult with other pilgrims about the state of the stages, and communicate with businesses on el Camino. Everything automatically translated to your language, in real time.",
+    "subtitulo": "Plan, explore and experience the Camino de Santiago"
   },
   "etapa": {
     "mapa": "Stage map",
@@ -352,7 +411,6 @@
       "precipitacion": "Precipitation",
       "viento": "Max wind",
       "prob": "Prob.",
-      "fuente": "Open-Meteo · forecast up to 16 days",
       "error": "Could not load weather forecast",
       "cargando": "Loading forecast…",
       "dias": [
@@ -398,7 +456,8 @@
         "ligera": "Light",
         "moderada": "Moderate",
         "intensa": "Heavy"
-      }
+      },
+      "fuente": "Open-Meteo · previsión hasta 16 días"
     }
   },
   "interactions": {
@@ -452,7 +511,6 @@
     "toca_explorar": "Tap to explore",
     "cargando_etapas": "Loading stages...",
     "tu_posicion": "Your position",
-    "sectores": "French Way · Sectors",
     "etapa": "Stage",
     "aqui": "here",
     "cargando": "Loading the Camino...",
@@ -470,6 +528,7 @@
     "subida": "Uphill",
     "bajada": "Downhill",
     "ver_ficha": "View full details",
-    "variante": "Variant"
+    "variante": "Variant",
+    "sectores": "Camino Francés · Sectores"
   }
 }

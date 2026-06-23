@@ -34,14 +34,13 @@
       "ponferrada_frase": "Die Templerfestung des Bierzo"
     },
     "stats": {
-      "km_label": "Französischer Weg",
       "etapas_label": "Etappen",
-      "albergues_label": "Herbergen"
+      "albergues_label": "Herbergen",
+      "km_label": "Camino Francés"
     }
   },
   "etapas": {
     "titulo": "Die 34 Etappen",
-    "subtitulo": "Französischer Weg · 825 km",
     "completado": "Weg vollendet!",
     "casi": "Fast geschafft!",
     "ultima_etapa": "letzte Etappe!",
@@ -53,11 +52,11 @@
       "media": "Moderat",
       "alta": "Schwierig",
       "muy_alta": "Sehr schwierig"
-    }
+    },
+    "subtitulo": "Camino Francés · 825 km"
   },
   "albergues": {
     "titulo": "Herbergen",
-    "subtitulo": "Französischer Weg · 34 Etappen",
     "buscarPlaceholder": "Nach Name oder Ort suchen…",
     "todasEtapas": "Alle Etappen",
     "resultados": "Herbergen",
@@ -113,7 +112,64 @@
       "libre": "Plätze verfügbar",
       "casi_lleno": "Fast voll",
       "completo": "Voll"
-    }
+    },
+    "browser": {
+      "buscar_placeholder": "Nach Name oder Ort suchen…",
+      "todas_etapas": "Alle Etappen",
+      "resultados": "albergues",
+      "cargando": "albergues werden geladen…",
+      "sin_resultados": "Keine Ergebnisse",
+      "sin_resultados_desc": "Versuche einen anderen Begriff oder entferne die Filter",
+      "error_carga": "Fehler beim Laden der albergues",
+      "reintentar": "Erneut versuchen",
+      "seleccionar_etapa": "Etappe auswählen",
+      "buscar_etapa": "Etappe suchen…",
+      "limpiar_filtro": "Filter entfernen",
+      "sin_albergues": "Keine albergues in dieser Etappe",
+      "albergue_singular": "1 albergue",
+      "albergue_plural": "albergues",
+      "camas": "Betten",
+      "llamar": "Anrufen",
+      "reservar": "Bei Booking buchen"
+    },
+    "detalle": {
+      "etapa_prefijo": "Etappe",
+      "sobre_albergue": "Über dieses albergue",
+      "servicios": "Dienstleistungen",
+      "contacto": "Kontakt",
+      "canal": "albergue-Kanal",
+      "canal_desc": "Öffentliche Fragen und Antworten",
+      "mensaje_privado": "Privatnachricht",
+      "mensaje_privado_desc": "Nur du und der hospitalero",
+      "llamar_whatsapp": "Anrufen oder WhatsApp",
+      "web_oficial": "Offizielle Website",
+      "por_cama": "pro Bett",
+      "plazas": "Plätze",
+      "habitacion_privada": "Privatzimmer",
+      "reservar_booking": "Bei Booking buchen",
+      "editar": "Bearbeiten",
+      "act": "Akt.",
+      "tipo": {
+        "municipal": "Kommunal",
+        "privado": "Privat",
+        "parroquial": "Pfarrgemeinde",
+        "asociacion": "Verein"
+      },
+      "ocupacion": {
+        "libre": "Plätze verfügbar",
+        "lleno": "Fast voll",
+        "cerrado": "Geschlossen"
+      },
+      "servicio": {
+        "wifi": "WiFi",
+        "cocina": "Küche",
+        "lavanderia": "Wäscherei",
+        "parking": "Parkplatz",
+        "desayuno": "Frühstück",
+        "bar": "Bar"
+      }
+    },
+    "subtitulo": "Camino Francés · 34 etapas"
   },
   "auth": {
     "registro": "Registrierung",
@@ -245,23 +301,20 @@
       "subtitulo_seccion": "Alles, was du brauchst,",
       "subtitulo_acento": "an einem Ort",
       "idiomas_titulo": "7 Sprachen",
-      "idiomas_desc": "Verfügbar in Spanisch, Englisch, Deutsch, Französisch, Italienisch, Portugiesisch und Koreanisch. Der Leitfaden des Camino de Santiago für Pilger aus aller Welt.",
       "albergues_titulo": "Alle Herbergen des Weges",
       "albergues_desc": "Umfassendes Verzeichnis von Herbergen mit verfügbaren Plätzen, Preisen, Dienstleistungen und aktuellen Kontaktinformationen.",
       "pois_titulo": "Sehenswürdigkeiten und Höhe",
       "pois_desc": "Detaillierte Karten mit Höhenprofil, Quellen, Herbergen, Kirchen, Restaurants und anderen Sehenswürdigkeiten entlang jeder Etappe.",
       "meteo_titulo": "Wetterverhältnisse",
-      "meteo_desc": "Wettervorhersage für jede Etappe mit Daten zu Temperatur, Niederschlag und Wind. Planen Sie Ihren Tag mit aktuellen Informationen."
+      "meteo_desc": "Wettervorhersage für jede Etappe mit Daten zu Temperatur, Niederschlag und Wind. Planen Sie Ihren Tag mit aktuellen Informationen.",
+      "idiomas_desc": "Verfügbar in Spanisch, Englisch, Deutsch, Französisch, Italienisch, Portugiesisch und Koreanisch. Der Führer zum Camino de Santiago für Pilger aus aller Welt."
     },
     "mapa": {
       "explorar": "Erkunden",
-      "titulo": "Der Französische Weg",
-      "subtitulo": "825 km · 34 Etappen · Saint-Jean → Santiago",
       "ver_etapas": "Etappen anzeigen →",
       "toca_explorar": "Zum Erkunden tippen",
       "cargando_etapas": "Etappen werden geladen...",
       "tu_posicion": "Deine Position",
-      "sectores": "Französischer Weg · Abschnitte",
       "etapa": "Etappe",
       "aqui": "hier",
       "cargando": "Der Weg wird geladen...",
@@ -279,7 +332,10 @@
       "subida": "Aufstieg",
       "bajada": "Abstieg",
       "ver_ficha": "Vollständiges Formular anzeigen",
-      "variante": "Variante"
+      "variante": "Variante",
+      "titulo": "El Camino Francés",
+      "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
+      "sectores": "Camino Francés · Sectores"
     },
     "cta_final": {
       "eyebrow": "Beginne deinen Weg",
@@ -293,8 +349,11 @@
   "landing": {
     "siente_el": "Spüre den",
     "camino": "Weg.",
-    "subtitulo": "Plane, erkunde und erlebe den Camino de Santiago",
-    "descubre": "Erkunde den Weg"
+    "descubre": "Erkunde den Weg",
+    "chat_titulo": "Sprich mit dem Camino",
+    "chat_acento": "in deiner Sprache",
+    "chat_desc": "Frage den hospitalero, bevor du ankommst, konsultiere andere Pilger über den Zustand der Etappen und kommuniziere mit Unternehmen des Camino. Alles wird automatisch in deine Sprache übersetzt, in Echtzeit.",
+    "subtitulo": "Planen, erkunden und erleben Sie den Camino de Santiago"
   },
   "etapa": {
     "mapa": "Karte der Etappe",
@@ -352,7 +411,6 @@
       "precipitacion": "Niederschlag",
       "viento": "Maximale Windgeschwindigkeit",
       "prob": "Wahrscheinlichkeit",
-      "fuente": "Open-Meteo · Vorhersage bis 16 Tage",
       "error": "Wettervorhersage konnte nicht geladen werden",
       "cargando": "Vorhersage wird geladen…",
       "dias": [
@@ -398,7 +456,8 @@
         "ligera": "Leicht",
         "moderada": "Moderat",
         "intensa": "Intensiv"
-      }
+      },
+      "fuente": "Open-Meteo · previsión hasta 16 días"
     }
   },
   "interactions": {
@@ -452,7 +511,6 @@
     "toca_explorar": "Zum Erkunden tippen",
     "cargando_etapas": "Etappen werden geladen...",
     "tu_posicion": "Deine Position",
-    "sectores": "Französischer Weg · Sektoren",
     "etapa": "Etappe",
     "aqui": "hier",
     "cargando": "Laden des Camino...",
@@ -470,6 +528,7 @@
     "subida": "Anstieg",
     "bajada": "Abstieg",
     "ver_ficha": "Vollständige Informationen anzeigen",
-    "variante": "Variante"
+    "variante": "Variante",
+    "sectores": "Camino Francés · Sectores"
   }
 }

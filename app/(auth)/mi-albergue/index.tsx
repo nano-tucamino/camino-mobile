@@ -90,6 +90,71 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "cierre", label: "Cierre" },
   { key: "perfil", label: " Mi Perfil" },
 ];
+
+const bannerStyles = StyleSheet.create({
+  container: {
+    marginTop: 16,
+    backgroundColor: "#FEF3DC",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#B8860B",
+    padding: 16,
+    gap: 8,
+  },
+  titulo: { fontSize: 15, fontWeight: "700", color: "#8B6300" },
+  sub: { fontSize: 13, color: "#8B6300", lineHeight: 20 },
+  btn: {
+    backgroundColor: "#C8622A",
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginTop: 4,
+  },
+  btnText: { color: "white", fontSize: 14, fontWeight: "600" },
+});
+
+function LimiteBanner({
+  albergueId,
+  token,
+}: {
+  albergueId: string;
+  token: string;
+}) {
+  const [estado, setEstado] = useState<{
+    total: number;
+    limite: number;
+    puede_contactar: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/dm-entidad/albergue/${albergueId}/estado`)
+      .then((r) => r.json())
+      .then(setEstado)
+      .catch(() => {});
+  }, [albergueId]);
+
+  if (!estado || estado.puede_contactar) return null;
+
+  return (
+    <View style={bannerStyles.container}>
+      <Text style={bannerStyles.titulo}>Límite mensual alcanzado</Text>
+      <Text style={bannerStyles.sub}>
+        Has recibido {estado.total} conversaciones este mes. Activa Premium para
+        seguir recibiendo peregrinos.
+      </Text>
+      <TouchableOpacity
+        style={bannerStyles.btn}
+        onPress={() =>
+          Linking.openURL(
+            `https://caminosantiago.app/planes-premium?token=${encodeURIComponent(token)}`,
+          )
+        }
+      >
+        <Text style={bannerStyles.btnText}>Ver planes →</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
 export default function MiAlbergueScreen() {
   const insets = useSafeAreaInsets();
   const { token } = useAuth();
@@ -325,73 +390,6 @@ export default function MiAlbergueScreen() {
     ESTADO_CONFIG[ocupacion as keyof typeof ESTADO_CONFIG] ??
     ESTADO_CONFIG.abierto;
 
-  function LimiteBanner({
-    albergueId,
-    token,
-  }: {
-    albergueId: string;
-    token: string;
-  }) {
-    const [estado, setEstado] = useState<{
-      total: number;
-      limite: number;
-      puede_contactar: boolean;
-    } | null>(null);
-    const API_URL =
-      process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com";
-
-    useEffect(() => {
-      fetch(`${API_URL}/api/dm-entidad/albergue/${albergueId}/estado`)
-        .then((r) => r.json())
-        .then(setEstado)
-        .catch(() => {});
-    }, [albergueId]);
-
-    if (!estado || estado.puede_contactar) return null;
-
-    return (
-      <View style={bannerStyles.container}>
-        <Text style={bannerStyles.titulo}>Límite mensual alcanzado</Text>
-        <Text style={bannerStyles.sub}>
-          Has recibido {estado.total} conversaciones este mes. Activa Premium
-          para seguir recibiendo peregrinos.
-        </Text>
-        <TouchableOpacity
-          style={bannerStyles.btn}
-          onPress={() =>
-            Linking.openURL(
-              `https://caminosantiago.app/planes-premium?token=${encodeURIComponent(token)}`,
-            )
-          }
-        >
-          <Text style={bannerStyles.btnText}>Ver planes →</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  const bannerStyles = StyleSheet.create({
-    container: {
-      marginTop: 16,
-      backgroundColor: "#FEF3DC",
-      borderRadius: 14,
-      borderWidth: 1,
-      borderColor: "#B8860B",
-      padding: 16,
-      gap: 8,
-    },
-    titulo: { fontSize: 15, fontWeight: "700", color: "#8B6300" },
-    sub: { fontSize: 13, color: "#8B6300", lineHeight: 20 },
-    btn: {
-      backgroundColor: "#C8622A",
-      borderRadius: 10,
-      paddingVertical: 12,
-      alignItems: "center",
-      marginTop: 4,
-    },
-    btnText: { color: "white", fontSize: 14, fontWeight: "600" },
-  });
-
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* ── TOPBAR ──────────────────────────────────────────── */}
@@ -531,8 +529,6 @@ export default function MiAlbergueScreen() {
                 {new Date(albergue.updated_ocupacion).toLocaleString("es-ES")}
               </Text>
             )}
-
-            {/* Banner limite alcanzado */}
             {albergue.suscripcion_activa === false && (
               <LimiteBanner albergueId={albergue.id} token={token ?? ""} />
             )}

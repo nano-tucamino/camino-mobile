@@ -34,14 +34,13 @@
       "ponferrada_frase": "O castelo templário do Bierzo"
     },
     "stats": {
-      "km_label": "Caminho Francês",
       "etapas_label": "Etapas",
-      "albergues_label": "Albergues"
+      "albergues_label": "Albergues",
+      "km_label": "Camino Francés"
     }
   },
   "etapas": {
     "titulo": "As 34 etapas",
-    "subtitulo": "Caminho Francês · 825 km",
     "completado": "¡Caminho completado!",
     "casi": "¡quase!",
     "ultima_etapa": "¡última etapa!",
@@ -53,11 +52,11 @@
       "media": "Moderada",
       "alta": "Difícil",
       "muy_alta": "Muito difícil"
-    }
+    },
+    "subtitulo": "Camino Francés · 825 km"
   },
   "albergues": {
     "titulo": "Albergues",
-    "subtitulo": "Caminho Francês · 34 etapas",
     "buscarPlaceholder": "Procurar por nome ou localidade…",
     "todasEtapas": "Todas as etapas",
     "resultados": "albergues",
@@ -113,7 +112,64 @@
       "libre": "Vagas disponíveis",
       "casi_lleno": "Quase cheio",
       "completo": "Completo"
-    }
+    },
+    "browser": {
+      "buscar_placeholder": "Pesquisar por nome ou localidade…",
+      "todas_etapas": "Todos os estágios",
+      "resultados": "albergues",
+      "cargando": "Carregando albergues…",
+      "sin_resultados": "Sem resultados",
+      "sin_resultados_desc": "Tente outro termo ou remova os filtros",
+      "error_carga": "Erro ao carregar os albergues",
+      "reintentar": "Tentar novamente",
+      "seleccionar_etapa": "Selecionar estágio",
+      "buscar_etapa": "Pesquisar estágio…",
+      "limpiar_filtro": "Remover filtro",
+      "sin_albergues": "Não há albergues neste estágio",
+      "albergue_singular": "1 albergue",
+      "albergue_plural": "albergues",
+      "camas": "camas",
+      "llamar": "Ligar",
+      "reservar": "Reservar em Booking"
+    },
+    "detalle": {
+      "etapa_prefijo": "Estágio",
+      "sobre_albergue": "Sobre este albergue",
+      "servicios": "Serviços",
+      "contacto": "Contato",
+      "canal": "Canal do albergue",
+      "canal_desc": "Perguntas e respostas públicas",
+      "mensaje_privado": "Mensagem privada",
+      "mensaje_privado_desc": "Apenas você e o hospitalero",
+      "llamar_whatsapp": "Ligar ou WhatsApp",
+      "web_oficial": "Website oficial",
+      "por_cama": "por cama",
+      "plazas": "vagas",
+      "habitacion_privada": "Quarto privado",
+      "reservar_booking": "Reservar em Booking",
+      "editar": "Editar",
+      "act": "Atu.",
+      "tipo": {
+        "municipal": "Municipal",
+        "privado": "Privado",
+        "parroquial": "Paroquial",
+        "asociacion": "Associação"
+      },
+      "ocupacion": {
+        "libre": "Vagas livres",
+        "lleno": "Quase cheio",
+        "cerrado": "Fechado"
+      },
+      "servicio": {
+        "wifi": "WiFi",
+        "cocina": "Cozinha",
+        "lavanderia": "Lavanderia",
+        "parking": "Estacionamento",
+        "desayuno": "Pequeno-almoço",
+        "bar": "Bar"
+      }
+    },
+    "subtitulo": "Camino Francés · 34 etapas"
   },
   "auth": {
     "registro": "Registro",
@@ -245,23 +301,20 @@
       "subtitulo_seccion": "Tudo que você precisa,",
       "subtitulo_acento": "em um só lugar",
       "idiomas_titulo": "7 idiomas",
-      "idiomas_desc": "Disponível em espanhol, inglês, alemão, francês, italiano, português e coreano. O guia do Caminho de Santiago para peregrinos de todo o mundo.",
       "albergues_titulo": "Todos os albergues do Caminho",
       "albergues_desc": "Diretório completo de albergues com vagas disponíveis, preços, serviços e informações de contato atualizadas.",
       "pois_titulo": "Pontos de interesse e altitude",
       "pois_desc": "Mapas detalhados com perfil de altitude, fontes, albergues, igrejas, restaurantes e outros pontos de interesse ao longo de cada etapa.",
       "meteo_titulo": "Informações meteorológicas",
-      "meteo_desc": "Previsão do tempo para cada etapa com dados de temperatura, precipitação e vento. Planeje seu dia com informações atualizadas."
+      "meteo_desc": "Previsão do tempo para cada etapa com dados de temperatura, precipitação e vento. Planeje seu dia com informações atualizadas.",
+      "idiomas_desc": "Disponível em espanhol, inglês, alemão, francês, italiano, português e coreano. O guia do Camino de Santiago para peregrinos de todo o mundo."
     },
     "mapa": {
       "explorar": "Explorar",
-      "titulo": "O Caminho Francês",
-      "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
       "ver_etapas": "Ver etapas →",
       "toca_explorar": "Toque para explorar",
       "cargando_etapas": "Carregando etapas...",
       "tu_posicion": "Sua posição",
-      "sectores": "Caminho Francês · Setores",
       "etapa": "Etapa",
       "aqui": "aqui",
       "cargando": "Carregando o Caminho...",
@@ -279,7 +332,10 @@
       "subida": "Subida",
       "bajada": "Descida",
       "ver_ficha": "Ver ficha completa",
-      "variante": "Variante"
+      "variante": "Variante",
+      "titulo": "O Camino Francés",
+      "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
+      "sectores": "Camino Francés · Sectores"
     },
     "cta_final": {
       "eyebrow": "Comece seu Caminho",
@@ -293,8 +349,11 @@
   "landing": {
     "siente_el": "Sinta o",
     "camino": "Caminho.",
-    "subtitulo": "Planeje, explore e viva o Caminho de Santiago",
-    "descubre": "Descobrir o Caminho"
+    "descubre": "Descobrir o Caminho",
+    "chat_titulo": "Fale com o Camino",
+    "chat_acento": "no seu idioma",
+    "chat_desc": "Pergunte ao hospitalero antes de chegar, consulte outros peregrinos sobre o estado dos estágios e comunique-se com negócios do Camino. Tudo traduzido automaticamente para o seu idioma, em tempo real.",
+    "subtitulo": "Planeje, explore e viva o Camino de Santiago"
   },
   "etapa": {
     "mapa": "Mapa da etapa",
@@ -352,7 +411,6 @@
       "precipitacion": "Precipitação",
       "viento": "Vento máximo",
       "prob": "Prob.",
-      "fuente": "Open-Meteo · previsão até 16 dias",
       "error": "Não foi possível carregar a previsão meteorológica",
       "cargando": "Carregando previsão…",
       "dias": [
@@ -398,7 +456,8 @@
         "ligera": "Leve",
         "moderada": "Moderada",
         "intensa": "Intensa"
-      }
+      },
+      "fuente": "Open-Meteo · previsión hasta 16 días"
     }
   },
   "interactions": {
@@ -452,7 +511,6 @@
     "toca_explorar": "Toque para explorar",
     "cargando_etapas": "Carregando etapas...",
     "tu_posicion": "Sua posição",
-    "sectores": "Caminho Francês · Setores",
     "etapa": "Etapa",
     "aqui": "aqui",
     "cargando": "Carregando o Caminho...",
@@ -470,6 +528,7 @@
     "subida": "Subida",
     "bajada": "Descida",
     "ver_ficha": "Ver ficha completa",
-    "variante": "Variante"
+    "variante": "Variante",
+    "sectores": "Camino Francés · Sectores"
   }
 }

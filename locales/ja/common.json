@@ -34,14 +34,13 @@
       "ponferrada_frase": "ビエルソのテンプル騎士団の城"
     },
     "stats": {
-      "km_label": "フランス路",
       "etapas_label": "ステージ",
-      "albergues_label": "宿泊施設"
+      "albergues_label": "宿泊施設",
+      "km_label": "Camino Francés"
     }
   },
   "etapas": {
     "titulo": "34ステージ",
-    "subtitulo": "フランス路・825km",
     "completado": "カミーノ完了！",
     "casi": "もうすぐです！",
     "ultima_etapa": "最後のステージです！",
@@ -53,11 +52,11 @@
       "media": "中程度",
       "alta": "難しい",
       "muy_alta": "非常に難しい"
-    }
+    },
+    "subtitulo": "Camino Francés · 825 km"
   },
   "albergues": {
     "titulo": "宿泊施設",
-    "subtitulo": "フランス路・34ステージ",
     "buscarPlaceholder": "名前または地域で検索…",
     "todasEtapas": "すべてのステージ",
     "resultados": "宿泊施設",
@@ -113,7 +112,64 @@
       "libre": "空き状況あり",
       "casi_lleno": "ほぼ満室",
       "completo": "満室"
-    }
+    },
+    "browser": {
+      "buscar_placeholder": "名前または所在地で検索…",
+      "todas_etapas": "すべてのステージ",
+      "resultados": "albergue",
+      "cargando": "albergueを読み込んでいます…",
+      "sin_resultados": "結果がありません",
+      "sin_resultados_desc": "別の検索語を試すか、フィルターを削除してください",
+      "error_carga": "albergueの読み込みエラー",
+      "reintentar": "再試行",
+      "seleccionar_etapa": "ステージを選択",
+      "buscar_etapa": "ステージを検索…",
+      "limpiar_filtro": "フィルターを削除",
+      "sin_albergues": "このステージにはalbergueがありません",
+      "albergue_singular": "1 albergue",
+      "albergue_plural": "albergue",
+      "camas": "ベッド",
+      "llamar": "電話する",
+      "reservar": "Bookingで予約"
+    },
+    "detalle": {
+      "etapa_prefijo": "ステージ",
+      "sobre_albergue": "このalbergueについて",
+      "servicios": "サービス",
+      "contacto": "お問い合わせ",
+      "canal": "albergueのチャンネル",
+      "canal_desc": "公開Q&A",
+      "mensaje_privado": "プライベートメッセージ",
+      "mensaje_privado_desc": "あなたとhospitaleroだけ",
+      "llamar_whatsapp": "電話またはWhatsApp",
+      "web_oficial": "公式ウェブサイト",
+      "por_cama": "1ベッドあたり",
+      "plazas": "ベッド数",
+      "habitacion_privada": "個室",
+      "reservar_booking": "Bookingで予約",
+      "editar": "編集",
+      "act": "更新",
+      "tipo": {
+        "municipal": "市営",
+        "privado": "民営",
+        "parroquial": "教区運営",
+        "asociacion": "協会運営"
+      },
+      "ocupacion": {
+        "libre": "ベッド利用可能",
+        "lleno": "ほぼ満室",
+        "cerrado": "閉鎖中"
+      },
+      "servicio": {
+        "wifi": "WiFi",
+        "cocina": "キッチン",
+        "lavanderia": "洗濯機",
+        "parking": "駐車場",
+        "desayuno": "朝食",
+        "bar": "バー"
+      }
+    },
+    "subtitulo": "Camino Francés · 34 etapas"
   },
   "auth": {
     "registro": "登録",
@@ -245,23 +301,20 @@
       "subtitulo_seccion": "必要なすべてのものを",
       "subtitulo_acento": "1つの場所で",
       "idiomas_titulo": "7言語",
-      "idiomas_desc": "スペイン語、英語、ドイツ語、フランス語、イタリア語、ポルトガル語、韓国語で利用可能。世界中の巡礼者向けのサンティアゴ・デ・コンポステーラの道ガイド。",
       "albergues_titulo": "カミーノのすべての宿泊施設",
       "albergues_desc": "利用可能なベッド数、価格、サービス、最新の連絡先情報を備えた完全な宿泊施設ディレクトリ。",
       "pois_titulo": "観光地と標高",
       "pois_desc": "標高プロフィール、水飲み場、宿泊施設、教会、レストラン、および各ステージに沿った他の観光地を含む詳細な地図。",
       "meteo_titulo": "天気情報",
-      "meteo_desc": "気温、降水量、風のデータを含む各ステージの天気予報。最新情報であなたの移動を計画してください。"
+      "meteo_desc": "気温、降水量、風のデータを含む各ステージの天気予報。最新情報であなたの移動を計画してください。",
+      "idiomas_desc": "スペイン語、英語、ドイツ語、フランス語、イタリア語、ポルトガル語、韓国語で利用可能です。世界中の巡礼者向けのCamino de Santiagoガイド。"
     },
     "mapa": {
       "explorar": "探索",
-      "titulo": "フランス路",
-      "subtitulo": "825km・34ステージ・サン・ジャン→サンティアゴ",
       "ver_etapas": "ステージを見る →",
       "toca_explorar": "タップして探索",
       "cargando_etapas": "ステージを読み込み中...",
       "tu_posicion": "あなたの位置",
-      "sectores": "フランス道・セクター",
       "etapa": "ステージ",
       "aqui": "ここ",
       "cargando": "カミーノを読み込み中...",
@@ -279,7 +332,10 @@
       "subida": "上り",
       "bajada": "下り",
       "ver_ficha": "完全なカードを表示",
-      "variante": "バリアント"
+      "variante": "バリアント",
+      "titulo": "El Camino Francés",
+      "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
+      "sectores": "Camino Francés · Sectores"
     },
     "cta_final": {
       "eyebrow": "あなたのカミーノを開始",
@@ -293,8 +349,11 @@
   "landing": {
     "siente_el": "カミーノを感じて",
     "camino": "ください。",
-    "subtitulo": "サンティアゴ・デ・コンポステーラの道を計画し、探索し、体験してください",
-    "descubre": "カミーノを発見"
+    "descubre": "カミーノを発見",
+    "chat_titulo": "el Caminoと話す",
+    "chat_acento": "あなたの言語で",
+    "chat_desc": "到着前にhospitaleroに質問したり、他の巡礼者にステージの状態を相談したり、el Caminoのビジネスと通信したりできます。すべてがあなたの言語に自動的にリアルタイムで翻訳されます。",
+    "subtitulo": "Camino de Santiagoを計画し、探索し、体験しましょう"
   },
   "etapa": {
     "mapa": "ステージマップ",
@@ -352,7 +411,6 @@
       "precipitacion": "降水量",
       "viento": "最大風速",
       "prob": "確率",
-      "fuente": "Open-Meteo・最大16日間の予報",
       "error": "天気予報を読み込めませんでした",
       "cargando": "予報を読み込み中…",
       "dias": [
@@ -398,7 +456,8 @@
         "ligera": "弱い",
         "moderada": "中程度",
         "intensa": "強い"
-      }
+      },
+      "fuente": "Open-Meteo · previsión hasta 16 días"
     }
   },
   "interactions": {
@@ -452,7 +511,6 @@
     "toca_explorar": "タッチして探索",
     "cargando_etapas": "ステージを読み込み中…",
     "tu_posicion": "あなたの位置",
-    "sectores": "フランス路・セクター",
     "etapa": "ステージ",
     "aqui": "ここ",
     "cargando": "道を読み込み中...",
@@ -470,6 +528,7 @@
     "subida": "上り坂",
     "bajada": "下り坂",
     "ver_ficha": "詳細情報を表示",
-    "variante": "別ルート"
+    "variante": "別ルート",
+    "sectores": "Camino Francés · Sectores"
   }
 }

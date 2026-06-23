@@ -34,14 +34,13 @@
       "ponferrada_frase": "Le château templier du Bierzo"
     },
     "stats": {
-      "km_label": "Chemin Français",
       "etapas_label": "Étapes",
-      "albergues_label": "Gîtes"
+      "albergues_label": "Gîtes",
+      "km_label": "Camino Francés"
     }
   },
   "etapas": {
     "titulo": "Les 34 étapes",
-    "subtitulo": "Chemin Français · 825 km",
     "completado": "Chemin terminé !",
     "casi": "presque !",
     "ultima_etapa": "dernière étape !",
@@ -53,11 +52,11 @@
       "media": "Modérée",
       "alta": "Difficile",
       "muy_alta": "Très difficile"
-    }
+    },
+    "subtitulo": "Camino Francés · 825 km"
   },
   "albergues": {
     "titulo": "Gîtes",
-    "subtitulo": "Chemin Français · 34 étapes",
     "buscarPlaceholder": "Chercher par nom ou localité…",
     "todasEtapas": "Toutes les étapes",
     "resultados": "gîtes",
@@ -113,7 +112,64 @@
       "libre": "Places libres",
       "casi_lleno": "Presque complet",
       "completo": "Complet"
-    }
+    },
+    "browser": {
+      "buscar_placeholder": "Rechercher par nom ou localité…",
+      "todas_etapas": "Tous les étapes",
+      "resultados": "albergues",
+      "cargando": "Chargement des albergues…",
+      "sin_resultados": "Aucun résultat",
+      "sin_resultados_desc": "Essayez un autre terme ou supprimez les filtres",
+      "error_carga": "Erreur lors du chargement des albergues",
+      "reintentar": "Réessayer",
+      "seleccionar_etapa": "Sélectionner étape",
+      "buscar_etapa": "Rechercher étape…",
+      "limpiar_filtro": "Supprimer le filtre",
+      "sin_albergues": "Il n'y a pas d'albergues à cet étape",
+      "albergue_singular": "1 albergue",
+      "albergue_plural": "albergues",
+      "camas": "lits",
+      "llamar": "Appeler",
+      "reservar": "Réserver sur Booking"
+    },
+    "detalle": {
+      "etapa_prefijo": "Étape",
+      "sobre_albergue": "À propos de cet albergue",
+      "servicios": "Services",
+      "contacto": "Contact",
+      "canal": "Canal de l'albergue",
+      "canal_desc": "Questions et réponses publiques",
+      "mensaje_privado": "Message privé",
+      "mensaje_privado_desc": "Seulement toi et l'hospitalero",
+      "llamar_whatsapp": "Appeler ou WhatsApp",
+      "web_oficial": "Site officiel",
+      "por_cama": "par lit",
+      "plazas": "places",
+      "habitacion_privada": "Chambre privée",
+      "reservar_booking": "Réserver sur Booking",
+      "editar": "Modifier",
+      "act": "Maj.",
+      "tipo": {
+        "municipal": "Municipal",
+        "privado": "Privé",
+        "parroquial": "Paroissial",
+        "asociacion": "Association"
+      },
+      "ocupacion": {
+        "libre": "Places disponibles",
+        "lleno": "Presque complet",
+        "cerrado": "Fermé"
+      },
+      "servicio": {
+        "wifi": "WiFi",
+        "cocina": "Cuisine",
+        "lavanderia": "Blanchisserie",
+        "parking": "Parking",
+        "desayuno": "Petit-déjeuner",
+        "bar": "Bar"
+      }
+    },
+    "subtitulo": "Camino Francés · 34 etapas"
   },
   "auth": {
     "registro": "Inscription",
@@ -245,23 +301,20 @@
       "subtitulo_seccion": "Tout ce dont tu as besoin,",
       "subtitulo_acento": "en un seul endroit",
       "idiomas_titulo": "7 langues",
-      "idiomas_desc": "Disponible en espagnol, anglais, allemand, français, italien, portugais et coréen. Le guide du Chemin de Santiago pour les pèlerins du monde entier.",
       "albergues_titulo": "Tous les gîtes du Chemin",
       "albergues_desc": "Répertoire complet des gîtes avec places disponibles, tarifs, services et informations de contact à jour.",
       "pois_titulo": "Points d'intérêt et altitude",
       "pois_desc": "Cartes détaillées avec profil d'altitude, sources, gîtes, églises, restaurants et autres points d'intérêt le long de chaque étape.",
       "meteo_titulo": "Informations météorologiques",
-      "meteo_desc": "Prévisions météorologiques pour chaque étape avec données de température, précipitations et vent. Planifie ta journée avec des informations à jour."
+      "meteo_desc": "Prévisions météorologiques pour chaque étape avec données de température, précipitations et vent. Planifie ta journée avec des informations à jour.",
+      "idiomas_desc": "Disponible en español, inglés, alemán, francés, italiano, portugués y coreano. La guía del Camino de Santiago para peregrinos de todo el mundo."
     },
     "mapa": {
       "explorar": "Explorer",
-      "titulo": "Le Chemin Français",
-      "subtitulo": "825 km · 34 étapes · Saint-Jean → Santiago",
       "ver_etapas": "Voir les étapes →",
       "toca_explorar": "Appuyez pour explorer",
       "cargando_etapas": "Chargement des étapes...",
       "tu_posicion": "Votre position",
-      "sectores": "Chemin Français · Secteurs",
       "etapa": "Étape",
       "aqui": "ici",
       "cargando": "Chargement du Chemin...",
@@ -279,7 +332,10 @@
       "subida": "Montée",
       "bajada": "Descente",
       "ver_ficha": "Voir la fiche complète",
-      "variante": "Variante"
+      "variante": "Variante",
+      "titulo": "Le Camino Francés",
+      "subtitulo": "825 km · 34 etapas · Saint-Jean → Santiago",
+      "sectores": "Camino Francés · Sectores"
     },
     "cta_final": {
       "eyebrow": "Commence ton Chemin",
@@ -293,8 +349,11 @@
   "landing": {
     "siente_el": "Ressens le",
     "camino": "Chemin.",
-    "subtitulo": "Planifie, explore et vis le Chemin de Santiago",
-    "descubre": "Découvrir le Chemin"
+    "descubre": "Découvrir le Chemin",
+    "chat_titulo": "Parlez avec le Camino",
+    "chat_acento": "dans ta langue",
+    "chat_desc": "Posez des questions à l'hospitalero avant votre arrivée, consultez d'autres pèlerins sur l'état des étapes et communiquez avec les commerces du Camino. Tout traduit automatiquement dans ta langue, en temps réel.",
+    "subtitulo": "Planifiez, explorez et vivez le Camino de Santiago"
   },
   "etapa": {
     "mapa": "Carte de l'étape",
@@ -352,7 +411,6 @@
       "precipitacion": "Précipitations",
       "viento": "Vent maximal",
       "prob": "Prob.",
-      "fuente": "Open-Meteo · prévision jusqu'à 16 jours",
       "error": "Impossible de charger la prévision météorologique",
       "cargando": "Chargement de la prévision…",
       "dias": [
@@ -398,7 +456,8 @@
         "ligera": "Légère",
         "moderada": "Modérée",
         "intensa": "Intense"
-      }
+      },
+      "fuente": "Open-Meteo · previsión hasta 16 días"
     }
   },
   "interactions": {
@@ -452,7 +511,6 @@
     "toca_explorar": "Appuie pour explorer",
     "cargando_etapas": "Chargement des étapes...",
     "tu_posicion": "Ta position",
-    "sectores": "Chemin Français · Secteurs",
     "etapa": "Étape",
     "aqui": "ici",
     "cargando": "Chargement du Chemin...",
@@ -470,6 +528,7 @@
     "subida": "Montée",
     "bajada": "Descente",
     "ver_ficha": "Voir la fiche complète",
-    "variante": "Variante"
+    "variante": "Variante",
+    "sectores": "Camino Francés · Sectores"
   }
 }
