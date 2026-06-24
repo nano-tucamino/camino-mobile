@@ -19,7 +19,8 @@ interface Props {
   mensaje: Mensaje;
   esMio: boolean;
   onReply?: (mensaje: Mensaje) => void;
-  onAvatarPress?: (autorId: string) => void; // ← nuevo
+  onAvatarPress?: (autorId: string) => void;
+  userId?: string;
 }
 
 export function MessageBubble({
@@ -27,9 +28,27 @@ export function MessageBubble({
   esMio,
   onReply,
   onAvatarPress,
+  userId,
 }: Props) {
   const locale = i18n.language ?? "en";
   const [mostrarOriginal, setMostrarOriginal] = useState(false);
+  const [reportado, setReportado] = useState(false);
+
+  const handleReportar = async () => {
+    if (reportado || !userId) return;
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      await supabase.from("reportes").insert({
+        reporter_id: userId,
+        tipo: "mensaje",
+        entidad_id: mensaje.id,
+      });
+      setReportado(true);
+    } catch (e) {
+      console.error("Error al reportar:", e);
+    }
+  };
+
   const autor = normalizeAutor(mensaje.autor);
 
   const textoMostrado = mostrarOriginal
@@ -104,6 +123,22 @@ export function MessageBubble({
             </TouchableOpacity>
           )}
           <View style={styles.footerRight}>
+            {!esMio && userId && (
+              <TouchableOpacity
+                onPress={handleReportar}
+                disabled={reportado}
+                style={styles.replyBtn}
+              >
+                <Text
+                  style={[
+                    styles.replyIcon,
+                    { color: reportado ? "#ccc" : "#c0392b", opacity: 1 },
+                  ]}
+                >
+                  {reportado ? "✓" : "⚑"}
+                </Text>
+              </TouchableOpacity>
+            )}
             {onReply && (
               <TouchableOpacity
                 onPress={() => onReply(mensaje)}

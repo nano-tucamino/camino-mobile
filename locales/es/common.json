@@ -473,6 +473,7 @@
   "interactions": {
     "comentarios": {
       "titulo": "Comentarios",
+      "reportar": "Reportar",
       "cargando": "Cargando comentarios...",
       "primero": "Sé el primero en comentar esta etapa.",
       "placeholder_respuesta": "Escribe tu respuesta...",

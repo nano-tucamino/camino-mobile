@@ -174,6 +174,7 @@ export default function CanalChat({
               esMio={item.autor_id === user?.id}
               onReply={setReplyTo}
               onAvatarPress={user ? handleAvatarPress : undefined}
+              userId={user?.id}
             />
           )}
           ListHeaderComponent={

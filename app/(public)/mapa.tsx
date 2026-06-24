@@ -9,6 +9,7 @@ import {
   Animated,
   ScrollView,
   Modal,
+  Image,
 } from "react-native";
 import Mapbox, {
   MapView,
@@ -20,6 +21,7 @@ import Mapbox, {
   UserLocation,
   UserLocationRenderMode,
   UserTrackingMode,
+  MarkerView,
 } from "@rnmapbox/maps";
 import * as Location from "expo-location";
 import { useLocalSearchParams, router } from "expo-router";
@@ -404,9 +406,15 @@ export default function MapaScreen() {
   const marcadoresAlbergues: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",
     features: (marcadores?.features ?? []).filter(
-      (f) => f.properties?._layer === "albergue",
+      (f) =>
+        f.properties?._layer === "albergue" && f.properties?.plan !== "premium",
     ),
   };
+
+  const marcadoresPremium = (marcadores?.features ?? []).filter(
+    (f) =>
+      f.properties?._layer === "albergue" && f.properties?.plan === "premium",
+  );
 
   const marcadoresPois: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",
@@ -471,10 +479,9 @@ export default function MapaScreen() {
             modoSeguimiento ? UserTrackingMode.FollowWithCourse : undefined
           }
           followZoomLevel={modoSeguimiento ? 15 : undefined}
-          followHeading={modoSeguimiento ? headingSmoothed : undefined}
         />
         {gpsActivo && permisoGPS && (
-          <UserLocation visible renderMode={UserLocationRenderMode.Native} />
+          <UserLocation visible showsUserHeadingIndicator />
         )}
 
         {(recorrido?.features.length ?? 0) > 0 && (
@@ -673,6 +680,52 @@ export default function MapaScreen() {
             />
           </ShapeSource>
         )}
+
+        {marcadoresPremium.map((f) => {
+          const coords = (f.geometry as any).coordinates;
+          const p = f.properties!;
+          return (
+            <MarkerView
+              key={p.id}
+              coordinate={[coords[0], coords[1]]}
+              anchor={{ x: 0.5, y: 1 }}
+            >
+              <TouchableOpacity
+                onPress={() =>
+                  setAlbergueSeleccionado({
+                    nombre: p.nombre,
+                    localidad: p.localidad,
+                    slug: p.slug,
+                    lat: coords[1],
+                    lng: coords[0],
+                  })
+                }
+                style={styles.markerPremium}
+              >
+                {p.foto_url ? (
+                  <Image
+                    source={{ uri: p.foto_url }}
+                    style={styles.markerPremiumFoto}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View style={styles.markerPremiumFotoFallback}>
+                    <Text style={{ fontSize: 18 }}>🏠</Text>
+                  </View>
+                )}
+                <View style={styles.markerPremiumLabel}>
+                  <Text style={styles.markerPremiumNombre} numberOfLines={1}>
+                    {p.nombre}
+                  </Text>
+                  <Text style={styles.markerPremiumPrecio}>
+                    {p.precio_cama}
+                  </Text>
+                </View>
+                <View style={styles.markerPremiumPunta} />
+              </TouchableOpacity>
+            </MarkerView>
+          );
+        })}
       </MapView>
 
       {/* Botones GPS */}
@@ -1269,4 +1322,51 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   popupBtnNavText: { fontSize: 13, fontWeight: "700", color: "#1a1a1a" },
+
+  markerPremium: {
+    width: 140,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 6,
+    borderWidth: 2,
+    borderColor: "#F5C842",
+  },
+  markerPremiumFoto: {
+    width: "100%",
+    height: 80,
+  },
+  markerPremiumFotoFallback: {
+    width: "100%",
+    height: 80,
+    backgroundColor: "#F5F0E8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  markerPremiumLabel: {
+    padding: 6,
+  },
+  markerPremiumNombre: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#1a1a1a",
+  },
+  markerPremiumPrecio: {
+    fontSize: 11,
+    color: "#C8A96E",
+    marginTop: 1,
+  },
+  markerPremiumPunta: {
+    width: 12,
+    height: 12,
+    backgroundColor: "#F5C842",
+    transform: [{ rotate: "45deg" }],
+    alignSelf: "center",
+    marginTop: -6,
+    marginBottom: 3,
+  },
 });

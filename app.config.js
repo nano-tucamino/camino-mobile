@@ -51,8 +51,8 @@ export default {
       [
         "expo-location",
         {
-          locationAlwaysAndWhenInUsePermission:
-            "Allow $(PRODUCT_NAME) to access your location even when you are not using the app.",
+          locationWhenInUsePermission:
+            "Allow $(PRODUCT_NAME) to use your location to show your position on the Camino map.",
         },
       ],
     ],

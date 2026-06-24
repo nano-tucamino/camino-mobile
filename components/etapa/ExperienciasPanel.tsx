@@ -259,6 +259,23 @@ function ComentarioItem({
   const [editando, setEditando] = useState(false);
   const [textoResp, setTextoResp] = useState("");
   const [textoEdit, setTextoEdit] = useState(comentario.texto);
+
+  const [reportado, setReportado] = useState(false);
+
+  const handleReportar = async () => {
+    if (reportado) return;
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      await supabase.from("reportes").insert({
+        reporter_id: userId,
+        tipo: "comentario",
+        entidad_id: comentario.id,
+      });
+      setReportado(true);
+    } catch (e) {
+      console.error("Error al reportar:", e);
+    }
+  };
   const esMio = userId === comentario.autor_id;
   const nombre = comentario.autor?.nombre_display ?? "Peregrino";
 
@@ -335,7 +352,9 @@ function ComentarioItem({
                 value={textoEdit}
                 onChangeText={setTextoEdit}
                 multiline
+                autoFocus
                 style={ci.textarea}
+                scrollEnabled={false}
               />
               <View style={{ flexDirection: "row", gap: 8, marginTop: 6 }}>
                 <TouchableOpacity
@@ -395,6 +414,20 @@ function ComentarioItem({
                   </TouchableOpacity>
                 </>
               )}
+              {!esMio && userId && (
+                <TouchableOpacity onPress={handleReportar} disabled={reportado}>
+                  <Text
+                    style={[
+                      ci.action,
+                      { color: reportado ? TEXTO_SOFT : "#c0392b" },
+                    ]}
+                  >
+                    {reportado
+                      ? "✓ Reportado"
+                      : t("interactions.comentarios.reportar")}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           )}
 
@@ -408,6 +441,8 @@ function ComentarioItem({
                 )}
                 placeholderTextColor="#A09080"
                 multiline
+                autoFocus
+                scrollEnabled={false}
                 style={ci.textarea}
               />
               <View style={{ flexDirection: "row", gap: 8, marginTop: 6 }}>

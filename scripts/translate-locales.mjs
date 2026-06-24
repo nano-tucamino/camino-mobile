@@ -22,57 +22,7 @@ const LANGUAGES = {
 
 // Claves que contienen "Camino" o "Camino Francés" y fueron mal traducidas
 // Se fuerza retraducción en TODOS los idiomas incluyendo inglés
-const CLAVES_A_CORREGIR = [
-  "hero.titulo",
-  "hero.subtitulo",
-  "hero.cta",
-  "hero.vive_el",
-  "hero.camino",
-  "hero.explorar_etapas",
-  "hero.ver_albergues",
-  "hero.stats.km_label",
-  "etapas.subtitulo",
-  "etapas.completado",
-  "albergues.subtitulo",
-  "auth.login.subtitulo_email",
-  "auth.registro_page.titulo_paso1",
-  "auth.registro_page.bienvenido",
-  "auth.registro_page.comenzar",
-  "auth.registro_page.titulo_paso2",
-  "auth.registro_page.subtitulo_paso2",
-  "auth.confirmar.descripcion",
-  "perfil.bio_placeholder",
-  "perfil.como_haces",
-  "perfil.con_quien",
-  "perfil.como_organizas",
-  "perfil.cuantas_veces",
-  "perfil.camino_label",
-  "perfil.empty_camino",
-  "perfil.tabs.camino",
-  "home.features.idiomas_desc",
-  "home.features.albergues_titulo",
-  "home.features.albergues_desc",
-  "home.mapa.titulo",
-  "home.mapa.subtitulo",
-  "home.mapa.sectores",
-  "home.mapa.cargando",
-  "home.mapa.negocios",
-  "home.cta_final.eyebrow",
-  "home.cta_final.titulo",
-  "home.cta_final.descripcion",
-  "home.cta_final.nota",
-  "landing.siente_el",
-  "landing.camino",
-  "landing.subtitulo",
-  "landing.chat_titulo",
-  "landing.chat_desc",
-  "landing.descubre",
-  "mapa.sectores",
-  "mapa.cargando",
-  "mapa.negocios",
-  "etapa.meteo.fuente",
-  "interactions.panel.banner_texto",
-];
+const CLAVES_A_CORREGIR = []; // Corrección ya aplicada — dejar vacío
 
 const GLOSSARY = `
 TRANSLATION RULES for this Camino de Santiago pilgrimage app:
@@ -103,7 +53,7 @@ IMPORTANT: Return ONLY valid JSON, same keys, no markdown, no explanation.
 `;
 
 const source = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "../locales/es/common.json"), "utf8")
+  fs.readFileSync(path.join(__dirname, "../locales/es/common.json"), "utf8"),
 );
 
 function flattenKeys(obj, prefix = "") {
@@ -192,7 +142,9 @@ async function translate(langCode, langName) {
   }
 
   if (corregidas > 0) {
-    console.log(`   🔧 Retraducciendo ${corregidas} claves con el glosario correcto...`);
+    console.log(
+      `   🔧 Retraducciendo ${corregidas} claves con el glosario correcto...`,
+    );
     const BLOCK_SIZE = 40;
     const entries = Object.entries(clavesARetraducir);
     for (let i = 0; i < entries.length; i += BLOCK_SIZE) {
@@ -208,7 +160,9 @@ async function translate(langCode, langName) {
   const newKeys = getNewKeys(source, target);
 
   if (Object.keys(newKeys).length > 0) {
-    console.log(`   📝 Traduciendo ${Object.keys(newKeys).length} claves nuevas...`);
+    console.log(
+      `   📝 Traduciendo ${Object.keys(newKeys).length} claves nuevas...`,
+    );
     const BLOCK_SIZE = 50;
     const entries = Object.entries(newKeys);
     for (let i = 0; i < entries.length; i += BLOCK_SIZE) {

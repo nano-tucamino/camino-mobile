@@ -1798,6 +1798,41 @@ export type Database = {
         };
         Relationships: [];
       };
+      reportes: {
+        Row: {
+          created_at: string | null;
+          entidad_id: string;
+          id: string;
+          motivo: string | null;
+          reporter_id: string | null;
+          tipo: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          entidad_id: string;
+          id?: string;
+          motivo?: string | null;
+          reporter_id?: string | null;
+          tipo: string;
+        };
+        Update: {
+          created_at?: string | null;
+          entidad_id?: string;
+          id?: string;
+          motivo?: string | null;
+          reporter_id?: string | null;
+          tipo?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reportes_reporter_id_fkey";
+            columns: ["reporter_id"];
+            isOneToOne: false;
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       retos_completados: {
         Row: {
           comentario: string | null;
@@ -2035,6 +2070,7 @@ export type Database = {
       albergues_con_coords: {
         Args: { p_etapa_id: string };
         Returns: {
+          foto_url: string;
           id: string;
           lat: number;
           lng: number;
