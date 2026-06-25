@@ -275,7 +275,8 @@
       "camino": "Camino",
       "resenas": "Reseñas",
       "fotos": "Fotos",
-      "config": "Config"
+      "config": "Config",
+      "checkin": "Check-in"
     },
     "transporte": {
       "a_pie": "A pie",
@@ -296,8 +297,42 @@
       "etapas_fds_sub": "Etapas en días sueltos",
       "etapas_sueltas": "Etapas sueltas",
       "etapas_sueltas_sub": "Sin orden ni continuidad"
+    },
+
+    "checkin": {
+      "titulo": "Check-in sin papeles",
+      "descripcion": "Rellena tus datos de viaje una sola vez. Al llegar a cualquier albergue, el hospitalero escanea tu QR y te registra al instante. Tus datos son privados y nunca se comparten sin tu permiso.",
+      "aviso_privacidad": "Tus datos se almacenan de forma segura. Solo tú puedes verlos. Solo se comparten en el momento en que muestras tu QR al hospitalero.",
+      "seccion_personal": "Datos personales",
+      "seccion_documento": "Documento de identidad",
+      "seccion_contacto": "Contacto y residencia",
+      "nombre": "Nombre",
+      "apellidos": "Apellidos",
+      "sexo": "Sexo",
+      "sexo_m": "Hombre",
+      "sexo_f": "Mujer",
+      "sexo_x": "No especificado",
+      "fecha_nacimiento": "Fecha de nacimiento",
+      "nacionalidad": "Nacionalidad",
+      "tipo_documento": "Tipo de documento",
+      "tipo_dni": "DNI",
+      "tipo_pasaporte": "Pasaporte",
+      "tipo_nie": "NIE",
+      "tipo_otro": "Otro",
+      "numero_documento": "Número de documento",
+      "numero_soporte": "Número de soporte",
+      "numero_soporte_ayuda": "Código alfanumérico del reverso del DNI o parte inferior del pasaporte",
+      "direccion_residencia": "Dirección de residencia habitual",
+      "telefono": "Teléfono (con prefijo internacional)",
+      "guardar": "Guardar datos de viaje",
+      "guardado_ok": "Datos guardados correctamente",
+      "mi_qr": "Mi QR de check-in",
+      "qr_desc": "Muestra este código al llegar al albergue. El hospitalero lo escanea y te registra al instante.",
+      "qr_incompleto": "Completa todos los campos obligatorios (*) para generar tu QR de check-in.",
+      "agrandar_qr": "Ver QR a pantalla completa"
     }
   },
+
   "general": {
     "cargando": "Cargando...",
     "error": "Algo fue mal",

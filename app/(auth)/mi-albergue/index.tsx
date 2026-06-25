@@ -1,5 +1,6 @@
 // 📄 apps/camino-mobile/app/(auth)/mi-albergue/index.tsx
 import { useState, useEffect } from "react";
+import TabRegistro from "@/components/albergue/TabRegistro";
 import {
   View,
   Text,
@@ -75,6 +76,7 @@ const SERVICIOS_CONFIG = [
 type TabKey =
   | "estado"
   | "info"
+  | "registro"
   | "servicios"
   | "fotos"
   | "cierre"
@@ -84,7 +86,8 @@ type TabKey =
 const TABS: { key: TabKey; label: string }[] = [
   { key: "estado", label: "Estado" },
   { key: "info", label: "Info" },
-  { key: "ubicacion_mapa", label: "Ubicación" }, // ← nuevo
+  { key: "registro", label: "Registro" },
+  { key: "ubicacion_mapa", label: "Ubicación" },
   { key: "servicios", label: "Servicios" },
   { key: "fotos", label: "Fotos" },
   { key: "cierre", label: "Cierre" },
@@ -767,6 +770,12 @@ export default function MiAlbergueScreen() {
             </View>
           </View>
         )}
+
+        {/* REGISTRO DE PEREGRINOS TAB REGISTRO */}
+        {activeTab === "registro" && (
+          <TabRegistro token={token ?? ""} albergueNombre={albergue.nombre} />
+        )}
+
         {/* ─ UBICACIÓN ─ */}
         {activeTab === "ubicacion_mapa" && (
           <View>

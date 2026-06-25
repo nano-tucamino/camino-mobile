@@ -12,16 +12,19 @@ import {
   Alert,
   Platform,
   StatusBar,
-  Pressable,
+  Modal,
+  Dimensions,
 } from "react-native";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
+import QRCode from "react-native-qrcode-svg";
 import { apiGet, apiPut, apiPost, apiDelete } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 
 const STATUS_BAR_HEIGHT =
   Platform.OS === "ios" ? 50 : (StatusBar.currentHeight ?? 24);
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 // ─── Colores ──────────────────────────────────────────────────
 const C = {
@@ -43,7 +46,7 @@ const C = {
 } as const;
 
 // ─── Tipos ────────────────────────────────────────────────────
-type TabKey = "perfil" | "camino" | "resenas" | "config";
+type TabKey = "perfil" | "camino" | "resenas" | "checkin" | "config";
 
 interface Perfil {
   id: string;
@@ -83,6 +86,19 @@ interface Comentario {
   created_at: string;
 }
 
+interface RegistroViaje {
+  nombre: string;
+  apellidos: string;
+  sexo: string;
+  fecha_nacimiento: string;
+  nacionalidad: string;
+  tipo_documento: string;
+  numero_documento: string;
+  numero_soporte: string;
+  direccion_residencia: string;
+  telefono: string;
+}
+
 // ─── Constantes ───────────────────────────────────────────────
 const TRANSPORTES = [
   { value: "a_pie", icon: "🥾" },
@@ -110,54 +126,45 @@ const MODOS = [
 
 const IDIOMAS = ["es", "en", "de", "fr", "it", "pt", "ko", "ja"];
 
+const TIPOS_DOCUMENTO = ["DNI", "PASAPORTE", "NIE", "OTRO"];
+const SEXOS = [
+  { value: "M", labelKey: "sexo_m" },
+  { value: "F", labelKey: "sexo_f" },
+  { value: "X", labelKey: "sexo_x" },
+];
+
+const REGISTRO_VACIO: RegistroViaje = {
+  nombre: "",
+  apellidos: "",
+  sexo: "",
+  fecha_nacimiento: "",
+  nacionalidad: "",
+  tipo_documento: "DNI",
+  numero_documento: "",
+  numero_soporte: "",
+  direccion_residencia: "",
+  telefono: "",
+};
+
 function ordinalCamino(n: number, t: any): string {
   if (n <= 1) return t("perfil.primera_vez");
   return `${n}º ${t("perfil.camino_label")}`;
 }
 
-// ─── Componentes auxiliares ───────────────────────────────────
-
-function Avatar({
-  nombre,
-  avatarUrl,
-  size = 72,
-}: {
-  nombre: string | null;
-  avatarUrl: string | null;
-  size?: number;
-}) {
-  const inicial = (nombre ?? "P")[0].toUpperCase();
-  return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size / 2,
-        backgroundColor: C.acento,
-        borderWidth: 3,
-        borderColor: "rgba(255,255,255,0.15)",
-        overflow: "hidden",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {avatarUrl ? (
-        <Image
-          source={{ uri: avatarUrl }}
-          style={{ width: size, height: size }}
-          resizeMode="cover"
-        />
-      ) : (
-        <Text
-          style={{ fontSize: size * 0.33, fontWeight: "700", color: C.blanco }}
-        >
-          {inicial}
-        </Text>
-      )}
-    </View>
+function registroCompleto(r: RegistroViaje): boolean {
+  return !!(
+    r.nombre &&
+    r.apellidos &&
+    r.sexo &&
+    r.fecha_nacimiento &&
+    r.nacionalidad &&
+    r.tipo_documento &&
+    r.numero_documento &&
+    r.direccion_residencia
   );
 }
 
+// ─── Componentes auxiliares ───────────────────────────────────
 function EmptyState({ texto }: { texto: string }) {
   return (
     <View
@@ -219,7 +226,7 @@ const pillS = StyleSheet.create({
 // ─── Pantalla principal ───────────────────────────────────────
 export default function PerfilScreen() {
   const { t, i18n } = useTranslation();
-  const { user, token, signOut, session } = useAuth();
+  const { session } = useAuth();
 
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [email, setEmail] = useState("");
@@ -231,10 +238,9 @@ export default function PerfilScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState("");
-
   const [activeTab, setActiveTab] = useState<TabKey>("perfil");
 
-  // Form state
+  // Perfil form
   const [nombre, setNombre] = useState("");
   const [bio, setBio] = useState("");
   const [nacionalidad, setNacionalidad] = useState("");
@@ -247,30 +253,37 @@ export default function PerfilScreen() {
   const [idioma, setIdioma] = useState(i18n.language ?? "en");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
+  // Registro viaje
+  const [registro, setRegistro] = useState<RegistroViaje>(REGISTRO_VACIO);
+  const [savingRegistro, setSavingRegistro] = useState(false);
+  const [qrVisible, setQrVisible] = useState(false);
+
   const TABS: { key: TabKey; label: string }[] = [
     { key: "perfil", label: t("perfil.tabs.perfil") },
     { key: "camino", label: t("perfil.tabs.camino") },
     { key: "resenas", label: t("perfil.tabs.resenas") },
+    { key: "checkin", label: t("perfil.tabs.checkin") },
     { key: "config", label: t("perfil.tabs.config") },
   ];
 
   useEffect(() => {
-    if (session) {
-      loadData();
-    }
+    if (session) loadData();
   }, [session]);
 
   async function loadData() {
     try {
-      const [perfilRes, etapasRes, comentariosRes] = await Promise.all([
-        apiGet<{ perfil: Perfil; email: string }>("/api/peregrino/perfil"),
-        apiGet<{ etapasCompletadas: EtapaCompletada[]; totalEtapas: number }>(
-          "/api/peregrino/perfil/etapas",
-        ),
-        apiGet<{ comentarios: Comentario[] }>(
-          "/api/peregrino/perfil/comentarios",
-        ),
-      ]);
+      const [perfilRes, etapasRes, comentariosRes, registroRes] =
+        await Promise.all([
+          apiGet<{ perfil: Perfil; email: string }>("/api/peregrino/perfil"),
+          apiGet<{ etapasCompletadas: EtapaCompletada[]; totalEtapas: number }>(
+            "/api/peregrino/perfil/etapas",
+          ),
+          apiGet<{ comentarios: Comentario[] }>(
+            "/api/peregrino/perfil/comentarios",
+          ),
+          apiGet<{ registro: RegistroViaje | null }>("/api/peregrino/registro"),
+        ]);
+
       setPerfil(perfilRes.perfil);
       setEmail(perfilRes.email ?? "");
       setNombre(perfilRes.perfil.nombre_display ?? "");
@@ -287,10 +300,20 @@ export default function PerfilScreen() {
       setTotalEtapas(etapasRes.totalEtapas ?? 34);
       setComentarios(comentariosRes.comentarios ?? []);
 
-      // Aplicar idioma guardado en perfil
       const idiomaGuardado = perfilRes.perfil.idioma_preferido ?? "es";
       setIdioma(idiomaGuardado);
       i18n.changeLanguage(idiomaGuardado);
+
+      if (registroRes.registro) {
+        setRegistro({ ...REGISTRO_VACIO, ...registroRes.registro });
+      } else {
+        // Pre-rellenar con datos del perfil
+        setRegistro((r) => ({
+          ...r,
+          nombre: perfilRes.perfil.nombre_display?.split(" ")[0] ?? "",
+          nacionalidad: perfilRes.perfil.nacionalidad ?? "",
+        }));
+      }
     } catch {
       Alert.alert(t("general.error"));
     } finally {
@@ -330,6 +353,24 @@ export default function PerfilScreen() {
     showSaved(ok ? t("perfil.guardar") : t("general.error"));
   }
 
+  async function handleGuardarRegistro() {
+    setSavingRegistro(true);
+    try {
+      await apiPost("/api/peregrino/registro", registro);
+      showSaved(t("perfil.checkin.guardado_ok"));
+    } catch {
+      Alert.alert(t("general.error"));
+    } finally {
+      setSavingRegistro(false);
+    }
+  }
+
+  function setReg(field: keyof RegistroViaje, value: string) {
+    setRegistro((r) => ({ ...r, [field]: value }));
+  }
+
+  const qrData = registroCompleto(registro) ? JSON.stringify(registro) : null;
+
   async function handlePickAvatar() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -339,7 +380,6 @@ export default function PerfilScreen() {
     });
     if (result.canceled) return;
     const uri = result.assets[0].uri;
-    // Subir a Cloudinary
     const formData = new FormData();
     formData.append("file", {
       uri,
@@ -373,7 +413,7 @@ export default function PerfilScreen() {
       {
         text: t("perfil.cerrar_sesion"),
         style: "destructive",
-        onPress: signOut,
+        onPress: () => {},
       },
     ]);
   }
@@ -422,12 +462,46 @@ export default function PerfilScreen() {
     .map((n) => n[0])
     .join("")
     .toUpperCase();
-
   const pctCamino = Math.round((etapasCompletadas.length / totalEtapas) * 100);
 
   return (
     <View style={{ flex: 1, backgroundColor: C.fondo }}>
       <StatusBar barStyle="light-content" />
+
+      {/* ── MODAL QR PANTALLA COMPLETA ── */}
+      <Modal
+        visible={qrVisible}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setQrVisible(false)}
+      >
+        <View style={s.qrModal}>
+          <TouchableOpacity
+            style={s.qrModalClose}
+            onPress={() => setQrVisible(false)}
+          >
+            <Text style={{ fontSize: 16, color: C.blanco, fontWeight: "600" }}>
+              ✕
+            </Text>
+          </TouchableOpacity>
+          <Text style={s.qrModalNombre}>
+            {registro.nombre} {registro.apellidos}
+          </Text>
+          <Text style={s.qrModalSub}>{t("perfil.checkin.qr_desc")}</Text>
+          <View style={s.qrModalBox}>
+            {qrData && (
+              <QRCode
+                value={qrData}
+                size={SCREEN_WIDTH * 0.7}
+                backgroundColor="white"
+              />
+            )}
+          </View>
+          <Text style={s.qrModalAviso}>
+            {t("perfil.checkin.aviso_privacidad")}
+          </Text>
+        </View>
+      </Modal>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -441,7 +515,6 @@ export default function PerfilScreen() {
               <Text style={s.savedText}>{savedMsg}</Text>
             </View>
           )}
-
           <TouchableOpacity
             onPress={handlePickAvatar}
             activeOpacity={0.8}
@@ -462,7 +535,6 @@ export default function PerfilScreen() {
               </View>
             </View>
           </TouchableOpacity>
-
           <Text style={s.headerNombre}>
             {perfil.nombre_display ?? t("perfil.peregrino")}
           </Text>
@@ -472,7 +544,6 @@ export default function PerfilScreen() {
             </Text>
           )}
           <Text style={s.headerEmail}>{email}</Text>
-
           <View style={s.statsRow}>
             {[
               {
@@ -512,7 +583,6 @@ export default function PerfilScreen() {
           {/* ── TAB PERFIL ── */}
           {activeTab === "perfil" && (
             <View style={{ gap: 16 }}>
-              {/* Nombre + bio */}
               <View style={s.card}>
                 <Text style={s.fieldLabel}>{t("perfil.nombre")}</Text>
                 <TextInput
@@ -533,8 +603,6 @@ export default function PerfilScreen() {
                   style={[s.input, { minHeight: 72, textAlignVertical: "top" }]}
                 />
               </View>
-
-              {/* Origen */}
               <View style={s.card}>
                 <View style={{ flexDirection: "row", gap: 12 }}>
                   <View style={{ flex: 1 }}>
@@ -561,8 +629,6 @@ export default function PerfilScreen() {
                   </View>
                 </View>
               </View>
-
-              {/* Transporte */}
               <View style={s.card}>
                 <Text style={s.fieldLabel}>{t("perfil.como_haces")}</Text>
                 <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
@@ -599,8 +665,6 @@ export default function PerfilScreen() {
                   />
                 )}
               </View>
-
-              {/* Con quién */}
               <View style={s.card}>
                 <Text style={s.fieldLabel}>{t("perfil.con_quien")}</Text>
                 <View
@@ -623,8 +687,6 @@ export default function PerfilScreen() {
                   ))}
                 </View>
               </View>
-
-              {/* Cómo organizas */}
               <View style={s.card}>
                 <Text style={s.fieldLabel}>{t("perfil.como_organizas")}</Text>
                 <View style={{ gap: 8, marginTop: 8 }}>
@@ -655,8 +717,6 @@ export default function PerfilScreen() {
                   ))}
                 </View>
               </View>
-
-              {/* Cuántas veces */}
               <View style={s.card}>
                 <Text style={s.fieldLabel}>{t("perfil.cuantas_veces")}</Text>
                 <View
@@ -693,7 +753,6 @@ export default function PerfilScreen() {
                   </TouchableOpacity>
                 </View>
               </View>
-
               <TouchableOpacity
                 onPress={handleGuardarPerfil}
                 disabled={saving}
@@ -709,7 +768,6 @@ export default function PerfilScreen() {
           {/* ── TAB CAMINO ── */}
           {activeTab === "camino" && (
             <View style={{ gap: 12 }}>
-              {/* Barra progreso */}
               <View style={s.card}>
                 <View
                   style={{
@@ -746,7 +804,6 @@ export default function PerfilScreen() {
                   {t("perfil.etapas_restantes")}
                 </Text>
               </View>
-
               {etapasCompletadas.length === 0 ? (
                 <EmptyState texto={t("perfil.empty_camino")} />
               ) : (
@@ -763,11 +820,7 @@ export default function PerfilScreen() {
                         <Text style={s.etapaFecha}>
                           {new Date(ec.fecha).toLocaleDateString(
                             i18n.language,
-                            {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                            },
+                            { day: "numeric", month: "long", year: "numeric" },
                           )}
                         </Text>
                       )}
@@ -836,11 +889,7 @@ export default function PerfilScreen() {
                       >
                         {new Date(c.fecha_visita).toLocaleDateString(
                           i18n.language,
-                          {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          },
+                          { day: "numeric", month: "long", year: "numeric" },
                         )}
                       </Text>
                     )}
@@ -850,10 +899,287 @@ export default function PerfilScreen() {
             </View>
           )}
 
+          {/* ── TAB CHECK-IN ── */}
+          {activeTab === "checkin" && (
+            <View style={{ gap: 16 }}>
+              {/* Explicación */}
+              <View
+                style={[s.card, { borderColor: C.acento, borderWidth: 1.5 }]}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "700",
+                    color: C.tinta,
+                    marginBottom: 8,
+                  }}
+                >
+                  🏨 {t("perfil.checkin.titulo")}
+                </Text>
+                <Text
+                  style={{ fontSize: 13, color: C.tintaSoft, lineHeight: 20 }}
+                >
+                  {t("perfil.checkin.descripcion")}
+                </Text>
+              </View>
+
+              {/* QR — visible solo si datos completos */}
+              {qrData ? (
+                <View style={s.card}>
+                  <Text style={s.fieldLabel}>{t("perfil.checkin.mi_qr")}</Text>
+                  <View style={{ alignItems: "center", paddingVertical: 16 }}>
+                    <QRCode value={qrData} size={180} backgroundColor="white" />
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: C.tintaSoft,
+                      textAlign: "center",
+                      marginBottom: 12,
+                    }}
+                  >
+                    {t("perfil.checkin.qr_desc")}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setQrVisible(true)}
+                    style={s.btnSecondary}
+                  >
+                    <Text style={s.btnSecondaryText}>
+                      ⛶ {t("perfil.checkin.agrandar_qr")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View style={[s.card, { backgroundColor: C.fondo2 }]}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: C.tintaSoft,
+                      textAlign: "center",
+                      lineHeight: 20,
+                    }}
+                  >
+                    {t("perfil.checkin.qr_incompleto")}
+                  </Text>
+                </View>
+              )}
+
+              {/* Formulario */}
+              {/* Sección: Datos personales */}
+              <Text style={s.seccionLabel}>
+                {t("perfil.checkin.seccion_personal")}
+              </Text>
+
+              <View style={s.card}>
+                <Text style={s.fieldLabel}>{t("perfil.checkin.nombre")} *</Text>
+                <TextInput
+                  value={registro.nombre}
+                  onChangeText={(v) => setReg("nombre", v)}
+                  style={s.input}
+                  placeholderTextColor={C.piedraDark}
+                  placeholder={t("perfil.checkin.nombre")}
+                />
+
+                <Text style={[s.fieldLabel, { marginTop: 12 }]}>
+                  {t("perfil.checkin.apellidos")} *
+                </Text>
+                <TextInput
+                  value={registro.apellidos}
+                  onChangeText={(v) => setReg("apellidos", v)}
+                  style={s.input}
+                  placeholderTextColor={C.piedraDark}
+                  placeholder={t("perfil.checkin.apellidos")}
+                />
+
+                <Text style={[s.fieldLabel, { marginTop: 12 }]}>
+                  {t("perfil.checkin.sexo")} *
+                </Text>
+                <View style={{ flexDirection: "row", gap: 8, marginTop: 6 }}>
+                  {SEXOS.map((sx) => (
+                    <TouchableOpacity
+                      key={sx.value}
+                      onPress={() => setReg("sexo", sx.value)}
+                      activeOpacity={0.7}
+                      style={[
+                        pillS.base,
+                        registro.sexo === sx.value && pillS.active,
+                        {
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          pillS.text,
+                          registro.sexo === sx.value && pillS.textActive,
+                        ]}
+                      >
+                        {t(`perfil.checkin.${sx.labelKey}`)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <Text style={[s.fieldLabel, { marginTop: 12 }]}>
+                  {t("perfil.checkin.fecha_nacimiento")} *
+                </Text>
+                <TextInput
+                  value={registro.fecha_nacimiento}
+                  onChangeText={(v) => setReg("fecha_nacimiento", v)}
+                  style={s.input}
+                  placeholderTextColor={C.piedraDark}
+                  placeholder="YYYY-MM-DD"
+                  keyboardType="numeric"
+                />
+
+                <Text style={[s.fieldLabel, { marginTop: 12 }]}>
+                  {t("perfil.checkin.nacionalidad")} *
+                </Text>
+                <TextInput
+                  value={registro.nacionalidad}
+                  onChangeText={(v) => setReg("nacionalidad", v)}
+                  style={s.input}
+                  placeholderTextColor={C.piedraDark}
+                  placeholder="España"
+                />
+              </View>
+
+              {/* Sección: Documento */}
+              <Text style={s.seccionLabel}>
+                {t("perfil.checkin.seccion_documento")}
+              </Text>
+
+              <View style={s.card}>
+                <Text style={s.fieldLabel}>
+                  {t("perfil.checkin.tipo_documento")} *
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 8,
+                    marginTop: 6,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {TIPOS_DOCUMENTO.map((td) => (
+                    <TouchableOpacity
+                      key={td}
+                      onPress={() => setReg("tipo_documento", td)}
+                      activeOpacity={0.7}
+                      style={[
+                        pillS.base,
+                        registro.tipo_documento === td && pillS.active,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          pillS.text,
+                          registro.tipo_documento === td && pillS.textActive,
+                        ]}
+                      >
+                        {t(`perfil.checkin.tipo_${td.toLowerCase()}`)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <Text style={[s.fieldLabel, { marginTop: 12 }]}>
+                  {t("perfil.checkin.numero_documento")} *
+                </Text>
+                <TextInput
+                  value={registro.numero_documento}
+                  onChangeText={(v) => setReg("numero_documento", v)}
+                  style={s.input}
+                  placeholderTextColor={C.piedraDark}
+                  placeholder="12345678X"
+                  autoCapitalize="characters"
+                />
+
+                <Text style={[s.fieldLabel, { marginTop: 12 }]}>
+                  {t("perfil.checkin.numero_soporte")}
+                </Text>
+                <TextInput
+                  value={registro.numero_soporte}
+                  onChangeText={(v) => setReg("numero_soporte", v)}
+                  style={s.input}
+                  placeholderTextColor={C.piedraDark}
+                  placeholder="AAA123456"
+                  autoCapitalize="characters"
+                />
+                <Text
+                  style={{ fontSize: 11, color: C.tintaSoft, marginTop: 4 }}
+                >
+                  {t("perfil.checkin.numero_soporte_ayuda")}
+                </Text>
+              </View>
+
+              {/* Sección: Contacto */}
+              <Text style={s.seccionLabel}>
+                {t("perfil.checkin.seccion_contacto")}
+              </Text>
+
+              <View style={s.card}>
+                <Text style={s.fieldLabel}>
+                  {t("perfil.checkin.direccion_residencia")} *
+                </Text>
+                <TextInput
+                  value={registro.direccion_residencia}
+                  onChangeText={(v) => setReg("direccion_residencia", v)}
+                  style={[s.input, { minHeight: 60, textAlignVertical: "top" }]}
+                  placeholderTextColor={C.piedraDark}
+                  placeholder="Calle, número, ciudad, país"
+                  multiline
+                />
+
+                <Text style={[s.fieldLabel, { marginTop: 12 }]}>
+                  {t("perfil.checkin.telefono")}
+                </Text>
+                <TextInput
+                  value={registro.telefono}
+                  onChangeText={(v) => setReg("telefono", v)}
+                  style={s.input}
+                  placeholderTextColor={C.piedraDark}
+                  placeholder="+34 600 000 000"
+                  keyboardType="phone-pad"
+                />
+              </View>
+
+              {/* Aviso privacidad */}
+              <View
+                style={{ flexDirection: "row", gap: 8, paddingHorizontal: 4 }}
+              >
+                <Text style={{ fontSize: 11 }}>🔒</Text>
+                <Text
+                  style={{
+                    fontSize: 11,
+                    color: C.tintaSoft,
+                    lineHeight: 16,
+                    flex: 1,
+                  }}
+                >
+                  {t("perfil.checkin.aviso_privacidad")}
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={handleGuardarRegistro}
+                disabled={savingRegistro}
+                style={[s.btnPrimary, savingRegistro && { opacity: 0.6 }]}
+              >
+                <Text style={s.btnPrimaryText}>
+                  {savingRegistro
+                    ? t("perfil.guardando")
+                    : t("perfil.checkin.guardar")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* ── TAB CONFIG ── */}
           {activeTab === "config" && (
             <View style={{ gap: 12 }}>
-              {/* Idioma */}
               <View style={s.card}>
                 <Text style={s.fieldLabel}>{t("perfil.idioma_preferido")}</Text>
                 <View
@@ -882,8 +1208,6 @@ export default function PerfilScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
-
-              {/* Cuenta */}
               <View style={s.card}>
                 <Text style={s.fieldLabel}>{t("perfil.cuenta")}</Text>
                 <Text
@@ -902,16 +1226,10 @@ export default function PerfilScreen() {
                 <Text style={{ fontSize: 14, color: C.tinta }}>
                   {new Date(perfil.created_at).toLocaleDateString(
                     i18n.language,
-                    {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    },
+                    { day: "numeric", month: "long", year: "numeric" },
                   )}
                 </Text>
               </View>
-
-              {/* Sesión */}
               <View style={s.card}>
                 <Text style={s.fieldLabel}>{t("perfil.sesion")}</Text>
                 <TouchableOpacity
@@ -1005,7 +1323,6 @@ const s = StyleSheet.create({
     textAlign: "center",
   },
   statLabel: { fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 3 },
-
   tabsBar: {
     backgroundColor: C.blanco,
     borderBottomWidth: 1,
@@ -1020,9 +1337,7 @@ const s = StyleSheet.create({
   tabActive: { borderBottomColor: C.acento },
   tabText: { fontSize: 13, color: C.tintaSoft },
   tabTextActive: { color: C.acento, fontWeight: "600" },
-
   content: { padding: 16, maxWidth: 640 },
-
   card: {
     backgroundColor: C.blanco,
     borderRadius: 14,
@@ -1038,6 +1353,14 @@ const s = StyleSheet.create({
     letterSpacing: 0.8,
     marginBottom: 6,
   },
+  seccionLabel: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: C.tinta,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    paddingHorizontal: 4,
+  },
   input: {
     borderWidth: 1,
     borderColor: C.piedra,
@@ -1048,7 +1371,6 @@ const s = StyleSheet.create({
     color: C.tinta,
     backgroundColor: C.blanco,
   },
-
   transporteBtn: {
     padding: 12,
     borderRadius: 10,
@@ -1060,7 +1382,6 @@ const s = StyleSheet.create({
   },
   transporteBtnActive: { borderColor: C.acento, backgroundColor: C.acentoSoft },
   transporteLabel: { fontSize: 11, fontWeight: "500", color: C.tintaSoft },
-
   modoBtn: {
     padding: 14,
     borderRadius: 10,
@@ -1076,7 +1397,6 @@ const s = StyleSheet.create({
     marginBottom: 2,
   },
   modoSub: { fontSize: 11, color: C.tintaSoft },
-
   counterBtn: {
     width: 36,
     height: 36,
@@ -1095,7 +1415,6 @@ const s = StyleSheet.create({
     lineHeight: 32,
   },
   counterLabel: { fontSize: 11, color: C.tintaSoft, marginTop: 2 },
-
   progressBar: {
     height: 6,
     backgroundColor: C.piedra,
@@ -1104,7 +1423,6 @@ const s = StyleSheet.create({
     marginBottom: 6,
   },
   progressFill: { height: 6, backgroundColor: C.acento, borderRadius: 3 },
-
   etapaCard: {
     backgroundColor: C.blanco,
     borderRadius: 12,
@@ -1138,7 +1456,6 @@ const s = StyleSheet.create({
     marginTop: 4,
   },
   etapaKm: { fontSize: 12, color: C.tintaSoft, flexShrink: 0 },
-
   resenaTag: {
     fontSize: 11,
     fontWeight: "600",
@@ -1146,7 +1463,6 @@ const s = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-
   btnPrimary: {
     backgroundColor: C.acento,
     borderRadius: 10,
@@ -1173,4 +1489,44 @@ const s = StyleSheet.create({
     backgroundColor: C.blanco,
   },
   btnLogoutText: { color: C.rojo, fontSize: 14, fontWeight: "500" },
+  // QR Modal
+  qrModal: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.92)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  qrModalClose: {
+    position: "absolute",
+    top: 56,
+    right: 24,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  qrModalNombre: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: C.blanco,
+    marginBottom: 6,
+    textAlign: "center",
+  },
+  qrModalSub: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.5)",
+    marginBottom: 32,
+    textAlign: "center",
+  },
+  qrModalBox: { backgroundColor: C.blanco, borderRadius: 20, padding: 24 },
+  qrModalAviso: {
+    fontSize: 11,
+    color: "rgba(255,255,255,0.3)",
+    marginTop: 24,
+    textAlign: "center",
+    lineHeight: 16,
+  },
 });

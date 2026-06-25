@@ -1562,6 +1562,113 @@ export type Database = {
           },
         ];
       };
+      peregrino_estancias: {
+        Row: {
+          albergue_id: string;
+          created_at: string | null;
+          datos_peregrino: Json | null;
+          fecha_entrada: string;
+          fecha_salida: string | null;
+          id: string;
+          metodo_pago: string | null;
+          peregrino_id: string;
+        };
+        Insert: {
+          albergue_id: string;
+          created_at?: string | null;
+          datos_peregrino?: Json | null;
+          fecha_entrada: string;
+          fecha_salida?: string | null;
+          id?: string;
+          metodo_pago?: string | null;
+          peregrino_id: string;
+        };
+        Update: {
+          albergue_id?: string;
+          created_at?: string | null;
+          datos_peregrino?: Json | null;
+          fecha_entrada?: string;
+          fecha_salida?: string | null;
+          id?: string;
+          metodo_pago?: string | null;
+          peregrino_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "peregrino_estancias_albergue_id_fkey";
+            columns: ["albergue_id"];
+            isOneToOne: false;
+            referencedRelation: "albergues";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "peregrino_estancias_peregrino_id_fkey";
+            columns: ["peregrino_id"];
+            isOneToOne: false;
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      peregrino_registro_oficial: {
+        Row: {
+          apellidos: string;
+          created_at: string | null;
+          direccion_residencia: string;
+          fecha_nacimiento: string;
+          id: string;
+          nacionalidad: string;
+          nombre: string;
+          numero_documento: string;
+          numero_soporte: string | null;
+          perfil_id: string;
+          sexo: string | null;
+          telefono: string | null;
+          tipo_documento: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          apellidos: string;
+          created_at?: string | null;
+          direccion_residencia: string;
+          fecha_nacimiento: string;
+          id?: string;
+          nacionalidad: string;
+          nombre: string;
+          numero_documento: string;
+          numero_soporte?: string | null;
+          perfil_id: string;
+          sexo?: string | null;
+          telefono?: string | null;
+          tipo_documento: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          apellidos?: string;
+          created_at?: string | null;
+          direccion_residencia?: string;
+          fecha_nacimiento?: string;
+          id?: string;
+          nacionalidad?: string;
+          nombre?: string;
+          numero_documento?: string;
+          numero_soporte?: string | null;
+          perfil_id?: string;
+          sexo?: string | null;
+          telefono?: string | null;
+          tipo_documento?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "peregrino_registro_oficial_perfil_id_fkey";
+            columns: ["perfil_id"];
+            isOneToOne: true;
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       perfiles: {
         Row: {
           avatar_url: string | null;
