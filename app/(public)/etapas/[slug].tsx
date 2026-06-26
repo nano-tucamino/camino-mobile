@@ -306,7 +306,12 @@ export default function EtapaScreen() {
         />
 
         {/* TABS */}
-        <View style={g.tabsBar}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={g.tabsBar}
+          contentContainerStyle={{ flexDirection: "row" }}
+        >
           {TABS.map((tab) => (
             <TouchableOpacity
               key={tab}
@@ -328,7 +333,7 @@ export default function EtapaScreen() {
               )}
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
 
         <NavEtapas
           anterior={navegacion.anterior}
@@ -1730,6 +1735,8 @@ const ab = StyleSheet.create({
 });
 
 // ── NAVEGACIÓN ETAPAS ──
+// Sustituye el componente NavEtapas y sus estilos nv en [slug].tsx
+
 function NavEtapas({
   anterior,
   siguiente,
@@ -1749,52 +1756,72 @@ function NavEtapas({
   return (
     <View style={nv.container}>
       <View style={nv.row}>
+        {/* ── ANTERIOR ── */}
         {anterior ? (
           <TouchableOpacity
             style={nv.btn}
             onPress={() =>
               router.push(`/(public)/etapas/${anterior.slug}` as any)
             }
+            activeOpacity={0.85}
           >
-            <Text style={nv.arrow}>‹</Text>
-            <View>
-              <Text style={nv.label}>
+            <View style={nv.arrowCircle}>
+              <Text style={nv.arrowIcon}>‹</Text>
+            </View>
+            <View style={nv.textBlock}>
+              <Text style={nv.etapaLabel}>
                 {t("etapa.navegacion_etapa")} {anterior.numero}
               </Text>
-              <Text style={nv.nombre} numberOfLines={1}>
-                {anterior.inicio_nombre} →
+              <Text style={nv.etapaNombre} numberOfLines={2}>
+                {anterior.inicio_nombre}
+                {"\n"}
+                {anterior.fin_nombre}
               </Text>
             </View>
           </TouchableOpacity>
         ) : (
           <View style={{ flex: 1 }} />
         )}
+
+        {/* ── BADGE NÚMERO ── */}
         <View style={[nv.badge, { backgroundColor: color }]}>
           <Text style={nv.badgeText}>
             {numero > 34 ? `F${numero - 100}` : numero}
           </Text>
         </View>
+
+        {/* ── SIGUIENTE ── */}
         {siguiente ? (
           <TouchableOpacity
-            style={[nv.btn, { justifyContent: "flex-end" }]}
+            style={[nv.btn, { alignItems: "flex-end" }]}
             onPress={() =>
               router.push(`/(public)/etapas/${siguiente.slug}` as any)
             }
+            activeOpacity={0.85}
           >
-            <View style={{ alignItems: "flex-end" }}>
-              <Text style={nv.label}>
+            <View style={[nv.textBlock, { alignItems: "flex-end" }]}>
+              <Text style={nv.etapaLabel}>
                 {t("etapa.navegacion_etapa")} {siguiente.numero}
               </Text>
-              <Text style={nv.nombre} numberOfLines={1}>
-                → {siguiente.fin_nombre}
+              <Text
+                style={[nv.etapaNombre, { textAlign: "right" }]}
+                numberOfLines={2}
+              >
+                {siguiente.inicio_nombre}
+                {"\n"}
+                {siguiente.fin_nombre}
               </Text>
             </View>
-            <Text style={nv.arrow}>›</Text>
+            <View style={nv.arrowCircle}>
+              <Text style={nv.arrowIcon}>›</Text>
+            </View>
           </TouchableOpacity>
         ) : (
           <View style={{ flex: 1 }} />
         )}
       </View>
+
+      {/* ── VARIANTES SIGUIENTE ── */}
       {variantesSiguiente.length > 0 && (
         <View style={nv.variantesRow}>
           {variantesSiguiente.map((v) => (
@@ -1802,8 +1829,11 @@ function NavEtapas({
               key={v.slug}
               style={nv.varianteBtn}
               onPress={() => router.push(`/(public)/etapas/${v.slug}` as any)}
+              activeOpacity={0.85}
             >
-              <Text style={nv.varianteIcon}>↳</Text>
+              <View style={nv.varianteBadge}>
+                <Text style={nv.varianteBadgeText}>↳</Text>
+              </View>
               <View style={{ flex: 1 }}>
                 <Text style={nv.varianteLabel}>
                   {v.nombre_variante ?? t("etapas.variante")}
@@ -1812,11 +1842,13 @@ function NavEtapas({
                   {v.inicio_nombre} → {v.fin_nombre}
                 </Text>
               </View>
-              <Text style={nv.arrow}>›</Text>
+              <Text style={nv.varianteChev}>›</Text>
             </TouchableOpacity>
           ))}
         </View>
       )}
+
+      {/* ── VARIANTES ANTERIOR ── */}
       {variantesAnterior.length > 0 && (
         <View style={nv.variantesRow}>
           {variantesAnterior.map((v) => (
@@ -1824,8 +1856,9 @@ function NavEtapas({
               key={v.slug}
               style={nv.varianteBtn}
               onPress={() => router.push(`/(public)/etapas/${v.slug}` as any)}
+              activeOpacity={0.85}
             >
-              <Text style={nv.arrow}>‹</Text>
+              <Text style={nv.varianteChev}>‹</Text>
               <View style={{ flex: 1 }}>
                 <Text style={nv.varianteLabel}>
                   {v.nombre_variante ?? t("etapas.variante")}
@@ -1834,7 +1867,9 @@ function NavEtapas({
                   {v.inicio_nombre} → {v.fin_nombre}
                 </Text>
               </View>
-              <Text style={nv.varianteIcon}>↲</Text>
+              <View style={nv.varianteBadge}>
+                <Text style={nv.varianteBadgeText}>↲</Text>
+              </View>
             </TouchableOpacity>
           ))}
         </View>
@@ -1853,41 +1888,101 @@ const nv = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0EBE0",
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    gap: 8,
   },
-  btn: { flex: 1, flexDirection: "row", alignItems: "center", gap: 8 },
-  arrow: { fontSize: 26, color: "#8B7355" },
-  label: {
-    fontSize: 10,
+  btn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  // Círculo azul con flecha amarilla
+  arrowCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#1A3A6B",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    borderWidth: 2,
+    borderColor: "#2855A0",
+  },
+  arrowIcon: {
+    fontSize: 20,
+    color: "#F5C518",
+    fontWeight: "900",
+    marginTop: -1,
+    includeFontPadding: false,
+    textAlignVertical: "center",
+  },
+  textBlock: {
+    flex: 1,
+    gap: 2,
+  },
+  etapaLabel: {
+    fontSize: 9,
+    fontWeight: "700",
     color: "#8B7355",
     textTransform: "uppercase",
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
-  nombre: { fontSize: 12, fontWeight: "600", color: "#2C1F0E", maxWidth: 120 },
+  etapaNombre: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "#2C1F0E",
+    lineHeight: 15,
+  },
+  // Badge número central
   badge: {
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    marginHorizontal: 8,
+    flexShrink: 0,
   },
-  badgeText: { color: "white", fontSize: 14, fontWeight: "700" },
-  variantesRow: { paddingHorizontal: 16, paddingBottom: 10, gap: 6 },
+  badgeText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  // Variantes
+  variantesRow: {
+    paddingHorizontal: 12,
+    paddingBottom: 10,
+    gap: 6,
+    borderTopWidth: 1,
+    borderTopColor: "#F5F0E8",
+    paddingTop: 8,
+  },
   varianteBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    backgroundColor: "#F5F0E8",
-    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#F0EBF8",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#DDD0F0",
   },
-  varianteIcon: { fontSize: 14, color: "#7C3AED" },
+  varianteBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#7C3AED",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  varianteBadgeText: {
+    fontSize: 14,
+    color: "white",
+    fontWeight: "700",
+  },
   varianteLabel: {
     fontSize: 9,
     color: "#7C3AED",
@@ -1899,10 +1994,12 @@ const nv = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: "#2C1F0E",
-    maxWidth: 160,
+  },
+  varianteChev: {
+    fontSize: 18,
+    color: "#7C3AED",
   },
 });
-
 // ── ESTILOS GLOBALES ──
 const g = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#FAF7F2" },
@@ -1941,7 +2038,7 @@ const g = StyleSheet.create({
     borderBottomColor: "#F0EBE0",
   },
   tabBtn: {
-    flex: 1,
+    paddingHorizontal: 16,
     alignItems: "center",
     paddingVertical: 11,
     position: "relative",

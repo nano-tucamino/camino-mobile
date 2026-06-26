@@ -1,4 +1,4 @@
-// 📄 app/(public)/etapas.tsx
+// 📄 C:\Users\ferna\Documents\tucamino\camino-mobile\app\(public)\etapas\index.tsx
 import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
@@ -109,7 +109,7 @@ function SelloCamino({ lang }: { lang: string }) {
   const startAngle = -90 - totalAngle / 2;
 
   return (
-    <Svg width={72} height={72} viewBox="0 0 110 110">
+    <Svg width={52} height={52} viewBox="0 0 110 110">
       <Circle
         cx="55"
         cy="55"
@@ -598,7 +598,11 @@ const styles = StyleSheet.create({
     borderColor: PIEDRA,
     overflow: "hidden",
   },
-  cardCompletada: { borderColor: GOLD + "60", backgroundColor: "#FDFAF4" },
+  cardCompletada: {
+    borderColor: "#6B8F5E",
+    backgroundColor: "#F2F7F0",
+    borderWidth: 1.5,
+  },
   cardInner: {
     flexDirection: "row",
     alignItems: "center",
@@ -617,8 +621,8 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   numeroContainerCompletada: {
-    backgroundColor: GOLD + "22",
-    borderColor: GOLD + "60",
+    backgroundColor: "#6B8F5E22",
+    borderColor: "#6B8F5E60",
   },
   numeroText: {
     fontSize: 13,
@@ -626,7 +630,7 @@ const styles = StyleSheet.create({
     color: TINTA,
     letterSpacing: -0.5,
   },
-  numeroTextCompletada: { color: GOLD },
+  numeroTextCompletada: { color: "#6B8F5E" },
   cardContent: { flex: 1, gap: 6 },
   nombreText: {
     fontSize: 15,
@@ -664,5 +668,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  selloWrapper: { opacity: 0.82, transform: [{ rotate: "-18deg" }] },
+  // Sello más pequeño:
+  selloWrapper: { opacity: 0.75, transform: [{ rotate: "-18deg" }] },
 });
