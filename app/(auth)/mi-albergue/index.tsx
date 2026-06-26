@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
 import Mapbox, { MapView, Camera, PointAnnotation } from "@rnmapbox/maps";
+import TabHistorico from "@/components/albergue/TabHistorico";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN ?? "");
 
@@ -77,6 +78,7 @@ type TabKey =
   | "estado"
   | "info"
   | "registro"
+  | "historico"
   | "servicios"
   | "fotos"
   | "cierre"
@@ -87,6 +89,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "estado", label: "Estado" },
   { key: "info", label: "Info" },
   { key: "registro", label: "Registro" },
+  { key: "historico", label: "Histórico" },
   { key: "ubicacion_mapa", label: "Ubicación" },
   { key: "servicios", label: "Servicios" },
   { key: "fotos", label: "Fotos" },
@@ -775,6 +778,8 @@ export default function MiAlbergueScreen() {
         {activeTab === "registro" && (
           <TabRegistro token={token ?? ""} albergueNombre={albergue.nombre} />
         )}
+        {/* HISTORICO DE REGISTRO  */}
+        {activeTab === "historico" && <TabHistorico token={token ?? ""} />}
 
         {/* ─ UBICACIÓN ─ */}
         {activeTab === "ubicacion_mapa" && (

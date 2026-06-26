@@ -15,6 +15,7 @@ import {
 
 import * as Print from "expo-print";
 import QRScanner from "./QRScanner";
+import DatePicker from "./DatePicker";
 
 const API_URL =
   process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com";
@@ -140,9 +141,10 @@ export default function TabRegistro({
       setScanned(false);
     }
   }
-
+  const savingRef = useRef(false);
   async function guardarEstancia() {
-    if (!estanciaActual) return;
+    if (!estanciaActual || savingRef.current) return;
+    savingRef.current = true;
     setSaving(true);
     try {
       const res = await fetch(`${API_URL}/api/hospitalero/estancias`, {
@@ -381,18 +383,11 @@ export default function TabRegistro({
           </View>
 
           {/* Fecha salida */}
-          <Text style={[s.seccionLabel, { marginTop: 16 }]}>
-            Fecha de salida prevista
-          </Text>
-          <TextInput
+          <DatePicker
+            label="Fecha de salida prevista"
             value={fechaSalida}
-            onChangeText={setFechaSalida}
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor="#C9C0B4"
-            style={s.input}
-            keyboardType="numeric"
+            onChange={setFechaSalida}
           />
-
           {/* Botones */}
           <TouchableOpacity
             onPress={guardarEstancia}
