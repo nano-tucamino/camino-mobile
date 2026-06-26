@@ -12,8 +12,9 @@ import {
   TextInput,
   Platform,
 } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera";
+
 import * as Print from "expo-print";
+import QRScanner from "./QRScanner";
 
 const API_URL =
   process.env.EXPO_PUBLIC_API_URL ?? "https://camino-api.onrender.com";
@@ -66,7 +67,7 @@ export default function TabRegistro({
   token: string;
   albergueNombre: string;
 }) {
-  const [permission, requestPermission] = useCameraPermissions();
+  //const [permission, requestPermission] = useCameraPermissions();
   const [scannerVisible, setScannerVisible] = useState(false);
   const [scanned, setScanned] = useState(false);
   const [estancias, setEstancias] = useState<Estancia[]>([]);
@@ -295,30 +296,16 @@ export default function TabRegistro({
           setScanned(false);
         }}
       >
-        <View style={s.scannerContainer}>
-          <CameraView
-            style={StyleSheet.absoluteFillObject}
-            facing="back"
-            barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-            onBarcodeScanned={scanned ? undefined : handleScan}
-          />
-          {/* Marco QR */}
-          <View style={s.scannerOverlay}>
-            <View style={s.scannerFrame} />
-            <Text style={s.scannerHint}>Apunta al QR del peregrino</Text>
-          </View>
-          <TouchableOpacity
-            style={s.scannerClose}
-            onPress={() => {
-              setScannerVisible(false);
-              setScanned(false);
-            }}
-          >
-            <Text style={s.scannerCloseText}>✕ Cancelar</Text>
-          </TouchableOpacity>
-        </View>
+        <QRScanner
+          onScan={(data) => {
+            if (!scanned) handleScan({ data });
+          }}
+          onClose={() => {
+            setScannerVisible(false);
+            setScanned(false);
+          }}
+        />
       </Modal>
-
       {/* ── Modal datos peregrino ── */}
       <Modal
         visible={modalVisible}
@@ -458,17 +445,7 @@ export default function TabRegistro({
           </View>
           <TouchableOpacity
             style={s.btnEscanear}
-            onPress={async () => {
-              if (!permission?.granted) {
-                const { granted } = await requestPermission();
-                if (!granted) {
-                  Alert.alert(
-                    "Permiso denegado",
-                    "Necesitas dar acceso a la cámara.",
-                  );
-                  return;
-                }
-              }
+            onPress={() => {
               setScanned(false);
               setScannerVisible(true);
             }}
@@ -575,38 +552,6 @@ export default function TabRegistro({
 
 // ── Estilos ──────────────────────────────────────────────────
 const s = StyleSheet.create({
-  // Scanner
-  scannerContainer: { flex: 1, backgroundColor: "black" },
-  scannerOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  scannerFrame: {
-    width: 240,
-    height: 240,
-    borderWidth: 3,
-    borderColor: "#C4843A",
-    borderRadius: 16,
-    backgroundColor: "transparent",
-  },
-  scannerHint: {
-    color: "white",
-    fontSize: 14,
-    marginTop: 24,
-    textAlign: "center",
-  },
-  scannerClose: {
-    position: "absolute",
-    bottom: 60,
-    alignSelf: "center",
-    backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 30,
-  },
-  scannerCloseText: { color: "white", fontSize: 15, fontWeight: "600" },
-
   // Modal datos
   modalContainer: { flex: 1, backgroundColor: "#FAF7F2" },
   modalTitulo: {

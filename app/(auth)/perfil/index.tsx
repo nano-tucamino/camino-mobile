@@ -256,6 +256,9 @@ export default function PerfilScreen() {
   // Registro viaje
   const [registro, setRegistro] = useState<RegistroViaje>(REGISTRO_VACIO);
   const [savingRegistro, setSavingRegistro] = useState(false);
+  const [erroresRegistro, setErroresRegistro] = useState<
+    Partial<Record<keyof RegistroViaje, string>>
+  >({});
   const [qrVisible, setQrVisible] = useState(false);
 
   const TABS: { key: TabKey; label: string }[] = [
@@ -354,6 +357,7 @@ export default function PerfilScreen() {
   }
 
   async function handleGuardarRegistro() {
+    if (!validarRegistro()) return;
     setSavingRegistro(true);
     try {
       await apiPost("/api/peregrino/registro", registro);
@@ -367,6 +371,21 @@ export default function PerfilScreen() {
 
   function setReg(field: keyof RegistroViaje, value: string) {
     setRegistro((r) => ({ ...r, [field]: value }));
+    if (erroresRegistro[field])
+      setErroresRegistro((e) => ({ ...e, [field]: undefined }));
+  }
+
+  function validarRegistro(): boolean {
+    const e: Partial<Record<keyof RegistroViaje, string>> = {};
+    if (!registro.nombre) e.nombre = "Obligatorio";
+    if (!registro.apellidos) e.apellidos = "Obligatorio";
+    if (!registro.sexo) e.sexo = "Selecciona una opción";
+    if (!registro.fecha_nacimiento) e.fecha_nacimiento = "Obligatorio";
+    if (!registro.nacionalidad) e.nacionalidad = "Obligatorio";
+    if (!registro.numero_documento) e.numero_documento = "Obligatorio";
+    if (!registro.direccion_residencia) e.direccion_residencia = "Obligatorio";
+    setErroresRegistro(e);
+    return Object.keys(e).length === 0;
   }
 
   const qrData = registroCompleto(registro) ? JSON.stringify(registro) : null;
@@ -923,7 +942,7 @@ export default function PerfilScreen() {
                 </Text>
               </View>
 
-              {/* QR — visible solo si datos completos */}
+              {/* QR */}
               {qrData ? (
                 <View style={s.card}>
                   <Text style={s.fieldLabel}>{t("perfil.checkin.mi_qr")}</Text>
@@ -964,8 +983,7 @@ export default function PerfilScreen() {
                 </View>
               )}
 
-              {/* Formulario */}
-              {/* Sección: Datos personales */}
+              {/* ── Sección: Datos personales ── */}
               <Text style={s.seccionLabel}>
                 {t("perfil.checkin.seccion_personal")}
               </Text>
@@ -975,10 +993,13 @@ export default function PerfilScreen() {
                 <TextInput
                   value={registro.nombre}
                   onChangeText={(v) => setReg("nombre", v)}
-                  style={s.input}
+                  style={[s.input, erroresRegistro.nombre && s.inputError]}
                   placeholderTextColor={C.piedraDark}
                   placeholder={t("perfil.checkin.nombre")}
                 />
+                {erroresRegistro.nombre && (
+                  <Text style={s.fieldError}>{erroresRegistro.nombre}</Text>
+                )}
 
                 <Text style={[s.fieldLabel, { marginTop: 12 }]}>
                   {t("perfil.checkin.apellidos")} *
@@ -986,10 +1007,13 @@ export default function PerfilScreen() {
                 <TextInput
                   value={registro.apellidos}
                   onChangeText={(v) => setReg("apellidos", v)}
-                  style={s.input}
+                  style={[s.input, erroresRegistro.apellidos && s.inputError]}
                   placeholderTextColor={C.piedraDark}
                   placeholder={t("perfil.checkin.apellidos")}
                 />
+                {erroresRegistro.apellidos && (
+                  <Text style={s.fieldError}>{erroresRegistro.apellidos}</Text>
+                )}
 
                 <Text style={[s.fieldLabel, { marginTop: 12 }]}>
                   {t("perfil.checkin.sexo")} *
@@ -1003,6 +1027,11 @@ export default function PerfilScreen() {
                       style={[
                         pillS.base,
                         registro.sexo === sx.value && pillS.active,
+                        erroresRegistro.sexo &&
+                          !registro.sexo && {
+                            borderColor: C.rojo,
+                            backgroundColor: C.rojoSoft,
+                          },
                         {
                           flex: 1,
                           justifyContent: "center",
@@ -1021,6 +1050,9 @@ export default function PerfilScreen() {
                     </TouchableOpacity>
                   ))}
                 </View>
+                {erroresRegistro.sexo && (
+                  <Text style={s.fieldError}>{erroresRegistro.sexo}</Text>
+                )}
 
                 <Text style={[s.fieldLabel, { marginTop: 12 }]}>
                   {t("perfil.checkin.fecha_nacimiento")} *
@@ -1028,11 +1060,19 @@ export default function PerfilScreen() {
                 <TextInput
                   value={registro.fecha_nacimiento}
                   onChangeText={(v) => setReg("fecha_nacimiento", v)}
-                  style={s.input}
+                  style={[
+                    s.input,
+                    erroresRegistro.fecha_nacimiento && s.inputError,
+                  ]}
                   placeholderTextColor={C.piedraDark}
                   placeholder="YYYY-MM-DD"
                   keyboardType="numeric"
                 />
+                {erroresRegistro.fecha_nacimiento && (
+                  <Text style={s.fieldError}>
+                    {erroresRegistro.fecha_nacimiento}
+                  </Text>
+                )}
 
                 <Text style={[s.fieldLabel, { marginTop: 12 }]}>
                   {t("perfil.checkin.nacionalidad")} *
@@ -1040,13 +1080,21 @@ export default function PerfilScreen() {
                 <TextInput
                   value={registro.nacionalidad}
                   onChangeText={(v) => setReg("nacionalidad", v)}
-                  style={s.input}
+                  style={[
+                    s.input,
+                    erroresRegistro.nacionalidad && s.inputError,
+                  ]}
                   placeholderTextColor={C.piedraDark}
                   placeholder="España"
                 />
+                {erroresRegistro.nacionalidad && (
+                  <Text style={s.fieldError}>
+                    {erroresRegistro.nacionalidad}
+                  </Text>
+                )}
               </View>
 
-              {/* Sección: Documento */}
+              {/* ── Sección: Documento ── */}
               <Text style={s.seccionLabel}>
                 {t("perfil.checkin.seccion_documento")}
               </Text>
@@ -1091,11 +1139,19 @@ export default function PerfilScreen() {
                 <TextInput
                   value={registro.numero_documento}
                   onChangeText={(v) => setReg("numero_documento", v)}
-                  style={s.input}
+                  style={[
+                    s.input,
+                    erroresRegistro.numero_documento && s.inputError,
+                  ]}
                   placeholderTextColor={C.piedraDark}
                   placeholder="12345678X"
                   autoCapitalize="characters"
                 />
+                {erroresRegistro.numero_documento && (
+                  <Text style={s.fieldError}>
+                    {erroresRegistro.numero_documento}
+                  </Text>
+                )}
 
                 <Text style={[s.fieldLabel, { marginTop: 12 }]}>
                   {t("perfil.checkin.numero_soporte")}
@@ -1115,7 +1171,7 @@ export default function PerfilScreen() {
                 </Text>
               </View>
 
-              {/* Sección: Contacto */}
+              {/* ── Sección: Contacto ── */}
               <Text style={s.seccionLabel}>
                 {t("perfil.checkin.seccion_contacto")}
               </Text>
@@ -1127,11 +1183,20 @@ export default function PerfilScreen() {
                 <TextInput
                   value={registro.direccion_residencia}
                   onChangeText={(v) => setReg("direccion_residencia", v)}
-                  style={[s.input, { minHeight: 60, textAlignVertical: "top" }]}
+                  style={[
+                    s.input,
+                    { minHeight: 60, textAlignVertical: "top" },
+                    erroresRegistro.direccion_residencia && s.inputError,
+                  ]}
                   placeholderTextColor={C.piedraDark}
                   placeholder="Calle, número, ciudad, país"
                   multiline
                 />
+                {erroresRegistro.direccion_residencia && (
+                  <Text style={s.fieldError}>
+                    {erroresRegistro.direccion_residencia}
+                  </Text>
+                )}
 
                 <Text style={[s.fieldLabel, { marginTop: 12 }]}>
                   {t("perfil.checkin.telefono")}
@@ -1528,5 +1593,14 @@ const s = StyleSheet.create({
     marginTop: 24,
     textAlign: "center",
     lineHeight: 16,
+  },
+  inputError: {
+    borderColor: C.rojo,
+    backgroundColor: C.rojoSoft,
+  },
+  fieldError: {
+    fontSize: 11,
+    color: C.rojo,
+    marginTop: 4,
   },
 });
