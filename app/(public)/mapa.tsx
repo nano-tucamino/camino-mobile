@@ -433,12 +433,18 @@ export default function MapaScreen() {
     ),
   };
 
-  const marcadoresNegocios: GeoJSON.FeatureCollection = {
+  const marcadoresNegocios: { type: string; features: any[] } = {
     type: "FeatureCollection",
     features: (marcadores?.features ?? []).filter(
-      (f) => f.properties?._layer === "negocio",
+      (f) =>
+        f.properties?._layer === "negocio" && f.properties?.plan !== "premium",
     ),
   };
+
+  const marcadoresNegociosPremium = (marcadores?.features ?? []).filter(
+    (f) =>
+      f.properties?._layer === "negocio" && f.properties?.plan === "premium",
+  );
 
   const numFiltrosActivos = Object.values(filtros).filter(Boolean).length;
 
@@ -770,6 +776,83 @@ export default function MapaScreen() {
                   </Text>
                 </View>
                 <View style={styles.markerPremiumPunta} />
+              </TouchableOpacity>
+            </MarkerView>
+          );
+        })}
+
+        {marcadoresNegociosPremium.map((f) => {
+          const coords = (f.geometry as any).coordinates;
+          const p = f.properties!;
+
+          if (zoomActual < 14) {
+            return (
+              <MarkerView
+                key={p.id}
+                coordinate={[coords[0], coords[1]]}
+                anchor={{ x: 0.5, y: 0.5 }}
+              >
+                <TouchableOpacity
+                  onPress={() =>
+                    router.push(`/(public)/negocios/${p.slug}` as any)
+                  }
+                  style={styles.markerNegocioPremiumCircle}
+                >
+                  <Text style={{ fontSize: 12 }}>🏪</Text>
+                </TouchableOpacity>
+              </MarkerView>
+            );
+          }
+
+          const cardWidth = zoomActual >= 16 ? 110 : 80;
+          const fotoHeight = zoomActual >= 16 ? 60 : 44;
+          const fontSize = zoomActual >= 16 ? 10 : 9;
+
+          return (
+            <MarkerView
+              key={p.id}
+              coordinate={[coords[0], coords[1]]}
+              anchor={{ x: 0.5, y: 1 }}
+            >
+              <TouchableOpacity
+                onPress={() =>
+                  router.push(`/(public)/negocios/${p.slug}` as any)
+                }
+                style={[
+                  styles.markerPremium,
+                  { width: cardWidth, borderColor: "#C8622A" },
+                ]}
+              >
+                {p.foto_url ? (
+                  <Image
+                    source={{ uri: p.foto_url }}
+                    style={[styles.markerPremiumFoto, { height: fotoHeight }]}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View
+                    style={[
+                      styles.markerPremiumFotoFallback,
+                      { height: fotoHeight },
+                    ]}
+                  >
+                    <Text style={{ fontSize: 14 }}>🏪</Text>
+                  </View>
+                )}
+                <View style={styles.markerPremiumLabel}>
+                  <Text
+                    style={[styles.markerPremiumNombre, { fontSize }]}
+                    numberOfLines={1}
+                  >
+                    {p.nombre}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.markerPremiumPunta,
+                    { backgroundColor: "#C8622A" },
+                  ]}
+                />
               </TouchableOpacity>
             </MarkerView>
           );
@@ -1422,6 +1505,21 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     backgroundColor: "#F5C842",
+    borderWidth: 2,
+    borderColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  markerNegocioPremiumCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#C8622A",
     borderWidth: 2,
     borderColor: "#fff",
     alignItems: "center",
