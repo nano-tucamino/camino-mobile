@@ -242,6 +242,11 @@ export default function MapaScreen() {
     cargar();
   }, [etapaSeleccionada, filtros]);
 
+  const manejarCameraChanged = useCallback((state: any) => {
+    const zoom = state?.properties?.zoom ?? state?.zoom;
+    if (typeof zoom === "number") setZoomActual(zoom);
+  }, []);
+
   const mostrarPanel = useCallback(
     async (etapa: EtapaFeature) => {
       setEtapaSeleccionada(etapa);
@@ -333,6 +338,9 @@ export default function MapaScreen() {
       const sw = Array.isArray(bounds) ? bounds[1] : bounds.sw;
       if (!ne || !sw) return;
 
+      const zoomNum = typeof zoom === "number" ? zoom : parseFloat(zoom);
+      if (!isNaN(zoomNum)) setZoomActual(zoomNum);
+
       await cargarMarcadoresPorZoom(zoom, { ne, sw });
     },
     [cargarMarcadoresPorZoom],
@@ -360,6 +368,8 @@ export default function MapaScreen() {
       friction: 11,
     }).start();
   };
+
+  const [zoomActual, setZoomActual] = useState(CAMINO_BOUNDS.zoom);
 
   const cerrarFiltros = () => {
     Animated.spring(filtrosAnim, {
@@ -467,6 +477,7 @@ export default function MapaScreen() {
         onPress={cerrarPanel}
         onMapIdle={manejarCambioRegion}
         onRegionDidChange={manejarCambioRegion}
+        onCameraChanged={manejarCameraChanged}
       >
         <Camera
           ref={cameraRef}
@@ -684,6 +695,38 @@ export default function MapaScreen() {
         {marcadoresPremium.map((f) => {
           const coords = (f.geometry as any).coordinates;
           const p = f.properties!;
+
+          // A zoom bajo → solo círculo dorado pequeño
+          if (zoomActual < 14) {
+            return (
+              <MarkerView
+                key={p.id}
+                coordinate={[coords[0], coords[1]]}
+                anchor={{ x: 0.5, y: 0.5 }}
+              >
+                <TouchableOpacity
+                  onPress={() =>
+                    setAlbergueSeleccionado({
+                      nombre: p.nombre,
+                      localidad: p.localidad,
+                      slug: p.slug,
+                      lat: coords[1],
+                      lng: coords[0],
+                    })
+                  }
+                  style={styles.markerPremiumCircle}
+                >
+                  <Text style={{ fontSize: 12 }}>🏠</Text>
+                </TouchableOpacity>
+              </MarkerView>
+            );
+          }
+
+          // A zoom medio/alto → mini card
+          const cardWidth = zoomActual >= 16 ? 110 : 80;
+          const fotoHeight = zoomActual >= 16 ? 60 : 44;
+          const fontSize = zoomActual >= 16 ? 10 : 9;
+
           return (
             <MarkerView
               key={p.id}
@@ -700,25 +743,30 @@ export default function MapaScreen() {
                     lng: coords[0],
                   })
                 }
-                style={styles.markerPremium}
+                style={[styles.markerPremium, { width: cardWidth }]}
               >
                 {p.foto_url ? (
                   <Image
                     source={{ uri: p.foto_url }}
-                    style={styles.markerPremiumFoto}
+                    style={[styles.markerPremiumFoto, { height: fotoHeight }]}
                     resizeMode="cover"
                   />
                 ) : (
-                  <View style={styles.markerPremiumFotoFallback}>
-                    <Text style={{ fontSize: 18 }}>🏠</Text>
+                  <View
+                    style={[
+                      styles.markerPremiumFotoFallback,
+                      { height: fotoHeight },
+                    ]}
+                  >
+                    <Text style={{ fontSize: 14 }}>🏠</Text>
                   </View>
                 )}
                 <View style={styles.markerPremiumLabel}>
-                  <Text style={styles.markerPremiumNombre} numberOfLines={1}>
+                  <Text
+                    style={[styles.markerPremiumNombre, { fontSize }]}
+                    numberOfLines={1}
+                  >
                     {p.nombre}
-                  </Text>
-                  <Text style={styles.markerPremiumPrecio}>
-                    {p.precio_cama}
                   </Text>
                 </View>
                 <View style={styles.markerPremiumPunta} />
@@ -1368,5 +1416,20 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: -6,
     marginBottom: 3,
+  },
+  markerPremiumCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#F5C842",
+    borderWidth: 2,
+    borderColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
   },
 });

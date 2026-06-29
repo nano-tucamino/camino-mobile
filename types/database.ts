@@ -1571,7 +1571,7 @@ export type Database = {
           fecha_salida: string | null;
           id: string;
           metodo_pago: string | null;
-          peregrino_id: string;
+          peregrino_id: string | null;
         };
         Insert: {
           albergue_id: string;
@@ -1581,7 +1581,7 @@ export type Database = {
           fecha_salida?: string | null;
           id?: string;
           metodo_pago?: string | null;
-          peregrino_id: string;
+          peregrino_id?: string | null;
         };
         Update: {
           albergue_id?: string;
@@ -1591,7 +1591,7 @@ export type Database = {
           fecha_salida?: string | null;
           id?: string;
           metodo_pago?: string | null;
-          peregrino_id?: string;
+          peregrino_id?: string | null;
         };
         Relationships: [
           {
@@ -1743,6 +1743,47 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      plan_eventos: {
+        Row: {
+          admin_id: string | null;
+          created_at: string | null;
+          entidad_id: string;
+          entidad_tipo: string;
+          evento: string;
+          id: string;
+          notas: string | null;
+          plan: string | null;
+        };
+        Insert: {
+          admin_id?: string | null;
+          created_at?: string | null;
+          entidad_id: string;
+          entidad_tipo: string;
+          evento: string;
+          id?: string;
+          notas?: string | null;
+          plan?: string | null;
+        };
+        Update: {
+          admin_id?: string | null;
+          created_at?: string | null;
+          entidad_id?: string;
+          entidad_tipo?: string;
+          evento?: string;
+          id?: string;
+          notas?: string | null;
+          plan?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "plan_eventos_admin_id_fkey";
+            columns: ["admin_id"];
+            isOneToOne: false;
+            referencedRelation: "perfiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       poi_fotos: {
         Row: {
