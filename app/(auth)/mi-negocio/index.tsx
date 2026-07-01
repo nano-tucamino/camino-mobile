@@ -51,19 +51,11 @@ const SERVICIOS_CONFIG = [
   { key: "frances", label: "Français", emoji: "🇫🇷" },
 ];
 
-type TabKey =
-  | "estado"
-  | "info"
-  | "descripcion"
-  | "horarios"
-  | "servicios"
-  | "fotos"
-  | "perfil";
+type TabKey = "estado" | "info" | "horarios" | "servicios" | "fotos" | "perfil";
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "estado", label: "Estado" },
   { key: "info", label: "Info" },
-  { key: "descripcion", label: "Descripción" },
   { key: "horarios", label: "Horarios" },
   { key: "servicios", label: "Servicios" },
   { key: "fotos", label: "Fotos" },
@@ -94,15 +86,7 @@ export default function MiNegocioScreen() {
   const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
   const [web, setWeb] = useState("");
-
-  // Descripción multiidioma
   const [descripcionEs, setDescripcionEs] = useState("");
-  const [descripcionEn, setDescripcionEn] = useState("");
-  const [descripcionDe, setDescripcionDe] = useState("");
-  const [descripcionFr, setDescripcionFr] = useState("");
-  const [descripcionIt, setDescripcionIt] = useState("");
-  const [descripcionPt, setDescripcionPt] = useState("");
-  const [descripcionKo, setDescripcionKo] = useState("");
 
   // Horarios
   const [horarios, setHorarios] = useState<Horario[]>([]);
@@ -133,12 +117,7 @@ export default function MiNegocioScreen() {
         setEmail(n.email ?? "");
         setWeb(n.web ?? "");
         setDescripcionEs(n.descripcion ?? "");
-        setDescripcionEn(n.descripcion_en ?? "");
-        setDescripcionDe(n.descripcion_de ?? "");
-        setDescripcionFr(n.descripcion_fr ?? "");
-        setDescripcionIt(n.descripcion_it ?? "");
-        setDescripcionPt(n.descripcion_pt ?? "");
-        setDescripcionKo(n.descripcion_ko ?? "");
+
         setHorarios(data.horarios ?? []);
         setFotos(data.fotos ?? []);
         setServicios(
@@ -184,25 +163,10 @@ export default function MiNegocioScreen() {
       whatsapp,
       email,
       web,
+      descripcion: descripcionEs,
     });
     setSaving(false);
     showSaved(ok ? "Guardado ✓" : "Error al guardar");
-  }
-
-  // ── Guardar descripción ────────────────────────────────────
-  async function guardarDescripcion() {
-    setSaving(true);
-    const ok = await apiPut("info", {
-      descripcion: descripcionEs,
-      descripcion_en: descripcionEn,
-      descripcion_de: descripcionDe,
-      descripcion_fr: descripcionFr,
-      descripcion_it: descripcionIt,
-      descripcion_pt: descripcionPt,
-      descripcion_ko: descripcionKo,
-    });
-    setSaving(false);
-    showSaved(ok ? "Descripciones guardadas ✓" : "Error al guardar");
   }
 
   // ── Horarios ───────────────────────────────────────────────
@@ -508,6 +472,19 @@ export default function MiNegocioScreen() {
                 />
               </View>
             ))}
+            <View style={s.fieldGroup}>
+              <Text style={s.fieldLabel}>Descripción</Text>
+              <TextInput
+                style={[s.fieldInput, s.fieldTextarea]}
+                value={descripcionEs}
+                onChangeText={setDescripcionEs}
+                multiline
+                numberOfLines={5}
+                textAlignVertical="top"
+                placeholderTextColor="#C4A882"
+                placeholder="Descripción en español..."
+              />
+            </View>
             <TouchableOpacity
               style={[s.btnPrimary, saving && s.btnDisabled]}
               onPress={guardarInfo}
@@ -515,76 +492,6 @@ export default function MiNegocioScreen() {
             >
               <Text style={s.btnPrimaryText}>
                 {saving ? "Guardando..." : "Guardar cambios"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {/* ─ DESCRIPCIÓN ─ */}
-        {activeTab === "descripcion" && (
-          <View>
-            <Text style={s.tabDesc}>
-              Describe tu negocio en cada idioma. Los peregrinos verán la
-              descripción en su idioma.
-            </Text>
-            {[
-              {
-                label: "🇪🇸 Español",
-                value: descripcionEs,
-                set: setDescripcionEs,
-              },
-              {
-                label: "🇬🇧 English",
-                value: descripcionEn,
-                set: setDescripcionEn,
-              },
-              {
-                label: "🇩🇪 Deutsch",
-                value: descripcionDe,
-                set: setDescripcionDe,
-              },
-              {
-                label: "🇫🇷 Français",
-                value: descripcionFr,
-                set: setDescripcionFr,
-              },
-              {
-                label: "🇮🇹 Italiano",
-                value: descripcionIt,
-                set: setDescripcionIt,
-              },
-              {
-                label: "🇵🇹 Português",
-                value: descripcionPt,
-                set: setDescripcionPt,
-              },
-              {
-                label: "🇰🇷 한국어",
-                value: descripcionKo,
-                set: setDescripcionKo,
-              },
-            ].map((f) => (
-              <View key={f.label} style={s.fieldGroup}>
-                <Text style={s.fieldLabel}>{f.label}</Text>
-                <TextInput
-                  style={[s.fieldInput, s.fieldTextarea]}
-                  value={f.value}
-                  onChangeText={f.set}
-                  multiline
-                  numberOfLines={4}
-                  textAlignVertical="top"
-                  placeholderTextColor="#C4A882"
-                  placeholder="Descripción..."
-                />
-              </View>
-            ))}
-            <TouchableOpacity
-              style={[s.btnPrimary, saving && s.btnDisabled]}
-              onPress={guardarDescripcion}
-              disabled={saving}
-            >
-              <Text style={s.btnPrimaryText}>
-                {saving ? "Guardando..." : "Guardar descripciones"}
               </Text>
             </TouchableOpacity>
           </View>

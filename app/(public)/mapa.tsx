@@ -408,12 +408,12 @@ export default function MapaScreen() {
     });
   };
 
-  const geojsonCompleto: GeoJSON.FeatureCollection = {
+  const geojsonCompleto: { type: "FeatureCollection"; features: any[] } = {
     type: "FeatureCollection",
-    features: (recorrido?.features ?? []) as unknown as GeoJSON.Feature[],
+    features: (recorrido?.features ?? []) as unknown as any[],
   };
 
-  const marcadoresAlbergues: GeoJSON.FeatureCollection = {
+  const marcadoresAlbergues: { type: "FeatureCollection"; features: any[] } = {
     type: "FeatureCollection",
     features: (marcadores?.features ?? []).filter(
       (f) =>
@@ -426,21 +426,20 @@ export default function MapaScreen() {
       f.properties?._layer === "albergue" && f.properties?.plan === "premium",
   );
 
-  const marcadoresPois: GeoJSON.FeatureCollection = {
+  const marcadoresPois: { type: "FeatureCollection"; features: any[] } = {
     type: "FeatureCollection",
     features: (marcadores?.features ?? []).filter(
       (f) => f.properties?._layer === "poi",
     ),
   };
 
-  const marcadoresNegocios: { type: string; features: any[] } = {
+  const marcadoresNegocios: { type: "FeatureCollection"; features: any[] } = {
     type: "FeatureCollection",
     features: (marcadores?.features ?? []).filter(
       (f) =>
         f.properties?._layer === "negocio" && f.properties?.plan !== "premium",
     ),
   };
-
   const marcadoresNegociosPremium = (marcadores?.features ?? []).filter(
     (f) =>
       f.properties?._layer === "negocio" && f.properties?.plan === "premium",
